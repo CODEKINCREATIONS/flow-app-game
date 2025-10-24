@@ -1,6 +1,6 @@
-// app/page.tsx
-import { redirect } from "next/navigation";
+"use client";
+import ColorDashboard from "@/app/components/ColorDashboard";
 
-export default function Home() {
-  redirect("/facilitator-login");
+export default function HomePage() {
+  return <ColorDashboard />;
 }
