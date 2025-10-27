@@ -1,22 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import Card from "@/app/components/ui/Card";
-import Input from "@/app/components/ui/Input";
-import Button from "@/app/components/ui/Button";
+import { Card, Input, Button } from "@/app/components/ui";
+import { useAuth } from "@/app/lib/hooks";
+import { validators } from "@/app/lib/utils";
 
 export default function PlayerLogin() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [language, setLanguage] = useState("");
+  const [error, setError] = useState("");
+  const { loginPlayer } = useAuth();
 
-  const handleLogin = () => {
-    if (!name.trim() || !email.trim()) return;
-    console.log("Player Info:", { name, email, language });
+  const handleLogin = async () => {
+    // Validation
+    if (!name.trim() || !email.trim()) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    if (!validators.isValidName(name.trim())) {
+      setError("Name must be 2-50 characters");
+      return;
+    }
+
+    if (!validators.isValidEmail(email.trim())) {
+      setError("Please enter a valid email");
+      return;
+    }
+
+    if (!language) {
+      setError("Please select a language");
+      return;
+    }
+
+    // Use the auth hook
+    const result = await loginPlayer(name.trim(), email.trim(), language);
+
+    if (!result.success) {
+      setError(result.error || "Failed to login");
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0F1125] text-white">
+      {/* Full screen layout for login pages */}
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -94,10 +122,16 @@ export default function PlayerLogin() {
                 disabled={!name.trim() || !email.trim()}
                 onClick={handleLogin}
                 className="mt-[10px]"
-                width="w-full" // ✅ takes full width
+                width="w-full"
               >
                 Join Game
               </Button>
+
+              {error && (
+                <div className="text-center mt-4">
+                  <p className="text-xs text-red-400 font-medium">{error}</p>
+                </div>
+              )}
             </div>
           </div>
         </Card>

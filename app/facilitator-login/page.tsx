@@ -1,28 +1,38 @@
 "use client";
 
-import Card from "@/app/components/ui/Card";
-import Input from "@/app/components/ui/Input";
-import Button from "@/app/components/ui/Button";
-import { useRouter } from "next/navigation";
+import { Card, Input, Button } from "@/app/components/ui";
+import { useAuth } from "@/app/lib/hooks";
 import { useState } from "react";
+import { validators } from "@/app/lib/utils";
 
 export default function FacilitatorLogin() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
+  const { loginFacilitator } = useAuth();
 
-  const handleLogin = () => {
-    // Example logic (you can later replace it with API call)
-    if (code.trim() === "12345") {
-      router.push("/facilitator-dashboard");
-    } else {
-      setError("Invalid or already used code");
+  const handleLogin = async () => {
+    // Validation
+    if (!code.trim()) {
+      setError("Please enter a code");
+      return;
+    }
+
+    if (!validators.isValidSessionCode(code.trim())) {
+      setError("Invalid code format");
+      return;
+    }
+
+    // Use the auth hook
+    const result = await loginFacilitator(code.trim());
+
+    if (!result.success) {
+      setError(result.error || "Invalid or already used code");
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-black">
-      {/* Outer Black Background */}
+      {/* Full screen layout for login pages */}
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Title Section */}
         <div className="text-center mb-16">
