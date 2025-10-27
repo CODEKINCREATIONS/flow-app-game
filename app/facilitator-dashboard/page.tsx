@@ -6,13 +6,14 @@ import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { QRModal } from "@/app/components/QRModal";
 import { Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Button from "@/app/components/ui/Button"; // ✅ import
 
 export default function FacilitatorDashboard() {
   const [time, setTime] = useState(0);
   const [showQR, setShowQR] = useState(false);
   const router = useRouter();
 
-  // ✅ Timer logic
+  // Timer logic
   useEffect(() => {
     const interval = setInterval(() => setTime((t) => t + 1), 1000);
     return () => clearInterval(interval);
@@ -39,29 +40,22 @@ export default function FacilitatorDashboard() {
             <span className="font-mono text-sm">{formatTime(time)}</span>
           </div>
 
-          <button
+          {/* ✅ Red finish button */}
+          <Button
+            variant="danger"
             onClick={() => router.push("/facilitator-login")}
-            className=" text-white font-bold bg-gradient-to-r from-[#FF3A3A] to-[#FF6B6B]
-              hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(255,58,58,0.4)]
-              transition-all duration-300 border border-[#FF6B6B] border-opacity-30
-              px-[26px] py-[12px] ml-[20px]  rounded-[0.3rem] shadow-lg"
           >
             Finish
-          </button>
+          </Button>
 
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className=" text-white font-extrabold text-lg bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]
-              hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(123,97,255,0.4)]
-              transition-all duration-300 border border-[#7B61FF] border-opacity-30
-              px-[32px] py-[12px] ml-[20px]  rounded-[0.3rem] shadow-lg"
-          >
+          {/* ✅ Blue unlock button */}
+          <Button variant="primary" onClick={() => setShowQR(!showQR)}>
             {showQR ? "Hide QR Code" : "Unlock session for players"}
-          </button>
+          </Button>
         </div>
       </header>
 
-      {/* Body Sections */}
+      {/* Body */}
       <div className="space-y-8">
         <SessionDetails />
         <PlayerProgress />

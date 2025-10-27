@@ -16,7 +16,7 @@ export default function PlayerLogin() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#0F1125] text-white">
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -29,7 +29,6 @@ export default function PlayerLogin() {
         {/* Login Card */}
         <Card>
           <div className="space-y-10 w-full pr-[60px]">
-            {/* Card Title */}
             <div className="text-center">
               <h2 className="text-2xl font-semibold text-white mb-2">
                 Enter your details
@@ -38,7 +37,6 @@ export default function PlayerLogin() {
 
             {/* Input Fields */}
             <div className="space-y-6">
-              {/* Name Field */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
                   Name
@@ -51,7 +49,6 @@ export default function PlayerLogin() {
                 />
               </div>
 
-              {/* Email Field */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
                   Email
@@ -65,7 +62,6 @@ export default function PlayerLogin() {
                 />
               </div>
 
-              {/* Language Field */}
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
                   Language
@@ -73,13 +69,8 @@ export default function PlayerLogin() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="px-5 py-[11px] bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem]
-                             text-gray-300 placeholder-gray-400 focus:outline-none
-                             focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20
-                             transition-all duration-300 text-lg appearance-none"
-                  style={{
-                    color: language ? "#D1D5DB" : "#9CA3AF", // same as placeholder color
-                  }}
+                  className="px-5 py-[11px] bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] text-gray-300 placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg appearance-none"
+                  style={{ color: language ? "#D1D5DB" : "#9CA3AF" }}
                 >
                   <option value="" className="text-gray-400 bg-[#0F111A]">
                     Select language
@@ -98,10 +89,12 @@ export default function PlayerLogin() {
             </div>
 
             {/* Button Section */}
-            <div className="space-y-6 pt-4">
+            <div className="pt-4">
               <Button
                 disabled={!name.trim() || !email.trim()}
                 onClick={handleLogin}
+                className="mt-[10px]"
+                width="w-full" // ✅ takes full width
               >
                 Join Game
               </Button>

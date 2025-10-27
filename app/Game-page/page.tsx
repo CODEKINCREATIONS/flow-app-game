@@ -36,10 +36,10 @@ export default function PlayerGamePage() {
         <div className="grid grid-cols-3 w-full">
           <div></div>
           <div className="flex justify-center mb-[10px]">
-            <Button className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] font-semibold rounded-xl shadow-lg hover:opacity-90 transition-all">
+            <Button className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] font-semibold rounded-xl shadow-lg hover:opacity-90 transition-all mt-[20px]">
               View Video
               <Image
-                className="ml-[10px]"
+                className="ml-[10px] "
                 src="/assets/video-icon.png"
                 alt="View Video"
                 width={22}

@@ -53,7 +53,13 @@ export default function FacilitatorLogin() {
 
             {/* Button */}
             <div className="space-y-6 pt-4">
-              <Button onClick={handleLogin}>Start Session</Button>
+              <Button
+                onClick={handleLogin}
+                width="w-full"
+                className="mt-[10px]"
+              >
+                Start Session
+              </Button>
             </div>
 
             {/* Error Message */}
