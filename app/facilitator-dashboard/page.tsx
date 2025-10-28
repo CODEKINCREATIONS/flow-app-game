@@ -6,6 +6,7 @@ import { SessionDetails } from "@/app/components/SessionDetails";
 import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
+import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
 
 export default function FacilitatorDashboard() {
   const [showQR, setShowQR] = useState(false);
@@ -45,7 +46,14 @@ export default function FacilitatorDashboard() {
           <PlayerProgress />
         </div>
 
-        {/* Optional QR Modal */}
+        {/* QR Code Dialog */}
+        {session && (
+          <QRCodeDialog
+            open={showQR}
+            onClose={() => setShowQR(false)}
+            sessionCode={session.code || session.id}
+          />
+        )}
       </main>
     </AppLayout>
   );

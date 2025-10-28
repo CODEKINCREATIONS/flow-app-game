@@ -37,3 +37,8 @@
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
 }
+@media (orientation: landscape) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
