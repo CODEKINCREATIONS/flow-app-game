@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { AppHeader } from "./AppHeader";
 import { AppFooter } from "./AppFooter";
+import { TimerProvider } from "@/app/lib/context/TimerContext";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -22,16 +23,18 @@ export const AppLayout = ({
   customActions,
 }: AppLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#0F1125]">
-      <AppHeader
-        mode={headerMode}
-        playerName={playerName}
-        showTimer={showTimer}
-        showLanguage={showLanguage}
-        customActions={customActions}
-      />
-      <main className="flex-1">{children}</main>
-      <AppFooter />
-    </div>
+    <TimerProvider>
+      <div className="min-h-screen flex flex-col bg-[#0F1125]">
+        <AppHeader
+          mode={headerMode}
+          playerName={playerName}
+          showTimer={showTimer}
+          showLanguage={showLanguage}
+          customActions={customActions}
+        />
+        <main className="flex-1">{children}</main>
+        <AppFooter />
+      </div>
+    </TimerProvider>
   );
 };

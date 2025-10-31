@@ -56,7 +56,7 @@ export function DialogContent({
 }) {
   return (
     <div
-      className={`bg-[#12142A] border border-[#1E2144] text-white rounded-2xl p-6 shadow-xl ${className}`}
+      className={`bg-[#12142A] border border-[#1E2144] text-white rounded-2xl shadow-xl relative ${className}`}
     >
       {children}
     </div>

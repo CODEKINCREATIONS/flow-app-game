@@ -51,12 +51,14 @@ export default function QRCodeModal({
         {/* ❌ icon in top-right corner */}
         <X
           onClick={onClose}
-          className="top-4 right-4 cursor-pointer text-gray-400 hover:text-white transition w-5 h-5"
+          className="absolute top-[15px] right-[15px] w-5 h-5 text-gray-400 hover:text-white transition-colors cursor-pointer"
         />
 
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-center text-white">
-            Session QR Code
+          <DialogTitle>
+            <span className="text-lg font-semibold text-center text-white block">
+              Session QR Code
+            </span>
           </DialogTitle>
         </DialogHeader>
 

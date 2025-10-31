@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, Input, Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
-import { validators } from "@/app/lib/utils";
+import { validators } from "@/app/lib/utils/validators";
 
 export default function PlayerLogin() {
   const [name, setName] = useState("");
@@ -43,22 +43,25 @@ export default function PlayerLogin() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0F1125] text-white">
+    <div
+      className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat text-white"
+      style={{ backgroundImage: "url('/assets/background login.png')" }}
+    >
       {/* Full screen layout for login pages */}
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] mb-4">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] mb-4">
             FLOW
           </h1>
-          <p className="text-gray-300 mb-9 text-xl">Player Login</p>
+          <p className="text-gray-300 mb-9 text-2xl">Player Login</p>
         </div>
 
         {/* Login Card */}
         <Card>
-          <div className="space-y-10 w-full pr-[60px]">
+          <div className="space-y-10 w-full px-4 sm:px-6 md:px-8 lg:px-10 max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
             <div className="text-center">
-              <h2 className="text-2xl font-semibold text-white mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
                 Enter your details
               </h2>
             </div>
@@ -66,19 +69,19 @@ export default function PlayerLogin() {
             {/* Input Fields */}
             <div className="space-y-6">
               <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
+                <label className="text-base sm:text-lg md:text-xl font-semibold text-gray-200 mb-[6px] mt-[12px]">
                   Name
                 </label>
                 <Input
                   placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300"
+                  className="text-base sm:text-lg md:text-xl text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[5px]"
                 />
               </div>
 
               <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
+                <label className="text-base sm:text-lg md:text-xl font-semibold text-gray-200 mb-[6px] mt-[12px] ">
                   Email
                 </label>
                 <Input
@@ -86,21 +89,21 @@ export default function PlayerLogin() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300"
+                  className="text-base sm:text-lg md:text-xl text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[7px]"
                 />
               </div>
 
               <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-300 mb-[5px] mt-[10px]">
+                <label className="text-base sm:text-lg md:text-xl font-semibold text-gray-200 mb-[6px] mt-[12px]">
                   Language
                 </label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="px-5 py-[11px] bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] text-gray-300 placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg appearance-none"
+                  className="px-4 sm:px-5 md:px-6 py-3 sm:py-3 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] text-gray-200 placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg sm:text-xl md:text-2xl appearance-none pt-[11px] pb-[11px] pl-[5px]"
                   style={{ color: language ? "#D1D5DB" : "#9CA3AF" }}
                 >
-                  <option value="" className="text-gray-400 bg-[#0F111A]">
+                  <option value="" className="text-gray-400 bg-[#0F111A] ">
                     Select language
                   </option>
                   <option value="en" className="text-gray-300 bg-[#0F111A]">
@@ -121,7 +124,7 @@ export default function PlayerLogin() {
               <Button
                 disabled={!name.trim() || !email.trim()}
                 onClick={handleLogin}
-                className="mt-[10px]"
+                className="!text-base sm:!text-lg md:!text-xl py-3 sm:py-3 md:py-4 mt-[20px]"
                 width="w-full"
               >
                 Join Game
@@ -129,7 +132,7 @@ export default function PlayerLogin() {
 
               {error && (
                 <div className="text-center mt-4">
-                  <p className="text-xs text-red-400 font-medium">{error}</p>
+                  <p className="text-sm text-red-400 font-medium">{error}</p>
                 </div>
               )}
             </div>

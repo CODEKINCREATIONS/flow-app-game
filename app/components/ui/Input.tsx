@@ -1,8 +1,10 @@
+import { cn } from "@/app/lib/utils";
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-export default function Input({ label, ...props }: InputProps) {
+export default function Input({ label, className, ...props }: InputProps) {
   return (
     <div className="flex flex-col gap-3">
       {label && (
@@ -10,16 +12,11 @@ export default function Input({ label, ...props }: InputProps) {
       )}
       <input
         {...props}
-        className="px-5 pr-[21px] pt-[11px] pb-[11px] 
-                   bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] 
-                   text-gray-300 placeholder-gray-400
-                   focus:outline-none focus:border-[#7B61FF] focus:ring-2 
-                   focus:ring-[#7B61FF] focus:ring-opacity-20 
-                   transition-all duration-300 text-lg"
-        style={{
-          color: "#D1D5DB", // ensures typed text always stays light gray
-          caretColor: "#7B61FF", // (optional) gives cursor same accent color
-        }}
+        className={cn(
+          "px-5 pr-[21px] pt-[11px] pb-[11px] bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] text-gray-300 placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg",
+          "text-[#D1D5DB] caret-[#7B61FF]",
+          className
+        )}
       />
     </div>
   );

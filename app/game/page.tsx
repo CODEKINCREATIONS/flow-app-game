@@ -12,6 +12,14 @@ export default function PlayerGamePage() {
   const { user, isPlayer } = useAuth();
   const { chests, unlockChest, setCurrentChest } = useGame();
 
+  // Generate random chest states (8 open, 8 closed)
+  const [randomOpenChests] = useState(() => {
+    const shuffled = Array.from({ length: 16 }, (_, i) => i).sort(
+      () => Math.random() - 0.5
+    );
+    return shuffled.slice(0, 8); // Take first 8 indices for open chests
+  });
+
   // Handle chest click
   const handleChestClick = (index: number) => {
     setSelectedChest(index);
@@ -38,24 +46,37 @@ export default function PlayerGamePage() {
       showTimer={true}
       showLanguage={true}
     >
-      <div className="w-full max-w-7xl mx-auto px-4 py-10 space-y-10">
-        {/* Centered Video Button */}
-        <div className="grid grid-cols-3 w-full">
-          <div></div>
-
-          <div></div>
-          <div></div>
-          <div className="flex justify-center mb-[10px]">
-            <Button className=" sm:w-2/3 md:w-1/2 lg:w-1/3 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] font-semibold rounded-xl shadow-lg hover:opacity-90 transition-all mt-[20px]">
-              View Video
-              <Image
-                className="ml-[10px] mr-[20px]"
-                src="/assets/video-icon.png"
-                alt="View Video"
-                width={22}
-                height={22}
-              />
-            </Button>
+      <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
+        {/* Progress Bar */}
+        <div className="w-full px-0 py-4 mt-[20px]">
+          <div className="relative w-full h-[20px] bg-[#0F1125] border border-[#23263A]/30">
+            <div
+              className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
+              style={{
+                width: `${(randomOpenChests.length / 16) * 100}%`,
+              }}
+            >
+              {/* Percentage text on progress bar */}
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white font-bold text-sm">
+                50%
+              </div>
+            </div>
+            {/* Progress Circle */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-[30px] h-[30px] bg-[#0F1125] rounded-full border-[3px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out"
+              style={{
+                left: `calc(${(randomOpenChests.length / 16) * 100}% - 15px)`,
+                boxShadow: "0 0 20px rgba(58,141,255,0.5)",
+              }}
+            >
+              <div className="w-[15px] h-[15px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
+            </div>
+          </div>
+          {/* Boxes opened text below progress bar */}
+          <div className="flex justify-center items-center text-lg m-[15px]">
+            <span className="text-white font-['Orbitron'] tracking-wide text-center">
+              Unlocked: {randomOpenChests.length}/16 Boxes
+            </span>
           </div>
         </div>
 
@@ -74,8 +95,12 @@ export default function PlayerGamePage() {
             <div
               key={index}
               onClick={() => setSelectedChest(index)} // 👈 open modal
-              className="
-                bg-[#1A1C33]
+              className={`
+                ${
+                  randomOpenChests.includes(index)
+                    ? "bg-[#00ff8c]/20"
+                    : "bg-[#ff0000]/20"
+                }
                 rounded-xl
                 flex
                 items-center
@@ -93,10 +118,19 @@ export default function PlayerGamePage() {
                 lg:h-[240px]
                 m-[10px]
                 rounded-[0.3rem]
-              "
+                ${
+                  randomOpenChests.includes(index)
+                    ? "shadow-[0_0_15px_rgba(0,255,140,0.2)]"
+                    : "shadow-[0_0_15px_rgba(255,0,0,0.2)]"
+                }
+              `}
             >
               <Image
-                src="/assets/chest-closed.png"
+                src={
+                  randomOpenChests.includes(index)
+                    ? "/assets/chest-open.png"
+                    : "/assets/chest-closed.png"
+                }
                 alt={`Chest ${index + 1}`}
                 width={220}
                 height={220}

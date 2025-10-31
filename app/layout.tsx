@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TimerProvider } from "@/app/lib/context/TimerContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,7 @@ export default function RootLayout({
       <body
         className={`bg-background text-textPrimary font-orbitron ${geistSans.variable} ${geistMono.variable}`}
       >
-        {children}
+        <TimerProvider>{children}</TimerProvider>
       </body>
     </html>
   );

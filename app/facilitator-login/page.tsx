@@ -3,7 +3,7 @@
 import { Card, Input, Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { useState } from "react";
-import { validators } from "@/app/lib/utils";
+import { validators } from "@/app/lib/utils/validators";
 
 export default function FacilitatorLogin() {
   const [code, setCode] = useState("");
@@ -31,7 +31,10 @@ export default function FacilitatorLogin() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div
+      className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/assets/background login.png')" }}
+    >
       {/* Full screen layout for login pages */}
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Title Section */}
