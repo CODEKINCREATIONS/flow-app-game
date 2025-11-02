@@ -11,6 +11,7 @@ interface AppLayoutProps {
   playerName?: string;
   showTimer?: boolean;
   showLanguage?: boolean;
+  transparentBackground?: boolean;
   customActions?: React.ReactNode;
 }
 
@@ -20,11 +21,16 @@ export const AppLayout = ({
   playerName,
   showTimer = false,
   showLanguage = false,
+  transparentBackground = false,
   customActions,
 }: AppLayoutProps) => {
   return (
     <TimerProvider>
-      <div className="min-h-screen flex flex-col bg-[#0F1125]">
+      <div
+        className={`min-h-screen flex flex-col ${
+          transparentBackground ? "bg-transparent" : "bg-[#0F1125]"
+        }`}
+      >
         <AppHeader
           mode={headerMode}
           playerName={playerName}

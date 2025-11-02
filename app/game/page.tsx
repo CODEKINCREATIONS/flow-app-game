@@ -40,48 +40,70 @@ export default function PlayerGamePage() {
     isPlayer && user && "name" in user ? (user.name as string) : "Player";
 
   return (
-    <AppLayout
-      headerMode="game"
-      playerName={playerName}
-      showTimer={true}
-      showLanguage={true}
-    >
-      <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
-        {/* Progress Bar */}
-        <div className="w-full px-0 py-4 mt-[20px]">
-          <div className="relative w-full h-[20px] bg-[#0F1125] border border-[#23263A]/30">
-            <div
-              className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
-              style={{
-                width: `${(randomOpenChests.length / 16) * 100}%`,
-              }}
-            >
-              {/* Percentage text on progress bar */}
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white font-bold text-sm">
-                50%
+    <>
+      {/* Full-viewport background (covers header too) */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundImage: "url('/assets/Background%20img_gme-dashboard.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: -1,
+        }}
+      />
+      <AppLayout
+        headerMode="game"
+        playerName={playerName}
+        showTimer={true}
+        showLanguage={true}
+        transparentBackground={true}
+      >
+        <div className="w-full min-h-screen">
+          <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
+            {/* Progress Bar */}
+            <div className="w-full px-0 py-4 mt-[40px] ">
+              <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF]/50 my-[5px]">
+                <div
+                  className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
+                  style={{
+                    width: `${(randomOpenChests.length / 16) * 100}%`,
+                  }}
+                >
+                  {/* Percentage text on progress bar */}
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white font-bold text-sm">
+                    50%
+                  </div>
+                </div>
+                {/* Progress Circle */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 w-[70px] h-[70px] bg-[#0F1125] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible"
+                  style={{
+                    left: `calc(${
+                      (randomOpenChests.length / 16) * 100
+                    }% - 45px)`,
+                    boxShadow: "0 0 30px rgba(58,141,255,0.8)",
+                  }}
+                >
+                  <div className="w-[45px] h-[45px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
+                  <div className="absolute text-white font-bold text-lg">
+                    50%
+                  </div>
+                </div>
+              </div>
+              {/* Boxes opened text below progress bar */}
+              <div className="flex justify-center items-center text-lg m-[45px]">
+                <span className="text-[#FFFFFF] font-['Orbitron'] tracking-wide text-center">
+                  Unlocked: {randomOpenChests.length}/16 Boxes
+                </span>
               </div>
             </div>
-            {/* Progress Circle */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 w-[30px] h-[30px] bg-[#0F1125] rounded-full border-[3px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out"
-              style={{
-                left: `calc(${(randomOpenChests.length / 16) * 100}% - 15px)`,
-                boxShadow: "0 0 20px rgba(58,141,255,0.5)",
-              }}
-            >
-              <div className="w-[15px] h-[15px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
-            </div>
-          </div>
-          {/* Boxes opened text below progress bar */}
-          <div className="flex justify-center items-center text-lg m-[15px]">
-            <span className="text-white font-['Orbitron'] tracking-wide text-center">
-              Unlocked: {randomOpenChests.length}/16 Boxes
-            </span>
-          </div>
-        </div>
 
-        <div
-          className="
+            <div
+              className="
             grid
             grid-cols-2
             sm:grid-cols-2
@@ -90,12 +112,12 @@ export default function PlayerGamePage() {
             justify-items-center
             
           "
-        >
-          {Array.from({ length: 16 }).map((_, index) => (
-            <div
-              key={index}
-              onClick={() => setSelectedChest(index)} // 👈 open modal
-              className={`
+            >
+              {Array.from({ length: 16 }).map((_, index) => (
+                <div
+                  key={index}
+                  onClick={() => setSelectedChest(index)} // 👈 open modal
+                  className={`
                 ${
                   randomOpenChests.includes(index)
                     ? "bg-[#00ff8c]/20"
@@ -124,31 +146,33 @@ export default function PlayerGamePage() {
                     : "shadow-[0_0_15px_rgba(255,0,0,0.2)]"
                 }
               `}
-            >
-              <Image
-                src={
-                  randomOpenChests.includes(index)
-                    ? "/assets/chest-open.png"
-                    : "/assets/chest-closed.png"
-                }
-                alt={`Chest ${index + 1}`}
-                width={220}
-                height={220}
-                className="object-contain"
-              />
+                >
+                  <Image
+                    src={
+                      randomOpenChests.includes(index)
+                        ? "/assets/chest-open.png"
+                        : "/assets/chest-closed.png"
+                    }
+                    alt={`Chest ${index + 1}`}
+                    width={220}
+                    height={220}
+                    className="object-contain"
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Code Entry Modal */}
-        {selectedChest !== null && (
-          <CodeEntryModal
-            open={selectedChest !== null}
-            onClose={() => setSelectedChest(null)}
-            onSubmit={handleSubmitCode}
-          />
-        )}
-      </div>
-    </AppLayout>
+            {/* Code Entry Modal */}
+            {selectedChest !== null && (
+              <CodeEntryModal
+                open={selectedChest !== null}
+                onClose={() => setSelectedChest(null)}
+                onSubmit={handleSubmitCode}
+              />
+            )}
+          </div>
+        </div>
+      </AppLayout>
+    </>
   );
 }
