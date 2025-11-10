@@ -1,3 +1,4 @@
+import { Player } from "./auth";
 // Session types
 
 export interface Session {

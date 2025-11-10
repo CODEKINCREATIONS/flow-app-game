@@ -76,11 +76,11 @@ export default function FacilitatorDashboard() {
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 space-y-8 font-sans mx-[30px] min-h-screen">
           {/* Action Buttons */}
-          <div className="flex justify-end gap-4 mb-6 mt-[15px]">
+          <div className="flex flex-wrap justify-end gap-4 mb-6 mt-[15px]">
             <Button
               variant="white"
               onClick={() => setShowQR(true)}
-              className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-5 whitespace-nowrap"
+              className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-5 whitespace-nowrap order-2 sm:order-1"
             >
               <QrCode className="w-5 h-5 mr-[5px] " />
               <span>QR Code</span>
@@ -88,7 +88,7 @@ export default function FacilitatorDashboard() {
             <Button
               variant={isSessionUnlocked ? "danger" : "primary"}
               onClick={handleUnlock}
-              className="!h-14 flex items-center justify-center gap-2 !text-base font-medium !px-6  whitespace-nowrap ml-[10px]"
+              className="!h-14 flex items-center justify-center gap-2 mr-[5px] !text-base font-medium !px-6 whitespace-nowrap ml-[10px] order-1 sm:order-2"
             >
               <span>
                 {isSessionUnlocked

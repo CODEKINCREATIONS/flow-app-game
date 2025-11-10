@@ -63,7 +63,7 @@ export default function PlayerGamePage() {
         transparentBackground={true}
       >
         <div className="w-full min-h-screen">
-          <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 space-y-8">
             {/* Progress Bar */}
             <div className="w-full px-0 py-4 mt-[40px] ">
               <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF] my-[5px]">
@@ -105,17 +105,7 @@ export default function PlayerGamePage() {
               </div>
             </div>
 
-            <div
-              className="
-            grid
-            grid-cols-2
-            sm:grid-cols-2
-            md:grid-cols-3
-            lg:grid-cols-4
-            justify-items-center
-            
-          "
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
               {Array.from({ length: 16 }).map((_, index) => (
                 <div
                   key={index}
@@ -131,7 +121,7 @@ export default function PlayerGamePage() {
                 items-center
                 justify-center
                 shadow-lg
-                hover:scale-105
+                hover:scale-105 
                 transition-transform
                 duration-300
                 cursor-pointer

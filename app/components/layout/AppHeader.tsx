@@ -99,16 +99,18 @@ export const AppHeader = ({
                   </span>
                 </div>
               )}
-              {/* Admin Settings (white icon) - visible on dashboard header to the right of the timer */}
-              <Link href="/admin-dashboard" className="ml-2">
-                <div
-                  role="button"
-                  aria-label="Admin dashboard"
-                  className="w-10 h-10 rounded-md flex items-center justify-center bg-white/5 hover:bg-white/10"
-                >
-                  <Settings className="w-6 h-6 mr-[10px]" color="#ffffff" />
-                </div>
-              </Link>
+              {/* Admin Settings (white icon) - hide on the facilitator dashboard page to avoid duplication */}
+              {!pathname?.includes("/facilitator-dashboard") && (
+                <Link href="/admin-dashboard" className="ml-2">
+                  <div
+                    role="button"
+                    aria-label="Admin dashboard"
+                    className="w-10 h-10 rounded-md flex items-center justify-center bg-white/5 hover:bg-white/10"
+                  >
+                    <Settings className="w-6 h-6 mr-[10px]" color="#ffffff" />
+                  </div>
+                </Link>
+              )}
               {customActions}
             </div>
           </div>
