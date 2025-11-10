@@ -80,7 +80,7 @@ export default function FacilitatorDashboard() {
             <Button
               variant="white"
               onClick={() => setShowQR(true)}
-              className="!h-14 flex items-center justify-center gap-2 !text-base font-medium bg-white shadow-sm hover:bg-gray-50 !px-6  whitespace-nowrap"
+              className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-5 whitespace-nowrap"
             >
               <QrCode className="w-5 h-5 mr-[5px] " />
               <span>QR Code</span>

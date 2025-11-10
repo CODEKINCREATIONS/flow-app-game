@@ -1,10 +1,8 @@
-// Zustand store configuration
-import { persistOptions } from "zustand/middleware";
+import { PersistOptions } from "zustand/middleware";
 
-export const persistConfig = {
+export const persistConfig: PersistOptions<any> = {
   name: "flow-game-storage",
   partialize: (state: any) => ({
     // Only persist non-sensitive data
-    // Session will be handled separately if needed
   }),
-} as const;
+};

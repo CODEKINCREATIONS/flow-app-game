@@ -54,7 +54,6 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     pause,
     reset,
     setTime,
-    formatted: formattedTime.formatted,
     ...formattedTime,
   };
 };

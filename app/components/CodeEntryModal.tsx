@@ -64,26 +64,23 @@ export default function CodeEntryModal({
           />
         </div>
         {/* 3-Digit Code Inputs */}
-        <div className="flex justify-center gap-[20px] mb-8">
-          {code.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
-              type="text"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleCodeChange(e.target.value, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              className="w-[60px] h-[60px] text-center text-[50px] font-['Orbitron']
-                         bg-[#181A33] border border-[#2F3260] rounded-lg 
-                         focus:outline-none focus:border-[#7B61FF] 
-                         transition text-white caret-[#7B61FF] placeholder-transparent"
-              style={{
-                color: "#FFFFFF",
-              }}
-            />
-          ))}
-        </div>
+        {code.map((digit, index) => (
+          <input
+            key={index}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
+            type="text"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleCodeChange(e.target.value, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+            className="w-[60px] h-[60px] text-center text-[50px] font-['Orbitron']
+               bg-[#181A33] border border-[#2F3260] rounded-lg 
+               focus:outline-none focus:border-[#7B61FF] 
+               transition text-white caret-[#7B61FF] placeholder-transparent mx-[5px]"
+          />
+        ))}
         {/* Submit Button */}
         <div className="flex justify-center">
           <Button

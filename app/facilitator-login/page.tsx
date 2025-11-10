@@ -39,9 +39,11 @@ export default function FacilitatorLogin() {
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Title Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] mb-4">
-            FLOW
-          </h1>
+          <div className="inline-flex items-center justify-center bg-[#1A1C2A] rounded-full w-[145px] h-[145px] mb-4">
+            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]">
+              FLOW
+            </h1>
+          </div>
           <p className="text-gray-300 mb-9 text-xl">Facilitator Login</p>
         </div>
 
@@ -61,6 +63,7 @@ export default function FacilitatorLogin() {
                 placeholder="Enter your code here"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
+                style={{ color: "#FFFFFF", borderColor: "#2A2D3D" }}
               />
             </div>
 
@@ -70,6 +73,7 @@ export default function FacilitatorLogin() {
                 onClick={handleLogin}
                 width="w-full"
                 className="mt-[10px]"
+                disabled={false}
               >
                 Start Session
               </Button>

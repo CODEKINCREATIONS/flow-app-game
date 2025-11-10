@@ -51,9 +51,11 @@ export default function PlayerLogin() {
       <main className="flex flex-col flex-1 items-center justify-center px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] mb-4">
-            FLOW
-          </h1>
+          <div className="inline-flex items-center justify-center bg-[#1A1C2A] rounded-full w-[145px] h-[145px] mb-4">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]">
+              FLOW
+            </h1>
+          </div>
           <p className="text-gray-300 mb-9 text-2xl">Player Login</p>
         </div>
 
@@ -76,7 +78,8 @@ export default function PlayerLogin() {
                   placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="text-base sm:text-lg md:text-xl text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[5px]"
+                  className="text-base sm:text-lg md:text-xl placeholder-gray-400 bg-[#0F111A] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[5px]"
+                  style={{ color: "#FFFFFF", borderColor: "#2A2D3D" }}
                 />
               </div>
 
@@ -89,7 +92,8 @@ export default function PlayerLogin() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="text-base sm:text-lg md:text-xl text-gray-300 placeholder-gray-400 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[7px]"
+                  className="text-base sm:text-lg md:text-xl placeholder-gray-400 bg-[#0F111A] rounded-[0.3rem] focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 pl-[7px]"
+                  style={{ color: "#FFFFFF", borderColor: "#2A2D3D" }}
                 />
               </div>
 
@@ -100,8 +104,11 @@ export default function PlayerLogin() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="px-4 sm:px-5 md:px-6 py-3 sm:py-3 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] text-gray-200 placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg sm:text-xl md:text-2xl appearance-none pt-[11px] pb-[11px] pl-[5px]"
-                  style={{ color: language ? "#D1D5DB" : "#9CA3AF" }}
+                  className="px-4 sm:px-5 md:px-6 py-3 sm:py-3 bg-[#0F111A] border-2 border-[#2A2D3D] rounded-[0.3rem] placeholder-gray-400 focus:outline-none focus:border-[#7B61FF] focus:ring-2 focus:ring-[#7B61FF] focus:ring-opacity-20 transition-all duration-300 text-lg sm:text-xl md:text-2xl appearance-none pt-[11px] pb-[11px] pl-[5px] text-white"
+                  style={{
+                    color: language ? "#FFFFFF" : "#9CA3AF",
+                    borderColor: "#2A2D3D",
+                  }}
                 >
                   <option value="" className="text-gray-400 bg-[#0F111A] ">
                     Select language
@@ -122,7 +129,7 @@ export default function PlayerLogin() {
             {/* Button Section */}
             <div className="pt-4">
               <Button
-                disabled={!name.trim() || !email.trim()}
+                disabled={false}
                 onClick={handleLogin}
                 className="!text-base sm:!text-lg md:!text-xl py-3 sm:py-3 md:py-4 mt-[20px]"
                 width="w-full"

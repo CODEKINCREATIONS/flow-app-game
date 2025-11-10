@@ -2,7 +2,7 @@
 import Button from "@/app/components/ui/Button";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Share2, X } from "lucide-react";
+import { Share2, X, Printer, Copy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +56,7 @@ export default function QRCodeModal({
 
         <DialogHeader>
           <DialogTitle>
-            <span className="text-lg font-semibold text-center text-white block">
+            <span className="text-2xl font-bold text-center text-white block">
               Session QR Code
             </span>
           </DialogTitle>
@@ -75,19 +75,93 @@ export default function QRCodeModal({
             )}
           </div>
 
-          <p className="text-sm text-gray-400 px-6 leading-relaxed">
+          <p className="text-base text-white px-6 leading-relaxed mb-4 font-medium">
             Ask players to scan this QR code with their phone cameras to join
             the session.
           </p>
 
-          <Button
-            variant="primary"
-            className="flex items-center justify-center gap-2 mt-[5px] mb-[30px]"
-            onClick={handleShare}
-          >
-            Share QR Code
-            <Share2 className="h-4 w-4 ml-[5px]" />
-          </Button>
+          {/* Link Input with Copy Button */}
+          <div className="w-full max-w-md relative">
+            <div className="flex">
+              <input
+                type="text"
+                readOnly
+                value={sessionUrl}
+                className="w-full px-[5px] py-[6px] bg-[#0B0D22] border-2 border-[#1E2144] rounded-l-md focus:outline-none font-medium text-white"
+                style={{ fontSize: "24px", color: "white" }}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(sessionUrl);
+                  const msgElement = document.getElementById("copyMsg");
+                  if (msgElement) {
+                    msgElement.classList.remove("opacity-0");
+                    setTimeout(
+                      () => msgElement.classList.add("opacity-0"),
+                      2000
+                    );
+                  }
+                }}
+                className="px-8 bg-[#7B61FF] rounded-r-md hover:bg-[#6B51EF] transition-colors border-2 border-[#7B61FF]"
+              >
+                <Copy className="h-5 w-5 text-white" />
+              </button>
+            </div>
+            <p
+              id="copyMsg"
+              className="text-base text-white mt-2 opacity-0 transition-opacity duration-200 font-medium"
+            >
+              Link copied to clipboard!
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 mt-6 mb-[30px] justify-center ">
+            <Button
+              variant="primary"
+              onClick={handleShare}
+              className="flex items-center justify-center gap-2 px-6 mr-[10px] !text-white hover:!text-white [&_*]:!text-white"
+              style={{ color: "white" }}
+            >
+              <span
+                className="text-xl font-semibold !text-white"
+                style={{ color: "white" }}
+              >
+                Share QR Code
+              </span>
+              <Share2
+                className="h-5 w-5 ml-[5px] !text-white"
+                style={{ color: "white" }}
+              />
+            </Button>{" "}
+            <Button
+              variant="primary"
+              className="flex items-center justify-center w-12 h-12 !text-white [&_*]:!text-white"
+              style={{ color: "white" }}
+              onClick={() => {
+                const printWindow = window.open("", "_blank");
+                if (printWindow) {
+                  printWindow.document.write(`
+                    <html>
+                      <head><title>Print QR Code</title></head>
+                      <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+                        <div style="text-align: center;">
+                          <div style="margin-bottom: 20px;">
+                            ${document.querySelector("svg")?.outerHTML || ""}
+                          </div>
+                          <p style="font-family: Arial; color: #666;">Scan this QR code to join the FLOW game session</p>
+                        </div>
+                      </body>
+                    </html>
+                  `);
+                  printWindow.document.close();
+                  printWindow.print();
+                }
+              }}
+            >
+              <Printer className="h-5 w-5 text-white" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

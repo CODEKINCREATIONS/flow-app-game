@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
-import { LogOut, User, Clock } from "lucide-react";
+import { LogOut, User, Clock, Settings } from "lucide-react";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useState } from "react";
 
@@ -99,6 +99,16 @@ export const AppHeader = ({
                   </span>
                 </div>
               )}
+              {/* Admin Settings (white icon) - visible on dashboard header to the right of the timer */}
+              <Link href="/admin-dashboard" className="ml-2">
+                <div
+                  role="button"
+                  aria-label="Admin dashboard"
+                  className="w-10 h-10 rounded-md flex items-center justify-center bg-white/5 hover:bg-white/10"
+                >
+                  <Settings className="w-6 h-6 mr-[10px]" color="#ffffff" />
+                </div>
+              </Link>
               {customActions}
             </div>
           </div>

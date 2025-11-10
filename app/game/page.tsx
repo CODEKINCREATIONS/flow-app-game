@@ -66,39 +66,42 @@ export default function PlayerGamePage() {
           <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
             {/* Progress Bar */}
             <div className="w-full px-0 py-4 mt-[40px] ">
-              <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF]/50 my-[5px]">
+              <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF] my-[5px]">
                 <div
                   className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
                   style={{
                     width: `${(randomOpenChests.length / 16) * 100}%`,
                   }}
                 >
-                  {/* Percentage text on progress bar */}
+                  {/* Percentage text on progress bar
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white font-bold text-sm">
                     50%
-                  </div>
+                  </div> */}
                 </div>
                 {/* Progress Circle */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-[70px] h-[70px] bg-[#0F1125] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible"
+                  className="absolute top-1/2 -translate-y-1/2 w-[100px] h-[100px] bg-[#0F1125]  mt-[15px] mb-[15px] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible"
                   style={{
                     left: `calc(${
                       (randomOpenChests.length / 16) * 100
-                    }% - 45px)`,
-                    boxShadow: "0 0 30px rgba(58,141,255,0.8)",
+                    }% - 50px)`,
+                    boxShadow: "0 0 30px #3A8DFF",
                   }}
                 >
-                  <div className="w-[45px] h-[45px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
-                  <div className="absolute text-white font-bold text-lg">
+                  <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
+                  <div className="absolute text-white font-bold text-2xl px-6">
                     50%
                   </div>
                 </div>
               </div>
               {/* Boxes opened text below progress bar */}
-              <div className="flex justify-center items-center text-lg m-[45px]">
-                <span className="text-[#FFFFFF] font-['Orbitron'] tracking-wide text-center">
+              <div className="flex justify-center items-center m-[45px]">
+                <Button
+                  variant="primary"
+                  className="!px-8 !py-4 !text-xl font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] mt-[25px] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100"
+                >
                   Unlocked: {randomOpenChests.length}/16 Boxes
-                </span>
+                </Button>
               </div>
             </div>
 
@@ -120,8 +123,8 @@ export default function PlayerGamePage() {
                   className={`
                 ${
                   randomOpenChests.includes(index)
-                    ? "bg-[#00ff8c]/20"
-                    : "bg-[#ff0000]/20"
+                    ? "bg-gradient-to-r from-[#FF3A3A]/100 to-[#FF6B6B]/100"
+                    : "bg-gradient-to-r from-[#7B61FF]/100 to-[#3A8DFF]/100"
                 }
                 rounded-xl
                 flex
@@ -139,11 +142,12 @@ export default function PlayerGamePage() {
                 md:h-[220px]
                 lg:h-[240px]
                 m-[10px]
-                rounded-[0.3rem]
+                rounded-[1rem]
+                border-5 border-white
                 ${
                   randomOpenChests.includes(index)
-                    ? "shadow-[0_0_15px_rgba(0,255,140,0.2)]"
-                    : "shadow-[0_0_15px_rgba(255,0,0,0.2)]"
+                    ? "shadow-[0_0_15px_rgba(0,255,140,0.4)]"
+                    : "shadow-[0_0_15px_rgba(255,0,0,0.4)]"
                 }
               `}
                 >
@@ -154,8 +158,8 @@ export default function PlayerGamePage() {
                         : "/assets/chest-closed.png"
                     }
                     alt={`Chest ${index + 1}`}
-                    width={220}
-                    height={220}
+                    width={180}
+                    height={180}
                     className="object-contain"
                   />
                 </div>
