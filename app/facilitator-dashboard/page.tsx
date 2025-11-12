@@ -9,7 +9,7 @@ import { useSession } from "@/app/lib/hooks";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useAuth } from "@/app/lib/hooks";
 import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
-import { QrCode, Video } from "lucide-react";
+import { QrCode } from "lucide-react";
 
 export default function FacilitatorDashboard() {
   const [showQR, setShowQR] = useState(false);
@@ -84,13 +84,6 @@ export default function FacilitatorDashboard() {
             >
               <QrCode className="w-5 h-5 mr-[5px] " />
               <span>QR Code</span>
-            </Button>
-            <Button
-              variant="primary"
-              className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium !px-5 whitespace-nowrap order-3 sm:order-1"
-            >
-              <Video className="w-5 h-5 mr-[5px] " />
-              <span>Video</span>
             </Button>
             <Button
               variant={isSessionUnlocked ? "danger" : "primary"}
