@@ -16,6 +16,13 @@ export interface SessionDetails {
   playersJoined: number;
 }
 
+export interface SessionVerificationResponse {
+  success: boolean;
+  message: string;
+  sessionCode?: string;
+  status?: string;
+}
+
 export interface SessionState {
   session: Session | null;
   loading: boolean;

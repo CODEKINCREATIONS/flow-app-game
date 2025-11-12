@@ -32,13 +32,19 @@ export default function Button({
       ? "px-[15px] py-[8px] text-[15px]"
       : "px-[32px] py-[12px]"
   } font-['Orbitron'] flex items-center justify-center`;
+
+  const spanStyle =
+    variant === "neon" || variant === "white" ? {} : { color: "white" };
+
   return (
     <button
       {...props}
       className={`${baseClasses} ${variantClasses} ${width} ${className}`}
       style={{ fontSize: "1.125rem" }}
     >
-      <span className={innerSpanClasses}>{children}</span>
+      <span className={innerSpanClasses} style={spanStyle}>
+        {children}
+      </span>
     </button>
   );
 }

@@ -8,9 +8,15 @@ import { validators } from "@/app/lib/utils/validators";
 export default function FacilitatorLogin() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const { loginFacilitator } = useAuth();
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { verifySession } = useAuth();
 
   const handleLogin = async () => {
+    // Clear previous messages
+    setError("");
+    setSuccess("");
+
     // Validation
     if (!code.trim()) {
       setError("Please enter a code");
@@ -22,11 +28,26 @@ export default function FacilitatorLogin() {
       return;
     }
 
-    // Use the auth hook
-    const result = await loginFacilitator(code.trim());
+    setIsLoading(true);
+
+    // Verify session with Azure API
+    const result = await verifySession(code.trim());
+
+    setIsLoading(false);
 
     if (!result.success) {
-      setError(result.error || "Invalid or already used code");
+      setError(result.error || "Invalid session code");
+    } else {
+      setSuccess("Session verified successfully!");
+      // Clear the input after successful verification
+      setCode("");
+      // Navigation happens in the hook
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -62,7 +83,9 @@ export default function FacilitatorLogin() {
               <Input
                 placeholder="Enter your code here"
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading}
                 style={{ color: "#FFFFFF", borderColor: "#2A2D3D" }}
               />
             </div>
@@ -72,10 +95,10 @@ export default function FacilitatorLogin() {
               <Button
                 onClick={handleLogin}
                 width="w-full"
-                className="mt-[10px]"
-                disabled={false}
+                className="mt-[10px] text-white "
+                disabled={isLoading}
               >
-                Start Session
+                {isLoading ? "Verifying..." : "Verify Session"}
               </Button>
             </div>
 
@@ -83,6 +106,13 @@ export default function FacilitatorLogin() {
             {error && (
               <div className="text-center mt-6">
                 <p className="text-xs text-red-400 font-medium">{error}</p>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {success && (
+              <div className="text-center mt-6">
+                <p className="text-xs text-green-400 font-medium">{success}</p>
               </div>
             )}
           </div>

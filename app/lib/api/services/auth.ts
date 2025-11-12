@@ -1,5 +1,6 @@
 // Authentication API service
 import { apiClient } from "../client";
+import { env } from "@/app/lib/config/env";
 import type { Player, Facilitator } from "@/app/types/auth";
 
 export const authService = {
@@ -15,6 +16,46 @@ export const authService = {
       email,
       language,
     });
+  },
+
+  // Session verification through Next.js API route (proxies to Azure)
+  verifySessionCode: async (sessionCode: string) => {
+    try {
+      const response = await fetch(
+        `/api/auth/verify-session?sessionCode=${encodeURIComponent(
+          sessionCode
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.message || "Invalid session code",
+          data: null,
+        };
+      }
+
+      return {
+        success: true,
+        data: data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to verify session",
+        data: null,
+      };
+    }
   },
 
   // Logout

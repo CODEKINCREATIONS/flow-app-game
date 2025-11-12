@@ -45,6 +45,27 @@ export const useAuth = () => {
     [loginFacilitator, router]
   );
 
+  const handleVerifySession = useCallback(
+    async (sessionCode: string) => {
+      try {
+        const response = await authService.verifySessionCode(sessionCode);
+        if (response.success && response.data) {
+          // Store session data if needed and navigate to facilitator dashboard
+          router.push("/facilitator-dashboard");
+        }
+        return response;
+      } catch (error) {
+        console.error("Session verification error:", error);
+        return {
+          success: false,
+          error: "Session verification failed",
+          data: null,
+        };
+      }
+    },
+    [router]
+  );
+
   const handleLogout = useCallback(async () => {
     try {
       await authService.logout();
@@ -61,6 +82,7 @@ export const useAuth = () => {
     isAuthenticated,
     loginPlayer: handlePlayerLogin,
     loginFacilitator: handleFacilitatorLogin,
+    verifySession: handleVerifySession,
     logout: handleLogout,
     isPlayer: role === "player",
     isFacilitator: role === "facilitator",

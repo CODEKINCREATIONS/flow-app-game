@@ -5,6 +5,7 @@ import { AppLayout } from "@/app/components/layout";
 import { Button } from "@/app/components/ui";
 import { useAuth, useGame } from "@/app/lib/hooks";
 import Image from "next/image";
+import { Video } from "lucide-react";
 import CodeEntryModal from "@/app/components/CodeEntryModal"; // import modal
 
 export default function PlayerGamePage() {
@@ -63,7 +64,7 @@ export default function PlayerGamePage() {
         transparentBackground={true}
       >
         <div className="w-full min-h-screen">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 space-y-8">
+          <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
             {/* Progress Bar */}
             <div className="w-full px-0 py-4 mt-[40px] ">
               <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF] my-[5px]">
@@ -95,12 +96,24 @@ export default function PlayerGamePage() {
                 </div>
               </div>
               {/* Boxes opened text below progress bar */}
-              <div className="flex justify-center items-center m-[45px]">
+              <div className="grid grid-cols-4 gap-4 w-full px-4">
+                {/* Left Button - Unlocked */}
                 <Button
                   variant="primary"
-                  className="!px-8 !py-4 !text-xl font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] mt-[25px] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mt-[50px]  mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100 w-full col-span-1"
                 >
                   Unlocked: {randomOpenChests.length}/16 Boxes
+                </Button>
+
+                {/* Right Button - Video */}
+                <Button
+                  variant="primary"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mt-[50px] mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300 w-full col-start-4 col-end-5"
+                >
+                  <div className="flex items-center justify-center gap-2 ">
+                    <Video size={25} />
+                    <span className="ml-[5px]">Watch Video</span>
+                  </div>
                 </Button>
               </div>
             </div>
