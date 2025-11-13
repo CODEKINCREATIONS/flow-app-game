@@ -1,8 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function SessionErrorPage() {
+function SessionErrorContent() {
   const searchParams = useSearchParams();
   const errorMessage =
     searchParams.get("error") || "Invalid or expired session";
@@ -13,5 +14,13 @@ export default function SessionErrorPage() {
         <p className="text-gray-300 text-lg leading-relaxed">{errorMessage}</p>
       </div>
     </main>
+  );
+}
+
+export default function SessionErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionErrorContent />
+    </Suspense>
   );
 }
