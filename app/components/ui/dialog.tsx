@@ -7,9 +7,10 @@ interface DialogProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  maxWidth?: string;
 }
 
-export function Dialog({ open, onClose, children }: DialogProps) {
+export function Dialog({ open, onClose, children, maxWidth = "max-w-md" }: DialogProps) {
   // Close dialog on ESC key
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -33,7 +34,7 @@ export function Dialog({ open, onClose, children }: DialogProps) {
           />
           {/* Content */}
           <motion.div
-            className="fixed top-1/2 left-1/2 z-50 max-w-md -translate-x-1/2 -translate-y-1/2"
+            className={`fixed top-1/2 left-1/2 z-50 ${maxWidth} -translate-x-1/2 -translate-y-1/2`}
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}

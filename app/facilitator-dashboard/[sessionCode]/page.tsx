@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { AppLayout } from "@/app/components/layout";
 import { SessionDetails } from "@/app/components/SessionDetails";
 import { PlayerProgress } from "@/app/components/PlayerProgress";
@@ -9,51 +9,87 @@ import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useAuth } from "@/app/lib/hooks";
-import { useQueryStringSession } from "@/app/lib/hooks";
-import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
+import { authService } from "@/app/lib/api/services/auth";
+import { useSessionStore } from "@/app/lib/store/sessionStore";
+import QRCodeDialog from "@/app/components/QRCodeDialog";
 import { QrCode } from "lucide-react";
 
-function FacilitatorDashboardContent() {
+function FacilitatorDashboardWithCodeContent() {
+  const params = useParams();
+  const router = useRouter();
+  const sessionCode = params?.sessionCode as string;
+
   const [showQR, setShowQR] = useState(false);
   const { endSession, session } = useSession();
   const { start } = useTimerContext();
   const { user } = useAuth();
-  const router = useRouter();
-  const {
-    isVerifying,
-    isVerified,
-    error: verificationError,
-    sessionCode,
-    verifyFromQueryString,
-    redirectToError,
-  } = useQueryStringSession();
+  const { setSession } = useSessionStore();
 
-  const [sessionVerificationChecked, setSessionVerificationChecked] =
-    useState(false);
+  const [verificationState, setVerificationState] = useState({
+    isVerifying: true,
+    isVerified: false,
+    error: null as string | null,
+  });
 
-  // Verify session from query string on component mount
+  const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
+
+  // Verify session from URL parameter on component mount
   useEffect(() => {
-    if (!sessionVerificationChecked) {
-      const checkSession = async () => {
-        const isValid = await verifyFromQueryString();
-
-        setSessionVerificationChecked(true);
-
-        // If session code was in URL but verification failed, redirect to error page
-        if (sessionCode && !isValid) {
-          redirectToError(verificationError || "Invalid session code");
-        }
-      };
-
-      checkSession();
+    if (!sessionCode) {
+      router.push("/facilitator-dashboard");
+      return;
     }
-  }, [
-    sessionVerificationChecked,
-    verifyFromQueryString,
-    sessionCode,
-    redirectToError,
-    verificationError,
-  ]);
+
+    const verifySession = async () => {
+      try {
+        const response = await authService.verifySessionCode(sessionCode);
+
+        if (response.success && response.data) {
+          // Store session data
+          setSession(response.data);
+
+          setVerificationState({
+            isVerifying: false,
+            isVerified: true,
+            error: null,
+          });
+        } else {
+          setVerificationState({
+            isVerifying: false,
+            isVerified: false,
+            error: response.error || "Failed to verify session",
+          });
+
+          // Redirect to error page after a short delay
+          setTimeout(() => {
+            router.push(
+              `/session-error?error=${encodeURIComponent(
+                response.error || "Invalid session code"
+              )}`
+            );
+          }, 2000);
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
+
+        setVerificationState({
+          isVerifying: false,
+          isVerified: false,
+          error: errorMessage,
+        });
+
+        // Redirect to error page after a short delay
+        setTimeout(() => {
+          router.push(
+            `/session-error?error=${encodeURIComponent(errorMessage)}`
+          );
+        }, 2000);
+      }
+    };
+
+    verifySession();
+  }, [sessionCode, router, setSession]);
 
   // Reset QR dialog when session changes
   useEffect(() => {
@@ -68,55 +104,6 @@ function FacilitatorDashboardContent() {
     }
     window.location.href = "/facilitator-login";
   };
-
-  const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
-
-  // Show loading state while verifying session
-  if (isVerifying) {
-    return (
-      <AppLayout
-        headerMode="dashboard"
-        showTimer={true}
-        transparentBackground={true}
-      >
-        <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7B61FF] mx-auto mb-4"></div>
-            <p className="text-lg">Verifying session...</p>
-          </div>
-        </main>
-      </AppLayout>
-    );
-  }
-
-  // Handle case where session code was provided but verification failed
-  if (sessionCode && !isVerified && verificationError) {
-    return (
-      <AppLayout
-        headerMode="dashboard"
-        showTimer={true}
-        transparentBackground={true}
-      >
-        <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
-          <div className="text-center max-w-md">
-            <div className="bg-red-500/20 border border-red-500 rounded-lg p-6 mb-6">
-              <p className="text-red-400 mb-2">Session Verification Failed</p>
-              <p className="text-sm text-gray-300">{verificationError}</p>
-            </div>
-            <Button
-              variant="primary"
-              onClick={() =>
-                redirectToError(verificationError || "Invalid session")
-              }
-              className="!px-6 !py-2"
-            >
-              Go to Error Page
-            </Button>
-          </div>
-        </main>
-      </AppLayout>
-    );
-  }
 
   const handleUnlock = async () => {
     if (!isSessionUnlocked) {
@@ -136,11 +123,51 @@ function FacilitatorDashboardContent() {
     await handleFinish();
   };
 
-  // no header action for unlocking/finishing — control lives in the page buttons below
+  // Show loading state while verifying session
+  if (verificationState.isVerifying) {
+    return (
+      <AppLayout
+        headerMode="dashboard"
+        showTimer={true}
+        transparentBackground={true}
+      >
+        <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7B61FF] mx-auto mb-4"></div>
+            <p className="text-lg">Verifying session code: {sessionCode}</p>
+          </div>
+        </main>
+      </AppLayout>
+    );
+  }
 
+  // Handle case where verification failed
+  if (!verificationState.isVerified && verificationState.error) {
+    return (
+      <AppLayout
+        headerMode="dashboard"
+        showTimer={true}
+        transparentBackground={true}
+      >
+        <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
+          <div className="text-center max-w-md">
+            <div className="bg-red-500/20 border border-red-500 rounded-lg p-6 mb-6">
+              <p className="text-red-400 mb-2">Session Verification Failed</p>
+              <p className="text-sm text-gray-300">{verificationState.error}</p>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">
+              Redirecting to error page...
+            </p>
+          </div>
+        </main>
+      </AppLayout>
+    );
+  }
+
+  // Main dashboard content after verification
   return (
     <>
-      {/* Full-viewport fixed background so it sits under header/footer */}
+      {/* Full-viewport fixed background */}
       <div
         style={{
           position: "fixed",
@@ -207,7 +234,7 @@ function FacilitatorDashboardContent() {
   );
 }
 
-export default function FacilitatorDashboard() {
+export default function FacilitatorDashboardWithCode() {
   return (
     <Suspense
       fallback={
@@ -225,7 +252,7 @@ export default function FacilitatorDashboard() {
         </AppLayout>
       }
     >
-      <FacilitatorDashboardContent />
+      <FacilitatorDashboardWithCodeContent />
     </Suspense>
   );
 }

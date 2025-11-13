@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X } from "lucide-react";
+import { X, Info } from "lucide-react";
 
 interface CodeEntryModalProps {
   open: boolean;
@@ -48,7 +48,8 @@ export default function CodeEntryModal({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[30px] border border-[#1E2144] text-white shadow-2xl text-center w-[420px] p-6">
-        <div className="flex justify-end items-center mb-8 px-2">
+        <div className="flex justify-between items-center mb-8 px-2">
+          <Info className="w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer" />
           <X
             onClick={onClose}
             className="w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"

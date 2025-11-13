@@ -50,8 +50,8 @@ export const useAuth = () => {
       try {
         const response = await authService.verifySessionCode(sessionCode);
         if (response.success && response.data) {
-          // Store session data if needed and navigate to facilitator dashboard
-          router.push("/facilitator-dashboard");
+          // Navigate to facilitator dashboard with session code in URL path (no encoding needed)
+          router.push(`/facilitator-dashboard/${sessionCode}`);
         }
         return response;
       } catch (error) {

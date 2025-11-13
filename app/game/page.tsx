@@ -7,11 +7,17 @@ import { useAuth, useGame } from "@/app/lib/hooks";
 import Image from "next/image";
 import { Video } from "lucide-react";
 import CodeEntryModal from "@/app/components/CodeEntryModal"; // import modal
+import VideoDialog from "@/app/components/VideoDialog"; // import video dialog
 
 export default function PlayerGamePage() {
   const [selectedChest, setSelectedChest] = useState<number | null>(null);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
   const { user, isPlayer } = useAuth();
   const { chests, unlockChest, setCurrentChest } = useGame();
+
+  // Video configuration
+  const VIDEO_PASSWORD = "1234"; // Change this to your desired password
+  const VIDEO_URL = "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Replace with your video URL
 
   // Generate random chest states (8 open, 8 closed)
   const [randomOpenChests] = useState(() => {
@@ -108,6 +114,7 @@ export default function PlayerGamePage() {
                 {/* Right Button - Video */}
                 <Button
                   variant="primary"
+                  onClick={() => setShowVideoDialog(true)}
                   className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mt-[50px] mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300 w-full col-start-4 col-end-5"
                 >
                   <div className="flex items-center justify-center gap-2 ">
@@ -177,6 +184,14 @@ export default function PlayerGamePage() {
                 onSubmit={handleSubmitCode}
               />
             )}
+
+            {/* Video Dialog */}
+            <VideoDialog
+              open={showVideoDialog}
+              onClose={() => setShowVideoDialog(false)}
+              videoUrl={VIDEO_URL}
+              password={VIDEO_PASSWORD}
+            />
           </div>
         </div>
       </AppLayout>
