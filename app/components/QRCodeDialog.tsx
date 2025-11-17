@@ -133,33 +133,6 @@ export default function QRCodeModal({
                 className="h-5 w-5 ml-[5px] !text-white"
                 style={{ color: "white" }}
               />
-            </Button>{" "}
-            <Button
-              variant="primary"
-              className="flex items-center justify-center w-12 h-12 !text-white [&_*]:!text-white"
-              style={{ color: "white" }}
-              onClick={() => {
-                const printWindow = window.open("", "_blank");
-                if (printWindow) {
-                  printWindow.document.write(`
-                    <html>
-                      <head><title>Print QR Code</title></head>
-                      <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-                        <div style="text-align: center;">
-                          <div style="margin-bottom: 20px;">
-                            ${document.querySelector("svg")?.outerHTML || ""}
-                          </div>
-                          <p style="font-family: Arial; color: #666;">Scan this QR code to join the FLOW game session</p>
-                        </div>
-                      </body>
-                    </html>
-                  `);
-                  printWindow.document.close();
-                  printWindow.print();
-                }
-              }}
-            >
-              <Printer className="h-5 w-5 text-white" />
             </Button>
           </div>
         </div>
