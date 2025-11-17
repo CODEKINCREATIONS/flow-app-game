@@ -9,7 +9,8 @@ import {
 } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
-import { X } from "lucide-react";
+import { X, Eye, EyeOff } from "lucide-react";
+import { authService } from "@/app/lib/api/services/auth";
 
 interface VideoDialogProps {
   open: boolean;
@@ -29,8 +30,10 @@ export default function VideoDialog({
   const [stage, setStage] = useState<DialogStage>("password");
   const [inputPassword, setInputPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmitPassword = () => {
+  const handleSubmitPassword = async () => {
     setError("");
 
     if (!inputPassword) {
@@ -38,16 +41,27 @@ export default function VideoDialog({
       return;
     }
 
-    if (inputPassword === password) {
-      setStage("video");
-    } else {
-      setError("Incorrect password. Please try again.");
-      setInputPassword("");
+    setIsLoading(true);
+
+    try {
+      const response = await authService.verifyPassword(inputPassword);
+
+      if (response.success) {
+        setStage("video");
+      } else {
+        setError(response.error || "Incorrect password. Please try again.");
+        setInputPassword("");
+      }
+    } catch (err) {
+      setError("An error occurred while verifying password. Please try again.");
+      console.error("Password verification error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isLoading) {
       handleSubmitPassword();
     }
   };
@@ -86,15 +100,37 @@ export default function VideoDialog({
 
               {/* Password Input Field */}
               <div className="w-full max-w-md relative">
-                <Input
-                  type="password"
-                  value={inputPassword}
-                  onChange={(e) => setInputPassword(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="  Enter password"
-                  autoFocus
-                  className="w-full !px-[0px] !py-3"
-                />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={inputPassword}
+                    onChange={(e) => setInputPassword(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="  Enter password"
+                    autoFocus
+                    className="w-full !px-[0px] !py-3 pr-[45px]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-[5px] top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 transition-colors focus:outline-none bg-transparent border-0 p-0 cursor-pointer"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? (
+                      <EyeOff
+                        className="w-5 h-5 stroke-2 text-white"
+                        style={{ color: "white" }}
+                      />
+                    ) : (
+                      <Eye
+                        className="w-5 h-5 stroke-2 text-white"
+                        style={{ color: "white" }}
+                      />
+                    )}
+                  </button>
+                </div>
 
                 {/* Error Message */}
                 {error && (
@@ -108,9 +144,10 @@ export default function VideoDialog({
               <Button
                 variant="primary"
                 onClick={handleSubmitPassword}
-                className="w-full max-w-md !px-8 !py-3 mt-[15px] !text-white hover:!shadow-lg transition-all"
+                disabled={isLoading}
+                className="w-full max-w-md !px-8 !py-3 mt-[15px] !text-white hover:!shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Password
+                {isLoading ? "Verifying..." : "Submit Password"}
               </Button>
             </div>
           </>

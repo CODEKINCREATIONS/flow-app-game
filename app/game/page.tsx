@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/app/components/layout";
 import { Button } from "@/app/components/ui";
 import { useAuth, useGame } from "@/app/lib/hooks";
@@ -12,12 +12,26 @@ import VideoDialog from "@/app/components/VideoDialog"; // import video dialog
 export default function PlayerGamePage() {
   const [selectedChest, setSelectedChest] = useState<number | null>(null);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoPassword, setVideoPassword] = useState("");
   const { user, isPlayer } = useAuth();
   const { chests, unlockChest, setCurrentChest } = useGame();
 
-  // Video configuration
-  const VIDEO_PASSWORD = "1234"; // Change this to your desired password
-  const VIDEO_URL = "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Replace with your video URL
+  // Fetch video configuration from API
+  useEffect(() => {
+    const fetchVideoConfig = async () => {
+      try {
+        const response = await fetch("/api/game/video-config");
+        const data = await response.json();
+        setVideoUrl(data.videoUrl || "");
+        setVideoPassword(data.password || "");
+      } catch (error) {
+        console.error("Failed to fetch video configuration:", error);
+      }
+    };
+
+    fetchVideoConfig();
+  }, []);
 
   // Generate random chest states (8 open, 8 closed)
   const [randomOpenChests] = useState(() => {
@@ -87,7 +101,7 @@ export default function PlayerGamePage() {
                 </div>
                 {/* Progress Circle */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-[100px] h-[100px] bg-[#0F1125]  mt-[15px] mb-[15px] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible"
+                  className="absolute top-1/2 -translate-y-1/2 w-[100px] h-[100px] bg-[#0F1125]  mt-[15px] mb-[15px] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible mb-[20px] "
                   style={{
                     left: `calc(${
                       (randomOpenChests.length / 16) * 100
@@ -102,11 +116,11 @@ export default function PlayerGamePage() {
                 </div>
               </div>
               {/* Boxes opened text below progress bar */}
-              <div className="grid grid-cols-4 gap-4 w-full px-4">
+              <div className="flex gap-4 w-full px-4 justify-center items-center">
                 {/* Left Button - Unlocked */}
                 <Button
                   variant="primary"
-                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mt-[50px]  mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100 w-full col-span-1"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 mt-[50px] mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100"
                 >
                   Unlocked: {randomOpenChests.length}/16 Boxes
                 </Button>
@@ -115,7 +129,7 @@ export default function PlayerGamePage() {
                 <Button
                   variant="primary"
                   onClick={() => setShowVideoDialog(true)}
-                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mt-[50px] mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300 w-full col-start-4 col-end-5"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 mt-[50px] mb-[24px] ml-[15px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300"
                 >
                   <div className="flex items-center justify-center gap-2 ">
                     <Video size={25} />
@@ -189,8 +203,8 @@ export default function PlayerGamePage() {
             <VideoDialog
               open={showVideoDialog}
               onClose={() => setShowVideoDialog(false)}
-              videoUrl={VIDEO_URL}
-              password={VIDEO_PASSWORD}
+              videoUrl={videoUrl}
+              password={videoPassword}
             />
           </div>
         </div>

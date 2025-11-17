@@ -58,6 +58,44 @@ export const authService = {
     }
   },
 
+  // Verify password through Next.js API route (proxies to Azure)
+  verifyPassword: async (password: string) => {
+    try {
+      const response = await fetch(
+        `/api/auth/verify-password?password=${encodeURIComponent(password)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.message || "Password verification failed",
+          data: null,
+        };
+      }
+
+      return {
+        success: true,
+        data: data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to verify password",
+        data: null,
+      };
+    }
+  },
+
   // Logout
   logout: async () => {
     return apiClient.post("/api/auth/logout");
