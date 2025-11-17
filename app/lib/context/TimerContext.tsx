@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+  useState,
+} from "react";
 import { useTimer } from "@/app/lib/hooks/useTimer";
 
 interface TimerContextValue {
@@ -19,6 +25,12 @@ const TimerContext = createContext<TimerContextValue | undefined>(undefined);
 const DEFAULT_DURATION = 70 * 60;
 
 export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // we keep an elapsed timer and expose remaining = duration - elapsed
   const { time, isRunning, start, pause, reset, setTime, formatted } = useTimer(
     {
@@ -63,6 +75,13 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     }),
     [secondsRemaining, start, pause, reset, isRunning, time, setTime]
   );
+
+  // Suppress hydration warning - timer state will differ between server and client
+  if (!isClient) {
+    return (
+      <TimerContext.Provider value={value}>{children}</TimerContext.Provider>
+    );
+  }
 
   return (
     <TimerContext.Provider value={value}>{children}</TimerContext.Provider>

@@ -5,7 +5,7 @@ import { AppLayout } from "@/app/components/layout";
 import { Button } from "@/app/components/ui";
 import { useAuth, useGame } from "@/app/lib/hooks";
 import Image from "next/image";
-import { Video } from "lucide-react";
+import { Video, Check, HelpCircle } from "lucide-react";
 import CodeEntryModal from "@/app/components/CodeEntryModal"; // import modal
 import VideoDialog from "@/app/components/VideoDialog"; // import video dialog
 
@@ -14,6 +14,7 @@ export default function PlayerGamePage() {
   const [showVideoDialog, setShowVideoDialog] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoPassword, setVideoPassword] = useState("");
+  const [unlockedChests, setUnlockedChests] = useState<number[]>([]);
   const { user, isPlayer } = useAuth();
   const { chests, unlockChest, setCurrentChest } = useGame();
 
@@ -33,14 +34,6 @@ export default function PlayerGamePage() {
     fetchVideoConfig();
   }, []);
 
-  // Generate random chest states (8 open, 8 closed)
-  const [randomOpenChests] = useState(() => {
-    const shuffled = Array.from({ length: 16 }, (_, i) => i).sort(
-      () => Math.random() - 0.5
-    );
-    return shuffled.slice(0, 8); // Take first 8 indices for open chests
-  });
-
   // Handle chest click
   const handleChestClick = (index: number) => {
     setSelectedChest(index);
@@ -48,13 +41,16 @@ export default function PlayerGamePage() {
   };
 
   // Handle code submit
-  const handleSubmitCode = async (code: string) => {
-    if (selectedChest === null || !user) return;
+  const handleSubmitCode = (code: string) => {
+    if (selectedChest === null) return;
 
-    const result = await unlockChest(selectedChest, user.id, code);
-    if (result.success) {
-      setSelectedChest(null);
-    }
+    // Add the unlocked chest to the state
+    setUnlockedChests((prev) => {
+      if (!prev.includes(selectedChest)) {
+        return [...prev, selectedChest];
+      }
+      return prev;
+    });
   };
 
   const playerName =
@@ -91,7 +87,7 @@ export default function PlayerGamePage() {
                 <div
                   className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
                   style={{
-                    width: `${(randomOpenChests.length / 16) * 100}%`,
+                    width: `${(unlockedChests.length / 16) * 100}%`,
                   }}
                 >
                   {/* Percentage text on progress bar
@@ -101,35 +97,33 @@ export default function PlayerGamePage() {
                 </div>
                 {/* Progress Circle */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-[100px] h-[100px] bg-[#0F1125]  mt-[15px] mb-[15px] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible mb-[20px] "
+                  className="absolute top-1/2 -translate-y-1/2 w-[100px] h-[100px] bg-[#0F1125]  mt-[15px] mb-[60px] rounded-full border-[2px] border-[#3A8DFF] flex items-center justify-center transition-all duration-500 ease-in-out overflow-visible"
                   style={{
-                    left: `calc(${
-                      (randomOpenChests.length / 16) * 100
-                    }% - 50px)`,
+                    left: `calc(${(unlockedChests.length / 16) * 100}% - 50px)`,
                     boxShadow: "0 0 30px #3A8DFF",
                   }}
                 >
                   <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]" />
                   <div className="absolute text-white font-bold text-2xl px-6">
-                    50%
+                    {Math.round((unlockedChests.length / 16) * 100)}%
                   </div>
                 </div>
               </div>
               {/* Boxes opened text below progress bar */}
-              <div className="flex gap-4 w-full px-4 justify-center items-center">
+              <div className="flex flex-wrap gap-[20px] w-full px-4 justify-center items-center mt-[60px]">
                 {/* Left Button - Unlocked */}
                 <Button
                   variant="primary"
-                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 mt-[50px] mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 mb-[20px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] !shadow-none !ring-0 !transition-none hover:!shadow-none hover:!scale-100"
                 >
-                  Unlocked: {randomOpenChests.length}/16 Boxes
+                  Unlocked: {unlockedChests.length}/16 Boxes
                 </Button>
 
                 {/* Right Button - Video */}
                 <Button
                   variant="primary"
                   onClick={() => setShowVideoDialog(true)}
-                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 mt-[50px] mb-[24px] ml-[15px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300"
+                  className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4  mb-[24px] !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider font-bold !border-[#FFFFFF] [&>span]:!text-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] transition-all duration-300"
                 >
                   <div className="flex items-center justify-center gap-2 ">
                     <Video size={25} />
@@ -143,12 +137,18 @@ export default function PlayerGamePage() {
               {Array.from({ length: 16 }).map((_, index) => (
                 <div
                   key={index}
-                  onClick={() => setSelectedChest(index)} // 👈 open modal
+                  onClick={() => {
+                    // Only open modal if chest is not already unlocked
+                    if (!unlockedChests.includes(index)) {
+                      setSelectedChest(index);
+                    }
+                  }}
                   className={`
+                relative
                 ${
-                  randomOpenChests.includes(index)
-                    ? "bg-gradient-to-r from-[#FF3A3A]/100 to-[#FF6B6B]/100"
-                    : "bg-gradient-to-r from-[#7B61FF]/100 to-[#3A8DFF]/100"
+                  unlockedChests.includes(index)
+                    ? "bg-gradient-to-r from-[#FF3A3A]/20 to-[#FF6B6B]/0"
+                    : "bg-gradient-to-r from-[#7B61FF]/20 to-[#3A8DFF]/0"
                 }
                 rounded-xl
                 flex
@@ -158,7 +158,11 @@ export default function PlayerGamePage() {
                 hover:scale-105 
                 transition-transform
                 duration-300
-                cursor-pointer
+                ${
+                  !unlockedChests.includes(index)
+                    ? "cursor-pointer"
+                    : "cursor-default"
+                }
                 w-full
                 max-w-[350px]
                 h-[180px]
@@ -167,9 +171,10 @@ export default function PlayerGamePage() {
                 lg:h-[240px]
                 m-[10px]
                 rounded-[1rem]
-                border-5 border-white
+                border-1 border-white
+                overflow-visible
                 ${
-                  randomOpenChests.includes(index)
+                  unlockedChests.includes(index)
                     ? "shadow-[0_0_15px_rgba(0,255,140,0.4)]"
                     : "shadow-[0_0_15px_rgba(255,0,0,0.4)]"
                 }
@@ -177,7 +182,7 @@ export default function PlayerGamePage() {
                 >
                   <Image
                     src={
-                      randomOpenChests.includes(index)
+                      unlockedChests.includes(index)
                         ? "/assets/chest-open.png"
                         : "/assets/chest-closed.png"
                     }
@@ -186,6 +191,55 @@ export default function PlayerGamePage() {
                     height={180}
                     className="object-contain"
                   />
+                  <div className="absolute top-[15px] left-[15px] z-50 text-white font-black text-lg bg-black bg-opacity-50 px-2 py-1 rounded">
+                    Box {index + 1}
+                  </div>
+                  {!unlockedChests.includes(index) && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "-8px",
+                        right: "-8px",
+                        width: "56px",
+                        height: "56px",
+                        backgroundColor: "#ef4444",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 10,
+                        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+                        border: "3px solid #dc2626",
+                      }}
+                    >
+                      <HelpCircle
+                        size={36}
+                        className="text-white"
+                        strokeWidth={2}
+                      />
+                    </div>
+                  )}
+                  {unlockedChests.includes(index) && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "-8px",
+                        right: "-8px",
+                        width: "56px",
+                        height: "56px",
+                        backgroundColor: "#22c55e",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 10,
+                        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+                        border: "3px solid #16a34a",
+                      }}
+                    >
+                      <Check size={40} className="text-white" strokeWidth={4} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

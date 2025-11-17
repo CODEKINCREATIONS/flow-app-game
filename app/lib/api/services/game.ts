@@ -17,8 +17,9 @@ export const gameService = {
 
   // Unlock a chest
   unlockChest: async (chestId: number, playerId: string, code: string) => {
-    return apiClient.post<Chest>(`/api/game/chests/${chestId}/unlock`, {
+    return apiClient.post(`/api/game/chests/unlock`, {
       playerId,
+      chestId,
       code,
     });
   },
