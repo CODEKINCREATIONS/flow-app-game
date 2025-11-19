@@ -61,9 +61,11 @@ export default function FacilitatorLogin() {
         {/* Title Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center bg-[#1A1C2A] rounded-full w-[145px] h-[145px] mb-4">
-            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF]">
-              FLOW
-            </h1>
+            <img
+              src="/assets/Logo_flow.png"
+              alt="Flow Logo"
+              className="w-[115px] h-[115px] object-contain"
+            />
           </div>
           <p className="text-gray-300 mb-9 text-xl">Facilitator Login</p>
         </div>

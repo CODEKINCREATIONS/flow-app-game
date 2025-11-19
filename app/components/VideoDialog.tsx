@@ -157,7 +157,7 @@ export default function VideoDialog({
             <div className="flex flex-col items-center text-center space-y-6 mt-6">
               {/* Video Player */}
               <div style={{ width: "600px", height: "400px" }}>
-                {true ? (
+                {false ? (
                   // YouTube Embed
                   <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
                     <iframe
@@ -172,7 +172,7 @@ export default function VideoDialog({
                   // MP4/Video File Embed
                   <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
                     <video className="w-full h-full" controls autoPlay>
-                      <source src={videoUrl} type="video/mp4" />
+                      <source src="/assets/language_Videos/English.mp4" type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>

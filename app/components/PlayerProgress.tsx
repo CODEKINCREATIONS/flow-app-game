@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
+import { PlayerDetailsDialog } from "@/app/components/PlayerDetailsDialog";
 
 export const PlayerProgress = () => {
   const { session } = useSession();
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
 
   const solveColor = (status: string) => {
     switch (status) {
@@ -25,15 +29,53 @@ export const PlayerProgress = () => {
 
   // temporary sample players if session has none
   const players = session?.players ?? [
-    { id: "1", name: "Tanya", activeRiddle: 1, attempt: 2, solved: "Yes" },
+    {
+      id: "1",
+      name: "Tanya",
+      activeRiddle: 1,
+      attempt: 2,
+      solved: "Yes",
+      email: "tanya@example.com",
+    },
     {
       id: "2",
       name: "Alex",
       activeRiddle: 2,
       attempt: 1,
       solved: "In Progress",
+      email: "alex@example.com",
     },
   ];
+
+  // Sample riddle data for demo
+  const getRiddleData = (playerId: string) => [
+    {
+      id: 1,
+      name: "Riddle 1: Logic Puzzle",
+      visited: true,
+      solved: true,
+      attempts: 2,
+    },
+    {
+      id: 2,
+      name: "Riddle 2: Code Challenge",
+      visited: true,
+      solved: false,
+      attempts: 1,
+    },
+    {
+      id: 3,
+      name: "Riddle 3: Pattern Match",
+      visited: false,
+      solved: false,
+      attempts: 0,
+    },
+  ];
+
+  const handleViewPlayer = (player: any) => {
+    setSelectedPlayer(player);
+    setShowDetailsDialog(true);
+  };
 
   return (
     <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg p-4 sm:p-6 mx-auto max-w-7xl overflow-x-auto p-[10px]">
@@ -75,7 +117,7 @@ export const PlayerProgress = () => {
                   <Button
                     variant="neon"
                     className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
-                    onClick={() => alert(`Open details for ${p.name}`)}
+                    onClick={() => handleViewPlayer(p)}
                   >
                     View
                   </Button>
@@ -85,6 +127,20 @@ export const PlayerProgress = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Player Details Dialog */}
+      {selectedPlayer && (
+        <PlayerDetailsDialog
+          open={showDetailsDialog}
+          onClose={() => {
+            setShowDetailsDialog(false);
+            setSelectedPlayer(null);
+          }}
+          playerName={selectedPlayer.name}
+          playerEmail={selectedPlayer.email}
+          riddleData={getRiddleData(selectedPlayer.id)}
+        />
+      )}
     </div>
   );
 };

@@ -171,16 +171,6 @@ function FacilitatorDashboardContent() {
                 <QrCode className="w-5 h-5 mr-[5px]" />
                 <span>QR Code</span>
               </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  setIsSessionUnlocked(false);
-                  window.location.reload();
-                }}
-                className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium !px-6 whitespace-nowrap"
-              >
-                <span>Reset</span>
-              </Button>
             </div>
             <Button
               variant={isSessionUnlocked ? "danger" : "primary"}

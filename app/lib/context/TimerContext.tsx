@@ -49,14 +49,13 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
   const secondsRemaining = Math.max(0, DEFAULT_DURATION - time);
 
-  // format remaining as HH:MM:SS
+  // format remaining as MM:SS
   const formatRemaining = (secs: number) => {
-    const hours = Math.floor(secs / 3600);
-    const minutes = Math.floor((secs % 3600) / 60);
+    const minutes = Math.floor(secs / 60);
     const seconds = secs % 60;
-    return `${hours.toString().padStart(2, "0")}:${minutes
+    return `${minutes.toString().padStart(2, "0")}:${seconds
       .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      .padStart(2, "0")}`;
   };
 
   const value = useMemo(
