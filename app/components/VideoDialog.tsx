@@ -172,7 +172,10 @@ export default function VideoDialog({
                   // MP4/Video File Embed
                   <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
                     <video className="w-full h-full" controls autoPlay>
-                      <source src="/assets/language_Videos/English.mp4" type="video/mp4" />
+                      <source
+                        src="/assets/language_Videos/English.mp4"
+                        type="video/mp4"
+                      />
                       Your browser does not support the video tag.
                     </video>
                   </div>
