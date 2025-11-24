@@ -12,9 +12,9 @@ export const validators = {
     return name.trim().length >= 2 && name.trim().length <= 50;
   },
 
-  // Validate session code (5+ alphanumeric characters)
+  // Validate session code (any format allowed, 1+ characters)
   isValidSessionCode: (code: string): boolean => {
-    return code.length >= 5 && /^[A-Z0-9]+$/.test(code.toUpperCase());
+    return code.trim().length > 0;
   },
 
   // Validate language code

@@ -125,30 +125,6 @@ export const useSession = () => {
     [removePlayerFromStore]
   );
 
-  const verifySessionCode = useCallback(
-    async (sessionCode: string) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await sessionService.verifySessionCode(sessionCode);
-        if (response.success && response.data) {
-          return response.data;
-        } else {
-          setError(response.error || "Failed to verify session code");
-          return { valid: false };
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Unknown error";
-        setError(errorMessage);
-        return { valid: false };
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setLoading, setError]
-  );
-
   return {
     session,
     sessionDetails,
@@ -162,6 +138,5 @@ export const useSession = () => {
     removePlayer,
     updateSessionStatus,
     reset,
-    verifySessionCode,
   };
 };

@@ -8,8 +8,6 @@ interface SessionState {
   sessionDetails: SessionDetails | null;
   loading: boolean;
   error: string | null;
-  verifying: boolean;
-  verificationError: string | null;
 
   // Actions
   setSession: (session: Session) => void;
@@ -19,8 +17,6 @@ interface SessionState {
   updateSessionStatus: (status: Session["status"]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setVerifying: (verifying: boolean) => void;
-  setVerificationError: (error: string | null) => void;
   reset: () => void;
 }
 
@@ -29,8 +25,6 @@ export const useSessionStore = create<SessionState>((set) => ({
   sessionDetails: null,
   loading: false,
   error: null,
-  verifying: false,
-  verificationError: null,
 
   setSession: (session) => set({ session }),
 
@@ -70,17 +64,11 @@ export const useSessionStore = create<SessionState>((set) => ({
 
   setError: (error) => set({ error }),
 
-  setVerifying: (verifying) => set({ verifying }),
-
-  setVerificationError: (error) => set({ verificationError: error }),
-
   reset: () =>
     set({
       session: null,
       sessionDetails: null,
       loading: false,
       error: null,
-      verifying: false,
-      verificationError: null,
     }),
 }));

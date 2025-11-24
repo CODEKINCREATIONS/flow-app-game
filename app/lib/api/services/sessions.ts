@@ -1,6 +1,6 @@
 // Session API service
 import { apiClient } from "../client";
-import type { Session, SessionDetails, SessionVerificationResponse } from "@/app/types/session";
+import type { Session, SessionDetails } from "@/app/types/session";
 import type { Player } from "@/app/types/auth";
 
 export const sessionService = {
@@ -44,12 +44,5 @@ export const sessionService = {
   // End session
   endSession: async (sessionId: string) => {
     return apiClient.post(`/api/sessions/${sessionId}/end`);
-  },
-
-  // Verify session code
-  verifySessionCode: async (sessionCode: string) => {
-    return apiClient.get<SessionVerificationResponse>(
-      `/Session/verifySessionCode?sessionCode=${sessionCode}`
-    );
   },
 };

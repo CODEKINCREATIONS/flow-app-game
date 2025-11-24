@@ -85,7 +85,7 @@ export default function FacilitatorLogin() {
               <Input
                 placeholder="Enter your code here"
                 value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onChange={(e) => setCode(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
                 style={{ color: "#FFFFFF", borderColor: "#2A2D3D" }}
