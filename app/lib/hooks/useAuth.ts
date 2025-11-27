@@ -21,7 +21,6 @@ export const useAuth = () => {
         }
         return response;
       } catch (error) {
-        console.error("Login error:", error);
         return { success: false, error: "Login failed" };
       }
     },
@@ -38,7 +37,6 @@ export const useAuth = () => {
         }
         return response;
       } catch (error) {
-        console.error("Login error:", error);
         return { success: false, error: "Login failed" };
       }
     },
@@ -55,7 +53,6 @@ export const useAuth = () => {
         }
         return response;
       } catch (error) {
-        console.error("Session verification error:", error);
         return {
           success: false,
           error: "Session verification failed",
@@ -71,9 +68,7 @@ export const useAuth = () => {
       await authService.logout();
       logout();
       router.push("/");
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    } catch (error) {}
   }, [logout, router]);
 
   return {

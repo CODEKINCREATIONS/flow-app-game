@@ -109,13 +109,8 @@ function FacilitatorDashboardWithCodeContent() {
     if (!isSessionUnlocked) {
       // Unlock the session for players: start timer and show QR
       setIsSessionUnlocked(true);
-      console.log("Unlock button clicked");
       start();
       setShowQR(true);
-      console.log(
-        "Opening QR Dialog",
-        session ? `with session: ${session.id}` : "without active session"
-      );
       return;
     }
 
@@ -224,7 +219,6 @@ function FacilitatorDashboardWithCodeContent() {
         <QRCodeDialog
           open={showQR}
           onClose={() => {
-            console.log("Closing QR Dialog");
             setShowQR(false);
           }}
           sessionCode={session?.code || session?.id || "demo-session"}

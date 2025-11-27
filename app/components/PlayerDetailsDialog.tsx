@@ -64,7 +64,7 @@ export const PlayerDetailsDialog = ({
         <div className="mt-[8px] mb-[8px]">
           {/* Statistics */}
           <div className="mb-[8px]">
-            <h3 className="text-xs font-semibold text-white mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+            <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
               Statistics
             </h3>
             <div className="grid grid-cols-3 gap-[6px]">
@@ -91,7 +91,7 @@ export const PlayerDetailsDialog = ({
 
           {/* Riddle Journey */}
           <div className="mb-[8px]">
-            <h3 className="text-xs font-semibold text-white mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+            <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
               Riddles
             </h3>
             <div className="space-y-[4px]">

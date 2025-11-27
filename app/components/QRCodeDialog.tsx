@@ -37,9 +37,7 @@ export default function QRCodeModal({
           text: "Scan this QR code to join the game session!",
           url: sessionUrl,
         });
-      } catch (err) {
-        console.error("Sharing failed:", err);
-      }
+      } catch (err) {}
     } else {
       alert("Sharing is not supported on this device.");
     }
@@ -120,19 +118,10 @@ export default function QRCodeModal({
             <Button
               variant="primary"
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 px-6 mr-[10px] !text-white hover:!text-white [&_*]:!text-white"
-              style={{ color: "white" }}
+              className="flex items-center justify-center gap-2 px-6 mr-[10px]"
             >
-              <span
-                className="text-xl font-semibold !text-white"
-                style={{ color: "white" }}
-              >
-                Share QR Code
-              </span>
-              <Share2
-                className="h-5 w-5 ml-[5px] !text-white"
-                style={{ color: "white" }}
-              />
+              <span className="text-xl font-semibold">Share QR Code</span>
+              <Share2 className="h-5 w-5 ml-[5px]" />
             </Button>
           </div>
         </div>

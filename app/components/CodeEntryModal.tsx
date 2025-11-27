@@ -89,7 +89,7 @@ export default function CodeEntryModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[30px] border border-[#1E2144] text-white shadow-2xl text-center w-[420px] p-6">
+      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[30px] border border-[#1E2144] text-white shadow-2xl text-center w-[420px]">
         <div className="flex justify-end mb-8 px-2">
           <X
             onClick={onClose}

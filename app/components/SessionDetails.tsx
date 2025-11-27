@@ -23,28 +23,27 @@ export const SessionDetails = () => {
   };
 
   return (
-    <div
-      className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg mx-auto max-w-7xl overflow-hidden p-[10px]"
-      style={{ paddingLeft: "8px" }}
-    >
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 sm:mb-6 border-l-4 border-[#7B61FF] pl-4 text-[#7CE3FF]">
+    <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg mx-auto max-w-7xl overflow-hidden p-[10px]">
+      <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
         Session Details
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 text-sm sm:text-base">
-        <div className="p-3 sm:pl-[10px] bg-[#0F1125]/50 rounded-lg">
-          <p className="text-gray-400 mb-1">Session Code</p>
-          <p className="text-white font-semibold truncate">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[6px]">
+        <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
+          <p className="text-gray-400 text-xs mb-[4px]">Session Code</p>
+          <p className="text-white font-semibold truncate text-xs">
             {session?.code ?? session?.id ?? "—"}
           </p>
         </div>
-        <div className="p-3 bg-[#0F1125]/50 rounded-lg">
-          <p className="text-gray-400 mb-1">Status</p>
-          <p className="text-[#7CE3FF] font-semibold">Active</p>
+        <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
+          <p className="text-gray-400 text-xs mb-[4px]">Status</p>
+          <p className="text-[#7CE3FF] font-semibold text-xs">Active</p>
         </div>
-        <div className="p-3 bg-[#0F1125]/50 rounded-lg">
-          <p className="text-gray-400 mb-1">Players Joined</p>
-          <p className="font-semibold">{session?.players?.length ?? 0}</p>
+        <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
+          <p className="text-gray-400 text-xs mb-[4px]">Players Joined</p>
+          <p className="font-semibold text-xs">
+            {session?.players?.length ?? 0}
+          </p>
         </div>
       </div>
     </div>

@@ -30,7 +30,6 @@ export const useGame = () => {
         }
         return response;
       } catch (error) {
-        console.error("Error fetching chests:", error);
         return { success: false, error: "Failed to fetch chests" };
       }
     },
@@ -46,7 +45,6 @@ export const useGame = () => {
         }
         return response;
       } catch (error) {
-        console.error("Error unlocking chest:", error);
         return { success: false, error: "Failed to unlock chest" };
       }
     },
@@ -69,7 +67,6 @@ export const useGame = () => {
         }
         return response;
       } catch (error) {
-        console.error("Error fetching player progress:", error);
         return { success: false, error: "Failed to fetch progress" };
       }
     },

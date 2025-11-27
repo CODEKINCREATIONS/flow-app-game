@@ -78,8 +78,8 @@ export const PlayerProgress = () => {
   };
 
   return (
-    <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg p-4 sm:p-6 mx-auto max-w-7xl overflow-x-auto p-[10px]">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 sm:mb-6 border-l-4 border-[#7B61FF] pl-4 text-[#7CE3FF] sticky left-0">
+    <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg p-[10px] mx-auto max-w-7xl overflow-x-auto">
+      <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px] sticky left-0">
         Player Progress
       </h2>
 
@@ -89,7 +89,7 @@ export const PlayerProgress = () => {
             <tr className="text-gray-300 border-b border-[#2A2D3D]">
               <th className="py-[10px] px-4 my-[2px] font-semibold">Name</th>
               <th className="py-[10px] px-4 my-[2px] font-semibold">
-                Active Riddle
+                Active Box
               </th>
               <th className="py-[10px] px-4 my-[2px] font-semibold">Attempt</th>
               <th className="py-[10px] px-4 my-[2px] font-semibold">Solved</th>

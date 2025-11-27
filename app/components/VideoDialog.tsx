@@ -54,7 +54,6 @@ export default function VideoDialog({
       }
     } catch (err) {
       setError("An error occurred while verifying password. Please try again.");
-      console.error("Password verification error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -145,7 +144,7 @@ export default function VideoDialog({
                 variant="primary"
                 onClick={handleSubmitPassword}
                 disabled={isLoading}
-                className="w-full max-w-md !px-8 !py-3 mt-[15px] !text-white hover:!shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full max-w-md !px-8 !py-3 mt-[15px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Verifying..." : "Submit Password"}
               </Button>
@@ -157,29 +156,12 @@ export default function VideoDialog({
             <div className="flex flex-col items-center text-center space-y-6 mt-6">
               {/* Video Player */}
               <div style={{ width: "600px", height: "400px" }}>
-                {false ? (
-                  // YouTube Embed
-                  <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
-                    <iframe
-                      className="w-full h-full"
-                      src="https://www.youtube.com/embed/1RiVM-sd544?si=lc07a3uA0guEiVIi"
-                      title="Video Player"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                ) : (
-                  // MP4/Video File Embed
-                  <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
-                    <video className="w-full h-full" controls autoPlay>
-                      <source
-                        src="/assets/language_Videos/English.mp4"
-                        type="video/mp4"
-                      />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                )}
+                <div className="relative w-full h-full bg-black rounded-lg overflow-hidden border-2 border-[#2F3260]">
+                  <video className="w-full h-full" controls autoPlay>
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
               </div>
             </div>
           </>
