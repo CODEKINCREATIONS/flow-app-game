@@ -11,10 +11,12 @@ import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useAuth } from "@/app/lib/hooks";
 import { useQueryStringSession } from "@/app/lib/hooks";
 import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
+import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
 import { QrCode } from "lucide-react";
 
 function FacilitatorDashboardContent() {
   const [showQR, setShowQR] = useState(false);
+  const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const { endSession, session, fetchSessionDetails } = useSession();
   const { start } = useTimerContext();
   const { user } = useAuth();
@@ -31,6 +33,7 @@ function FacilitatorDashboardContent() {
   const [sessionVerificationChecked, setSessionVerificationChecked] =
     useState(false);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
+  const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
 
   // Verify session from query string on component mount
   useEffect(() => {
@@ -94,8 +97,6 @@ function FacilitatorDashboardContent() {
     window.location.href = "/facilitator-login";
   };
 
-  const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
-
   // Show loading state while verifying session
   if (isVerifying) {
     return (
@@ -145,15 +146,21 @@ function FacilitatorDashboardContent() {
 
   const handleUnlock = async () => {
     if (!isSessionUnlocked) {
-      // Unlock the session for players: start timer and show QR
-      setIsSessionUnlocked(true);
-      start();
-      setShowQR(true);
+      // Show confirmation dialog
+      setShowUnlockConfirm(true);
       return;
     }
 
     // If already unlocked, treat click as Finish (end session)
     await handleFinish();
+  };
+
+  const handleConfirmUnlock = async () => {
+    // Unlock the session for players: start timer and show QR
+    setIsSessionUnlocked(true);
+    setShowUnlockConfirm(false);
+    start();
+    setShowQR(true);
   };
 
   // no header action for unlocking/finishing — control lives in the page buttons below
@@ -222,6 +229,15 @@ function FacilitatorDashboardContent() {
             setShowQR(false);
           }}
           sessionCode={session?.code || session?.id || "demo-session"}
+        />
+
+        {/* Unlock Session Confirmation Dialog */}
+        <UnlockSessionDialog
+          open={showUnlockConfirm}
+          onClose={() => {
+            setShowUnlockConfirm(false);
+          }}
+          onConfirm={handleConfirmUnlock}
         />
       </AppLayout>
     </>

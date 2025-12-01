@@ -12,6 +12,7 @@ import { useAuth } from "@/app/lib/hooks";
 import { authService } from "@/app/lib/api/services/auth";
 import { useSessionStore } from "@/app/lib/store/sessionStore";
 import QRCodeDialog from "@/app/components/QRCodeDialog";
+import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
 import { QrCode } from "lucide-react";
 
 function FacilitatorDashboardWithCodeContent() {
@@ -20,6 +21,7 @@ function FacilitatorDashboardWithCodeContent() {
   const sessionCode = params?.sessionCode as string;
 
   const [showQR, setShowQR] = useState(false);
+  const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const { endSession, session } = useSession();
   const { start } = useTimerContext();
   const { user } = useAuth();
@@ -134,15 +136,21 @@ function FacilitatorDashboardWithCodeContent() {
 
   const handleUnlock = async () => {
     if (!isSessionUnlocked) {
-      // Unlock the session for players: start timer and show QR
-      setIsSessionUnlocked(true);
-      start();
-      setShowQR(true);
+      // Show confirmation dialog
+      setShowUnlockConfirm(true);
       return;
     }
 
     // If already unlocked, treat click as Finish (end session)
     await handleFinish();
+  };
+
+  const handleConfirmUnlock = async () => {
+    // Unlock the session for players: start timer and show QR
+    setIsSessionUnlocked(true);
+    setShowUnlockConfirm(false);
+    start();
+    setShowQR(true);
   };
 
   // Show loading state while verifying session
@@ -210,19 +218,21 @@ function FacilitatorDashboardWithCodeContent() {
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 space-y-8 font-sans mx-[30px] min-h-screen">
           {/* Action Buttons */}
-          <div className="flex flex-wrap justify-end gap-4 mb-6 mt-[15px]">
-            <Button
-              variant="white"
-              onClick={() => setShowQR(true)}
-              className="!h-11 flex items-center justify-center gap-2 !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-5 whitespace-nowrap order-2 sm:order-1"
-            >
-              <QrCode className="w-5 h-5 mr-[5px] " />
-              <span>QR Code</span>
-            </Button>
+          <div className="flex flex-wrap justify-center sm:justify-end gap-6 mb-[6px] mt-[15px]">
+            <div className="flex gap-[4px] order-2 sm:order-1 mb-[4px] sm:mb-0">
+              <Button
+                variant="white"
+                onClick={() => setShowQR(true)}
+                className="!h-11 flex items-center justify-center mr-[5px] ml-[5px] !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-6 whitespace-nowrap"
+              >
+                <QrCode className="w-5 h-5 mr-[5px]" />
+                <span>QR Code</span>
+              </Button>
+            </div>
             <Button
               variant={isSessionUnlocked ? "danger" : "primary"}
               onClick={handleUnlock}
-              className="!h-14 flex items-center justify-center gap-2 mr-[5px] !text-base font-medium !px-6 whitespace-nowrap ml-[10px] order-1 sm:order-2"
+              className="!h-14 flex items-center justify-center gap-2 !text-base font-medium !px-8 whitespace-nowrap order-1 mb-[5px] sm:order-2"
             >
               <span style={{ color: "white" }}>
                 {isSessionUnlocked
@@ -249,6 +259,15 @@ function FacilitatorDashboardWithCodeContent() {
             setShowQR(false);
           }}
           sessionCode={session?.code || session?.id || "demo-session"}
+        />
+
+        {/* Unlock Session Confirmation Dialog */}
+        <UnlockSessionDialog
+          open={showUnlockConfirm}
+          onClose={() => {
+            setShowUnlockConfirm(false);
+          }}
+          onConfirm={handleConfirmUnlock}
         />
       </AppLayout>
     </>
