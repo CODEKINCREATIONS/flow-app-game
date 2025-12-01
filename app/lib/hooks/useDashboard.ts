@@ -37,62 +37,6 @@ export const useDashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
 
-  // Fetch dashboard data
-  const fetchDashboard = useCallback(async (sessionCode: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await gameService.getDashboard(sessionCode);
-
-      if (response.success && response.data) {
-        // The API response structure from backend is:
-        // {success: true, data: {data: {gameSession: {...}, playersProgress: [...]}}}
-        // OR {success: true, data: {gameSession: {...}, playersProgress: [...]}}
-        let fullData = response.data;
-
-        // Unwrap nested data if it exists
-        if ((fullData as any)?.data) {
-          fullData = (fullData as any).data;
-        }
-
-        // Extract the dashboard data (gameSession)
-        const dashData = (fullData as any)?.gameSession || fullData;
-        setDashboardData(dashData as DashboardData);
-
-        // Extract players from playersProgress (should be at same level as gameSession)
-        let playersData = (fullData as any)?.playersProgress || [];
-
-        if (Array.isArray(playersData) && playersData.length > 0) {
-          const mappedPlayers: DashboardPlayer[] = playersData.map(
-            (p: any) => ({
-              id: p.playerId || p.id || `player-${Math.random()}`,
-              playerId: p.playerId || p.id,
-              name: p.playerName || p.name,
-              playerName: p.playerName || p.name,
-              email: p.email,
-              activeRiddle: p.activeBox || p.riddleAccess || p.activeRiddle,
-              riddleAccess: p.activeBox || p.riddleAccess || p.activeRiddle,
-              attempt: p.attempt || p.attempts,
-              attempts: p.attempt || p.attempts,
-              solved: p.solved === "Yes" || p.solved === true || p.solved === 1,
-            })
-          );
-          setPlayers(mappedPlayers);
-        } else {
-          setPlayers([]);
-        }
-      } else {
-        const errorMsg = response.error || "Failed to fetch dashboard data";
-        setError(errorMsg);
-      }
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Unknown error";
-      setError(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   // Fetch players data (fallback - players should come from dashboard)
   const fetchPlayers = useCallback(async (sessionCode: string) => {
     try {
@@ -137,6 +81,85 @@ export const useDashboard = () => {
       // Silent fail - fallback function
     }
   }, []);
+
+  // Fetch dashboard data
+  const fetchDashboard = useCallback(
+    async (sessionCode: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await gameService.getDashboard(sessionCode);
+
+        if (response.success && response.data) {
+          // The API response structure from backend is:
+          // {success: true, data: {data: {gameSession: {...}, playersProgress: [...]}}}
+          // OR {success: true, data: {gameSession: {...}, playersProgress: [...]}}
+          let fullData = response.data;
+
+          // Unwrap nested data if it exists
+          if (
+            (fullData as any)?.data &&
+            typeof (fullData as any).data === "object"
+          ) {
+            fullData = (fullData as any).data;
+          }
+
+          // Extract the dashboard data (gameSession)
+          const dashData = (fullData as any)?.gameSession || fullData;
+          setDashboardData(dashData as DashboardData);
+
+          // Extract players from playersProgress (should be at same level as gameSession)
+          let playersData = (fullData as any)?.playersProgress;
+
+          // If playersData is not array, try other possible field names
+          if (!Array.isArray(playersData)) {
+            playersData =
+              (fullData as any)?.players || (fullData as any)?.data || [];
+          }
+
+          if (Array.isArray(playersData) && playersData.length > 0) {
+            const mappedPlayers: DashboardPlayer[] = playersData.map(
+              (p: any) => ({
+                id: p.playerId || p.id || `player-${Math.random()}`,
+                playerId: p.playerId || p.id,
+                name: p.playerName || p.name,
+                playerName: p.playerName || p.name,
+                email: p.email,
+                activeRiddle: p.activeBox || p.riddleAccess || p.activeRiddle,
+                riddleAccess: p.activeBox || p.riddleAccess || p.activeRiddle,
+                attempt: p.attempt || p.attempts,
+                attempts: p.attempt || p.attempts,
+                solved:
+                  p.solved === "Yes" || p.solved === true || p.solved === 1,
+              })
+            );
+            setPlayers(mappedPlayers);
+          } else {
+            setPlayers([]);
+            // If no players in dashboard response, try fallback endpoint
+            await fetchPlayers(sessionCode);
+          }
+        } else {
+          const errorMsg = response.error || "Failed to fetch dashboard data";
+          setError(errorMsg);
+          // Try fallback to fetchPlayers if dashboard fetch fails
+          await fetchPlayers(sessionCode);
+        }
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : "Unknown error";
+        setError(errorMsg);
+        // Try fallback to fetchPlayers if there's an error
+        try {
+          await fetchPlayers(sessionCode);
+        } catch (fallbackErr) {
+          // Silently fail fallback
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchPlayers]
+  );
 
   // Combined fetch function - dashboard includes all data
   const fetchDashboardData = useCallback(

@@ -14,7 +14,7 @@ export const PlayerProgress = ({
   sessionCode: propSessionCode,
 }: PlayerProgressProps = {}) => {
   const { session } = useSession();
-  const { players, fetchDashboardData } = useDashboard();
+  const { players, fetchDashboardData, loading, error } = useDashboard();
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
@@ -106,67 +106,91 @@ export const PlayerProgress = ({
         </h2>
       </div>
 
-      <div className="min-w-[650px]">
-        <table className="w-full text-left border-collapse text-base sm:text-lg">
-          <thead>
-            <tr className="text-gray-300 border-b border-[#2A2D3D]">
-              <th className="py-[10px] px-4 my-[2px] font-semibold">Name</th>
-              <th className="py-[10px] px-4 my-[2px] font-semibold">
-                Active Box
-              </th>
-              <th className="py-[10px] px-4 my-[2px] font-semibold">Attempt</th>
-              <th className="py-[10px] px-4 my-[2px] font-semibold">Solved</th>
-              <th className="py-[10px] px-4 my-[2px] font-semibold ">Action</th>
-            </tr>
-          </thead>
+      {/* Error Display */}
+      {error && (
+        <div className="mb-4 bg-red-500/10 border border-red-500/50 rounded p-3">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
 
-          <tbody>
-            {displayPlayers.length > 0 ? (
-              displayPlayers.map((p: any) => (
-                <tr
-                  key={p.id || p.playerId}
-                  className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
-                >
-                  <td className="py-4 px-4 text-[#D1D5DB] font-medium">
-                    {p.name || p.playerName || "Unknown"}
-                  </td>
-                  <td className="py-4 px-4 text-[#D1D5DB]">
-                    {p.activeRiddle ?? p.riddleAccess ?? "—"}
-                  </td>
-                  <td className="py-4 px-4 text-[#D1D5DB]">
-                    {p.attempt ?? p.attempts ?? "—"}
-                  </td>
-                  <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
-                    {typeof p.solved === "boolean"
-                      ? p.solved
-                        ? "✔ Yes"
-                        : "In Progress"
-                      : p.solved}
-                  </td>
-                  <td className="py-4 px-4 text-center">
-                    <Button
-                      variant="neon"
-                      className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
-                      onClick={() => handleViewPlayer(p)}
-                    >
-                      View
-                    </Button>
+      {/* Loading State */}
+      {loading && displayPlayers.length === 0 && (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B61FF]"></div>
+          <p className="ml-3 text-gray-300">Loading player data...</p>
+        </div>
+      )}
+
+      {/* Table */}
+      {!loading || displayPlayers.length > 0 ? (
+        <div className="min-w-[650px]">
+          <table className="w-full text-left border-collapse text-base sm:text-lg">
+            <thead>
+              <tr className="text-gray-300 border-b border-[#2A2D3D]">
+                <th className="py-[10px] px-4 my-[2px] font-semibold">Name</th>
+                <th className="py-[10px] px-4 my-[2px] font-semibold">
+                  Active Box
+                </th>
+                <th className="py-[10px] px-4 my-[2px] font-semibold">
+                  Attempt
+                </th>
+                <th className="py-[10px] px-4 my-[2px] font-semibold">
+                  Solved
+                </th>
+                <th className="py-[10px] px-4 my-[2px] font-semibold ">
+                  Action
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {displayPlayers.length > 0 ? (
+                displayPlayers.map((p: any) => (
+                  <tr
+                    key={p.id || p.playerId}
+                    className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
+                  >
+                    <td className="py-4 px-4 text-[#D1D5DB] font-medium">
+                      {p.name || p.playerName || "Unknown"}
+                    </td>
+                    <td className="py-4 px-4 text-[#D1D5DB]">
+                      {p.activeRiddle ?? p.riddleAccess ?? "—"}
+                    </td>
+                    <td className="py-4 px-4 text-[#D1D5DB]">
+                      {p.attempt ?? p.attempts ?? "—"}
+                    </td>
+                    <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
+                      {typeof p.solved === "boolean"
+                        ? p.solved
+                          ? "✔ Yes"
+                          : "In Progress"
+                        : p.solved}
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <Button
+                        variant="neon"
+                        className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
+                        onClick={() => handleViewPlayer(p)}
+                      >
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-4 px-4 text-center text-gray-400 text-xs"
+                  >
+                    No players joined yet
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="py-4 px-4 text-center text-gray-400 text-xs"
-                >
-                  No players joined yet
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
 
       {/* Player Details Dialog */}
       {selectedPlayer && (

@@ -13,9 +13,6 @@ export async function GET(
     const resolvedParams = await Promise.resolve(params);
     const sessionCode = resolvedParams.sessionCode;
 
-    console.log("Dashboard API - session code:", sessionCode);
-    console.log("Backend URL base:", env.SESSION_VERIFICATION_URL);
-
     if (!sessionCode) {
       return NextResponse.json(
         { success: false, error: "Session code is required" },
@@ -28,8 +25,6 @@ export async function GET(
     let backendUrl = `${
       env.SESSION_VERIFICATION_URL
     }/Dashboard/GetDashboard/${encodeURIComponent(sessionCode)}`;
-
-    console.log("Calling backend URL (method 1 - path param):", backendUrl);
 
     let response = await fetch(backendUrl, {
       method: "GET",
@@ -44,8 +39,6 @@ export async function GET(
         env.SESSION_VERIFICATION_URL
       }/Dashboard/GetDashboard?sessionCode=${encodeURIComponent(sessionCode)}`;
 
-      console.log("Trying method 2 - query param:", backendUrl);
-
       response = await fetch(backendUrl, {
         method: "GET",
         headers: {
@@ -54,20 +47,14 @@ export async function GET(
       });
     }
 
-    console.log("Backend response status:", response.status);
-
     let data;
     try {
       data = await response.json();
     } catch (e) {
-      console.error("Failed to parse response as JSON:", e);
       data = { message: "Failed to parse backend response" };
     }
 
-    console.log("Backend response data:", data);
-
     if (!response.ok) {
-      console.error("Backend returned non-200 status:", response.status, data);
       return NextResponse.json(
         {
           success: false,
@@ -82,7 +69,6 @@ export async function GET(
       data: data,
     });
   } catch (error) {
-    console.error("Dashboard API error:", error);
     return NextResponse.json(
       {
         success: false,
