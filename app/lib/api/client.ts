@@ -32,15 +32,24 @@ class ApiClient {
           status: response.status,
           errors: data.errors,
         };
+        // Log error in development
+        if (process.env.NODE_ENV === "development") {
+          console.error(`API Error [${response.status}]: ${url}`, error);
+        }
         return { success: false, error: error.message };
       }
 
       return { success: true, data };
     } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Network error occurred";
+      // Log error in development
+      if (process.env.NODE_ENV === "development") {
+        console.error(`API Request failed: ${endpoint}`, error);
+      }
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Network error occurred",
+        error: errorMsg,
       };
     }
   }
