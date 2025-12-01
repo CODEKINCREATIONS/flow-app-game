@@ -43,4 +43,19 @@ export const gameService = {
       success,
     });
   },
+
+  // Get dashboard data for a session
+  getDashboard: async (sessionCode: string) => {
+    return apiClient.get(`/api/dashboard/get-dashboard/${sessionCode}`);
+  },
+
+  // Get all players in a session
+  getDashboardPlayers: async (sessionCode: string) => {
+    return apiClient.get(`/api/game/players?sessionCode=${sessionCode}`);
+  },
+
+  // Get player progress for a specific player
+  getPlayerProgressByPlayerId: async (playerId: string) => {
+    return apiClient.get(`/api/game/player-progress/${playerId}`);
+  },
 };

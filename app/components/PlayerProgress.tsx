@@ -1,51 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
+import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import { PlayerDetailsDialog } from "@/app/components/PlayerDetailsDialog";
 
-export const PlayerProgress = () => {
+interface PlayerProgressProps {
+  sessionCode?: string;
+}
+
+export const PlayerProgress = ({
+  sessionCode: propSessionCode,
+}: PlayerProgressProps = {}) => {
   const { session } = useSession();
+  const { players, fetchDashboardData } = useDashboard();
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
-  const solveColor = (status: string) => {
-    switch (status) {
-      case "Yes":
-      case "Solved":
-      case "✔ Yes":
-        return "text-[#39FF14] font-semibold"; // neon green
-      case "Failed":
-      case "No":
-        return "text-red-400 font-semibold";
-      case "Inprogress":
-      case "In Progress":
-        return "text-[#FFD60A] font-semibold"; // neon yellow
-      default:
-        return "text-gray-300";
+  // Use prop sessionCode as fallback
+  const effectiveSessionCode = propSessionCode || session?.code;
+
+  // Fetch data on mount and set up polling
+  useEffect(() => {
+    if (effectiveSessionCode) {
+      // Initial fetch
+      fetchDashboardData(effectiveSessionCode);
+
+      // Set up polling for real-time updates
+      const interval = setInterval(() => {
+        fetchDashboardData(effectiveSessionCode);
+      }, 5000); // Poll every 5 seconds
+
+      setPollInterval(interval);
+
+      return () => {
+        if (interval) clearInterval(interval);
+      };
     }
-  };
+  }, [effectiveSessionCode, fetchDashboardData]);
 
-  // temporary sample players if session has none
-  const players = session?.players ?? [
-    {
-      id: "1",
-      name: "Tanya",
-      activeRiddle: 1,
-      attempt: 2,
-      solved: "Yes",
-      email: "tanya@example.com",
-    },
-    {
-      id: "2",
-      name: "Alex",
-      activeRiddle: 2,
-      attempt: 1,
-      solved: "In Progress",
-      email: "alex@example.com",
-    },
-  ];
+  const solveColor = (solved: boolean | string) => {
+    if (typeof solved === "boolean") {
+      return solved
+        ? "text-[#39FF14] font-semibold"
+        : "text-[#FFD60A] font-semibold";
+    }
+
+    const solvedStr = String(solved).toLowerCase();
+    if (
+      solvedStr === "yes" ||
+      solvedStr === "solved" ||
+      solvedStr === "✔ yes"
+    ) {
+      return "text-[#39FF14] font-semibold"; // neon green
+    }
+    if (solvedStr === "failed" || solvedStr === "no") {
+      return "text-red-400 font-semibold";
+    }
+    if (solvedStr === "inprogress" || solvedStr === "in progress") {
+      return "text-[#FFD60A] font-semibold"; // neon yellow
+    }
+    return "text-gray-300";
+  };
 
   // Sample riddle data for demo
   const getRiddleData = (playerId: string) => [
@@ -77,11 +95,16 @@ export const PlayerProgress = () => {
     setShowDetailsDialog(true);
   };
 
+  // Use real players from API, or fall back to empty if loading
+  const displayPlayers = players && players.length > 0 ? players : [];
+
   return (
     <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg p-[10px] mx-auto max-w-7xl overflow-x-auto">
-      <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px] sticky left-0">
-        Player Progress
-      </h2>
+      <div className="mb-[6px]">
+        <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[#7CE3FF] border-l-4 border-[#7B61FF] pl-[8px] sticky left-0">
+          Player Progress
+        </h2>
+      </div>
 
       <div className="min-w-[650px]">
         <table className="w-full text-left border-collapse text-base sm:text-lg">
@@ -98,32 +121,49 @@ export const PlayerProgress = () => {
           </thead>
 
           <tbody>
-            {players.map((p: any) => (
-              <tr
-                key={p.id}
-                className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
-              >
-                <td className="py-4 px-4 text-[#D1D5DB] font-medium">
-                  {p.name}
-                </td>
-                <td className="py-4 px-4 text-[#D1D5DB]">
-                  {p.activeRiddle ?? p.riddleAccess ?? "—"}
-                </td>
-                <td className="py-4 px-4 text-[#D1D5DB]">{p.attempt ?? "—"}</td>
-                <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
-                  {p.solved === "Yes" ? "✔ Yes" : p.solved}
-                </td>
-                <td className="py-4 px-4 text-center">
-                  <Button
-                    variant="neon"
-                    className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
-                    onClick={() => handleViewPlayer(p)}
-                  >
-                    View
-                  </Button>
+            {displayPlayers.length > 0 ? (
+              displayPlayers.map((p: any) => (
+                <tr
+                  key={p.id || p.playerId}
+                  className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
+                >
+                  <td className="py-4 px-4 text-[#D1D5DB] font-medium">
+                    {p.name || p.playerName || "Unknown"}
+                  </td>
+                  <td className="py-4 px-4 text-[#D1D5DB]">
+                    {p.activeRiddle ?? p.riddleAccess ?? "—"}
+                  </td>
+                  <td className="py-4 px-4 text-[#D1D5DB]">
+                    {p.attempt ?? p.attempts ?? "—"}
+                  </td>
+                  <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
+                    {typeof p.solved === "boolean"
+                      ? p.solved
+                        ? "✔ Yes"
+                        : "In Progress"
+                      : p.solved}
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <Button
+                      variant="neon"
+                      className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
+                      onClick={() => handleViewPlayer(p)}
+                    >
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="py-4 px-4 text-center text-gray-400 text-xs"
+                >
+                  No players joined yet
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -136,9 +176,11 @@ export const PlayerProgress = () => {
             setShowDetailsDialog(false);
             setSelectedPlayer(null);
           }}
-          playerName={selectedPlayer.name}
+          playerName={selectedPlayer.name || selectedPlayer.playerName}
           playerEmail={selectedPlayer.email}
-          riddleData={getRiddleData(selectedPlayer.id)}
+          riddleData={getRiddleData(
+            selectedPlayer.id || selectedPlayer.playerId
+          )}
         />
       )}
     </div>

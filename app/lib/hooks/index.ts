@@ -4,3 +4,4 @@ export * from "./useSession";
 export * from "./useGame";
 export * from "./useTimer";
 export * from "./useQueryStringSession";
+export * from "./useDashboard";

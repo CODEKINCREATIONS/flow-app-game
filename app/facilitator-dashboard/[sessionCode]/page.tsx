@@ -32,6 +32,7 @@ function FacilitatorDashboardWithCodeContent() {
   });
 
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Verify session from URL parameter on component mount
   useEffect(() => {
@@ -45,8 +46,13 @@ function FacilitatorDashboardWithCodeContent() {
         const response = await authService.verifySessionCode(sessionCode);
 
         if (response.success && response.data) {
-          // Store session data
-          setSession(response.data);
+          // Store session data with session code from URL
+          const sessionData = response.data;
+          // Ensure code is set from the URL parameter
+          if (!sessionData.code) {
+            sessionData.code = sessionCode;
+          }
+          setSession(sessionData);
 
           setVerificationState({
             isVerifying: false,
@@ -90,6 +96,27 @@ function FacilitatorDashboardWithCodeContent() {
 
     verifySession();
   }, [sessionCode, router, setSession]);
+
+  // Set up polling for session details after verification
+  useEffect(() => {
+    if (verificationState.isVerified && session?.id) {
+      // Set up polling every 5 seconds
+      const interval = setInterval(() => {
+        // Fetch fresh session details
+        authService.verifySessionCode(sessionCode).then((response) => {
+          if (response.success && response.data) {
+            setSession(response.data);
+          }
+        });
+      }, 5000);
+
+      setPollInterval(interval);
+
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }
+  }, [verificationState.isVerified, session?.id, sessionCode, setSession]);
 
   // Reset QR dialog when session changes
   useEffect(() => {
@@ -208,10 +235,10 @@ function FacilitatorDashboardWithCodeContent() {
           {/* Body */}
           <div className="space-y-8">
             <div className="mb-[20px] mt-[20px]">
-              <SessionDetails />
+              <SessionDetails sessionCode={sessionCode} />
             </div>
 
-            <PlayerProgress />
+            <PlayerProgress sessionCode={sessionCode} />
           </div>
         </main>
 

@@ -15,7 +15,7 @@ import { QrCode } from "lucide-react";
 
 function FacilitatorDashboardContent() {
   const [showQR, setShowQR] = useState(false);
-  const { endSession, session } = useSession();
+  const { endSession, session, fetchSessionDetails } = useSession();
   const { start } = useTimerContext();
   const { user } = useAuth();
   const router = useRouter();
@@ -30,6 +30,7 @@ function FacilitatorDashboardContent() {
 
   const [sessionVerificationChecked, setSessionVerificationChecked] =
     useState(false);
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Verify session from query string on component mount
   useEffect(() => {
@@ -53,6 +54,30 @@ function FacilitatorDashboardContent() {
     sessionCode,
     redirectToError,
     verificationError,
+  ]);
+
+  // Set up polling for session details
+  useEffect(() => {
+    if (session?.id && sessionVerificationChecked && isVerified) {
+      // Fetch immediately
+      fetchSessionDetails(session.id);
+
+      // Set up polling every 5 seconds
+      const interval = setInterval(() => {
+        fetchSessionDetails(session.id);
+      }, 5000);
+
+      setPollInterval(interval);
+
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }
+  }, [
+    session?.id,
+    sessionVerificationChecked,
+    isVerified,
+    fetchSessionDetails,
   ]);
 
   // Reset QR dialog when session changes
@@ -183,10 +208,10 @@ function FacilitatorDashboardContent() {
           {/* Body */}
           <div className="space-y-8">
             <div className="mb-[20px] mt-[20px]">
-              <SessionDetails />
+              <SessionDetails sessionCode={sessionCode || undefined} />
             </div>
 
-            <PlayerProgress />
+            <PlayerProgress sessionCode={sessionCode || undefined} />
           </div>
         </main>
 

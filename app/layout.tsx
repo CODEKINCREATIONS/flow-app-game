@@ -24,10 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`bg-background text-textPrimary font-orbitron ${geistSans.variable} ${geistMono.variable}`}
-      >
+    <html
+      lang="en"
+      style={
+        {
+          "--font-geist-sans": geistSans.variable,
+          "--font-geist-mono": geistMono.variable,
+        } as any
+      }
+    >
+      <body className="bg-background text-textPrimary font-orbitron">
         <TimerProvider>{children}</TimerProvider>
       </body>
     </html>

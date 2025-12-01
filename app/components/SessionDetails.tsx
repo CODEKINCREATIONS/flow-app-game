@@ -1,9 +1,28 @@
 "use client";
 
 import { useSession } from "@/app/lib/hooks";
+import { useDashboard } from "@/app/lib/hooks/useDashboard";
+import { useEffect } from "react";
 
-export const SessionDetails = () => {
+interface SessionDetailsProps {
+  sessionCode?: string;
+}
+
+export const SessionDetails = ({
+  sessionCode: propSessionCode,
+}: SessionDetailsProps = {}) => {
   const { session } = useSession();
+  const { dashboardData, fetchDashboard } = useDashboard();
+
+  // Use prop sessionCode as fallback
+  const effectiveSessionCode = propSessionCode || session?.code;
+
+  // Fetch dashboard data when session code changes
+  useEffect(() => {
+    if (effectiveSessionCode) {
+      fetchDashboard(effectiveSessionCode);
+    }
+  }, [effectiveSessionCode, fetchDashboard]);
 
   const statusColor = (status?: string) => {
     if (!status) return "text-gray-300";
@@ -22,6 +41,23 @@ export const SessionDetails = () => {
     }
   };
 
+  const sessionCode =
+    dashboardData?.sessionCode || session?.code || session?.id;
+  const playersJoined =
+    dashboardData?.playersJoined || session?.players?.length || 0;
+  const status = dashboardData?.status;
+
+  // Map status number to string if needed
+  const statusValue = String(status || "");
+  const statusDisplay =
+    statusValue === "1" || statusValue === "active"
+      ? "Active"
+      : statusValue === "2"
+      ? "Completed"
+      : statusValue === "0"
+      ? "Pending"
+      : "Active";
+
   return (
     <div className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg mx-auto max-w-7xl overflow-hidden p-[10px]">
       <h2 className="text-xs sm:text-sm md:text-base font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
@@ -32,18 +68,18 @@ export const SessionDetails = () => {
         <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
           <p className="text-gray-400 text-xs mb-[4px]">Session Code</p>
           <p className="text-white font-semibold truncate text-xs">
-            {session?.code ?? session?.id ?? "—"}
+            {sessionCode ?? "—"}
           </p>
         </div>
         <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
           <p className="text-gray-400 text-xs mb-[4px]">Status</p>
-          <p className="text-[#7CE3FF] font-semibold text-xs">Active</p>
+          <p className={`${statusColor(statusDisplay)} text-xs`}>
+            {statusDisplay}
+          </p>
         </div>
         <div className="bg-[#0e1020] rounded-[1px] p-[8px]">
           <p className="text-gray-400 text-xs mb-[4px]">Players Joined</p>
-          <p className="font-semibold text-xs">
-            {session?.players?.length ?? 0}
-          </p>
+          <p className="font-semibold text-xs">{playersJoined}</p>
         </div>
       </div>
     </div>

@@ -55,8 +55,12 @@ export const useQueryStringSession = () => {
       const response = await authService.verifySessionCode(sessionCode);
 
       if (response.success && response.data) {
-        // Store session data
-        setSession(response.data);
+        // Store session data - ensure code is set
+        const sessionData = response.data;
+        if (!sessionData.code) {
+          sessionData.code = sessionCode;
+        }
+        setSession(sessionData);
 
         setState({
           isVerifying: false,
