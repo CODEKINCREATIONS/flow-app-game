@@ -9,7 +9,9 @@ import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useAuth } from "@/app/lib/hooks";
+import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import { authService } from "@/app/lib/api/services/auth";
+import { gameService } from "@/app/lib/api/services/game";
 import { useSessionStore } from "@/app/lib/store/sessionStore";
 import QRCodeDialog from "@/app/components/QRCodeDialog";
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
@@ -26,6 +28,7 @@ function FacilitatorDashboardWithCodeContent() {
   const { start } = useTimerContext();
   const { user } = useAuth();
   const { setSession } = useSessionStore();
+  const { dashboardData, fetchDashboard, fetchDashboardData } = useDashboard();
 
   const [verificationState, setVerificationState] = useState({
     isVerifying: true,
@@ -33,8 +36,11 @@ function FacilitatorDashboardWithCodeContent() {
     error: null as string | null,
   });
 
+  // Track unlock state from dashboard response (persistent across refreshes)
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
+  const [dashboardPollInterval, setDashboardPollInterval] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Verify session from URL parameter on component mount
   useEffect(() => {
@@ -127,6 +133,34 @@ function FacilitatorDashboardWithCodeContent() {
     }
   }, [session]);
 
+  // Fetch and poll dashboard data
+  useEffect(() => {
+    if (!sessionCode) return;
+
+    // Fetch immediately
+    fetchDashboard(sessionCode);
+
+    // Poll every 5 seconds
+    const interval = setInterval(() => {
+      fetchDashboard(sessionCode);
+    }, 5000);
+
+    setDashboardPollInterval(interval);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [sessionCode, fetchDashboard]);
+
+  // Sync unlock state from dashboard data (persistent across page refreshes)
+  useEffect(() => {
+    if (dashboardData?.sessionUnlocked === true) {
+      setIsSessionUnlocked(true);
+      // Auto-start timer if session is already unlocked
+      start();
+    }
+  }, [dashboardData?.sessionUnlocked, start]);
+
   const handleFinish = async () => {
     if (session) {
       await endSession(session.id);
@@ -146,11 +180,24 @@ function FacilitatorDashboardWithCodeContent() {
   };
 
   const handleConfirmUnlock = async () => {
-    // Unlock the session for players: start timer and show QR
-    setIsSessionUnlocked(true);
-    setShowUnlockConfirm(false);
-    start();
-    setShowQR(true);
+    try {
+      // Call the unlock session API
+      const response = await gameService.unlockSession(sessionCode);
+
+      if (response.success) {
+        // Session unlocked successfully
+        setIsSessionUnlocked(true);
+        setShowUnlockConfirm(false);
+        start();
+        setShowQR(true);
+      } else {
+        alert(`Failed to unlock session: ${response.error}`);
+      }
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to unlock session";
+      alert(`Error: ${errorMsg}`);
+    }
   };
 
   // Show loading state while verifying session

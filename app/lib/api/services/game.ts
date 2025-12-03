@@ -58,4 +58,9 @@ export const gameService = {
   getPlayerProgressByPlayerId: async (playerId: string) => {
     return apiClient.get(`/api/game/player-progress/${playerId}`);
   },
+
+  // Unlock session for players
+  unlockSession: async (sessionCode: string) => {
+    return apiClient.put(`/api/dashboard/unlock-session/${sessionCode}`);
+  },
 };
