@@ -106,8 +106,8 @@ export default function FacilitatorLogin() {
 
             {/* Error Message */}
             {error && (
-              <div className="text-center mt-6">
-                <p className="text-xs text-red-400 font-medium">{error}</p>
+              <div className="text-center mt-6 bg-[#ffffff] rounded-[5px] px-4 py-2 text-[#8b0000]">
+                <p className="text-xs font-medium">{error}</p>
               </div>
             )}
 

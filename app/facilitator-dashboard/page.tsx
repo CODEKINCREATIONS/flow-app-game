@@ -286,7 +286,6 @@ function FacilitatorDashboardContent() {
             setShowQR(false);
           }}
           gameSessionId={gameSessionId || 0}
-          sessionCode={sessionCode || undefined}
         />
 
         {/* Unlock Session Confirmation Dialog */}
