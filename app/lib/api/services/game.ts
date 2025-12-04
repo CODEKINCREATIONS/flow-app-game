@@ -1,6 +1,10 @@
 // Game API service
 import { apiClient } from "../client";
-import type { Chest, PlayerProgress } from "@/app/types/game";
+import type {
+  Chest,
+  PlayerProgress,
+  PlayerActivityData,
+} from "@/app/types/game";
 
 export const gameService = {
   // Get all chests for a session
@@ -62,5 +66,12 @@ export const gameService = {
   // Unlock session for players
   unlockSession: async (sessionCode: string) => {
     return apiClient.put(`/api/dashboard/unlock-session/${sessionCode}`);
+  },
+
+  // Get player activity (statistics and progress)
+  getPlayerActivity: async (sessionCode: string, playerId: number | string) => {
+    return apiClient.get<PlayerActivityData>(
+      `/api/game/player-activity?sessionCode=${sessionCode}&playerId=${playerId}`
+    );
   },
 };

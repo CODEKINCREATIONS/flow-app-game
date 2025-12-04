@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/app/components/ui";
 import {
@@ -7,6 +8,8 @@ import {
   DialogContent,
   DialogHeader,
 } from "@/app/components/ui/dialog";
+import { gameService } from "@/app/lib/api/services/game";
+import type { PlayerStats, PlayerActivityItem } from "@/app/types/game";
 
 interface Riddle {
   id: number;
@@ -22,6 +25,8 @@ interface PlayerDetailsDialogProps {
   playerName: string;
   playerEmail?: string;
   riddleData: Riddle[];
+  sessionCode?: string;
+  playerId?: number | string;
 }
 
 export const PlayerDetailsDialog = ({
@@ -30,10 +35,63 @@ export const PlayerDetailsDialog = ({
   playerName,
   playerEmail,
   riddleData,
+  sessionCode,
+  playerId,
 }: PlayerDetailsDialogProps) => {
-  const totalRiddles = riddleData.length;
-  const solvedRiddles = riddleData.filter((r) => r.solved).length;
-  const visitedRiddles = riddleData.filter((r) => r.visited).length;
+  const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
+  const [activityItems, setActivityItems] = useState<PlayerActivityItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch real player activity data
+  useEffect(() => {
+    if (open && sessionCode && playerId) {
+      const fetchPlayerActivity = async () => {
+        try {
+          setIsLoading(true);
+          setError(null);
+          console.log(
+            `[PlayerDetailsDialog] Fetching activity for player ${playerId} in session ${sessionCode}`
+          );
+
+          const response = await gameService.getPlayerActivity(
+            sessionCode,
+            playerId
+          );
+
+          if (response.success && response.data) {
+            console.log(
+              "[PlayerDetailsDialog] Activity data received:",
+              response.data
+            );
+            setPlayerStats(response.data.playerStats);
+            setActivityItems(response.data.playersProgress);
+          } else {
+            console.warn(
+              "[PlayerDetailsDialog] Failed to fetch activity:",
+              response.error
+            );
+            setError(response.error || "Failed to load player activity");
+          }
+        } catch (err) {
+          const errorMsg = err instanceof Error ? err.message : "Unknown error";
+          console.error("[PlayerDetailsDialog] Exception:", errorMsg);
+          setError(errorMsg);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchPlayerActivity();
+    }
+  }, [open, sessionCode, playerId]);
+
+  // Use API data if available, otherwise fall back to props data
+  const totalRiddles = playerStats?.totalBoxes ?? riddleData.length;
+  const solvedRiddles =
+    playerStats?.boxesSolved ?? riddleData.filter((r) => r.solved).length;
+  const visitedRiddles =
+    playerStats?.boxesVisited ?? riddleData.filter((r) => r.visited).length;
 
   if (!open) return null;
 
@@ -60,78 +118,100 @@ export const PlayerDetailsDialog = ({
           </div>
         </DialogHeader>
 
-        {/* Content */}
-        <div className="mt-[8px] mb-[8px]">
-          {/* Statistics */}
-          <div className="mb-[8px]">
-            <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
-              Statistics
-            </h3>
-            <div className="grid grid-cols-3 gap-[6px]">
-              <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                <div className="text-lg font-bold text-[#7B61FF] mb-[4px]">
-                  {solvedRiddles}
-                </div>
-                <p className="text-gray-400 text-xs">Riddles Solved</p>
-              </div>
-              <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                <div className="text-lg font-bold text-[#3A8DFF] mb-[4px]">
-                  {visitedRiddles}
-                </div>
-                <p className="text-gray-400 text-xs">Riddles Visited</p>
-              </div>
-              <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                <div className="text-lg font-bold text-[#FFD60A] mb-[4px]">
-                  {totalRiddles}
-                </div>
-                <p className="text-gray-400 text-xs">Total Riddles</p>
-              </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="mt-[8px] mb-[8px]">
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B61FF]"></div>
+              <p className="ml-3 text-gray-400">Loading player data...</p>
             </div>
           </div>
+        )}
 
-          {/* Riddle Journey */}
-          <div className="mb-[8px]">
-            <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
-              Riddles
-            </h3>
-            <div className="space-y-[4px]">
-              {riddleData.map((riddle) => (
-                <div
-                  key={riddle.id}
-                  className="p-[8px] bg-[#1A1C2A] border border-[#23263A] rounded-[10px] hover:border-[#7B61FF] transition-colors"
-                >
-                  <div className="flex gap-[6px] items-start">
-                    <div
-                      className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-[2px] ${
-                        riddle.solved
-                          ? "bg-[#39FF14] text-[#0D0F1A]"
+        {/* Error State */}
+        {error && !isLoading && (
+          <div className="mt-[8px] mb-[8px]">
+            <div className="bg-red-500/20 border border-red-500 rounded-lg p-4">
+              <p className="text-red-400 text-sm">Error loading data:</p>
+              <p className="text-red-300 text-xs mt-2">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        {!isLoading && (
+          <div className="mt-[8px] mb-[8px]">
+            {/* Statistics */}
+            <div className="mb-[8px]">
+              <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+                Statistics
+              </h3>
+              <div className="grid grid-cols-3 gap-[6px]">
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-lg font-bold text-[#7B61FF] mb-[4px]">
+                    {solvedRiddles}
+                  </div>
+                  <p className="text-gray-400 text-xs">Boxes Solved</p>
+                </div>
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-lg font-bold text-[#3A8DFF] mb-[4px]">
+                    {visitedRiddles}
+                  </div>
+                  <p className="text-gray-400 text-xs">Boxes Visited</p>
+                </div>
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-lg font-bold text-[#FFD60A] mb-[4px]">
+                    {totalRiddles}
+                  </div>
+                  <p className="text-gray-400 text-xs">Total Boxes</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Riddle Journey */}
+            <div className="mb-[8px]">
+              <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+                Activity
+              </h3>
+              <div className="space-y-[4px]">
+                {riddleData.map((riddle) => (
+                  <div
+                    key={riddle.id}
+                    className="p-[8px] bg-[#1A1C2A] border border-[#23263A] rounded-[10px] hover:border-[#7B61FF] transition-colors"
+                  >
+                    <div className="flex gap-[6px] items-start">
+                      <div
+                        className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-[2px] ${
+                          riddle.solved
+                            ? "bg-[#39FF14] text-[#0D0F1A]"
+                            : riddle.visited
+                            ? "bg-[#FFD60A] text-[#0D0F1A]"
+                            : "bg-[#2A2D3D] text-gray-400"
+                        }`}
+                      ></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-medium text-xs line-clamp-2">
+                          {riddle.name}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-[6px] ml-[22px] text-gray-400 text-xs space-y-[2px]">
+                      <p>Attempts: {riddle.attempts}</p>
+                      <p>
+                        Status:{" "}
+                        {riddle.solved
+                          ? "Solved"
                           : riddle.visited
-                          ? "bg-[#FFD60A] text-[#0D0F1A]"
-                          : "bg-[#2A2D3D] text-gray-400"
-                      }`}
-                    ></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-medium text-xs line-clamp-2">
-                        {riddle.name}
+                          ? "Visited"
+                          : "Not Visited"}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-[6px] ml-[22px] text-gray-400 text-xs space-y-[2px]">
-                    <p>Attempts: {riddle.attempts}</p>
-                    <p>
-                      Status:{" "}
-                      {riddle.solved
-                        ? "Solved"
-                        : riddle.visited
-                        ? "Visited"
-                        : "Not Visited"}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );

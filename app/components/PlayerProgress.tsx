@@ -16,6 +16,9 @@ export const PlayerProgress = ({
   const { session } = useSession();
   const { players, fetchDashboardData, error, loading } = useDashboard();
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<number | null>(
+    null
+  );
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
@@ -90,8 +93,9 @@ export const PlayerProgress = ({
     },
   ];
 
-  const handleViewPlayer = (player: any) => {
+  const handleViewPlayer = (player: any, index: number) => {
     setSelectedPlayer(player);
+    setSelectedPlayerIndex(index + 1); // API expects 1-based index
     setShowDetailsDialog(true);
   };
 
@@ -156,7 +160,7 @@ export const PlayerProgress = ({
 
           <tbody>
             {displayPlayers.length > 0 ? (
-              displayPlayers.map((p: any) => (
+              displayPlayers.map((p: any, index: number) => (
                 <tr
                   key={p.id || p.playerId}
                   className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
@@ -181,7 +185,7 @@ export const PlayerProgress = ({
                     <Button
                       variant="neon"
                       className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
-                      onClick={() => handleViewPlayer(p)}
+                      onClick={() => handleViewPlayer(p, index)}
                     >
                       View
                     </Button>
@@ -203,18 +207,21 @@ export const PlayerProgress = ({
       </div>
 
       {/* Player Details Dialog */}
-      {selectedPlayer && (
+      {selectedPlayer && selectedPlayerIndex !== null && (
         <PlayerDetailsDialog
           open={showDetailsDialog}
           onClose={() => {
             setShowDetailsDialog(false);
             setSelectedPlayer(null);
+            setSelectedPlayerIndex(null);
           }}
           playerName={selectedPlayer.name || selectedPlayer.playerName}
           playerEmail={selectedPlayer.email}
           riddleData={getRiddleData(
             selectedPlayer.id || selectedPlayer.playerId
           )}
+          sessionCode={effectiveSessionCode}
+          playerId={selectedPlayerIndex} // Pass numeric index (1, 2, 3, etc.)
         />
       )}
     </div>

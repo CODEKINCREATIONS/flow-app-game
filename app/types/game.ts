@@ -25,3 +25,23 @@ export interface GameState {
   playerProgress: PlayerProgress[];
   videoUrl?: string;
 }
+
+// Player Activity API types
+export interface PlayerStats {
+  playerName: string;
+  boxesSolved: number;
+  boxesVisited: number;
+  totalBoxes: number;
+}
+
+export interface PlayerActivityItem {
+  playerName: string;
+  activeBox: number;
+  attempt: number;
+  solved: "Yes" | "No" | string;
+}
+
+export interface PlayerActivityData {
+  playerStats: PlayerStats;
+  playersProgress: PlayerActivityItem[];
+}
