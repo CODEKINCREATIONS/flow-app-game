@@ -38,6 +38,7 @@ function FacilitatorDashboardWithCodeContent() {
 
   // Track unlock state from dashboard response (persistent across refreshes)
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
+  const [gameSessionId, setGameSessionId] = useState<number | null>(null);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
   const [dashboardPollInterval, setDashboardPollInterval] =
     useState<NodeJS.Timeout | null>(null);
@@ -159,7 +160,12 @@ function FacilitatorDashboardWithCodeContent() {
       // Auto-start timer if session is already unlocked
       start();
     }
-  }, [dashboardData?.sessionUnlocked, start]);
+
+    // Extract gameSessionId from dashboard data
+    if (dashboardData?.gameSessionId) {
+      setGameSessionId(dashboardData.gameSessionId);
+    }
+  }, [dashboardData?.sessionUnlocked, dashboardData?.gameSessionId, start]);
 
   const handleFinish = async () => {
     if (session) {
@@ -305,7 +311,7 @@ function FacilitatorDashboardWithCodeContent() {
           onClose={() => {
             setShowQR(false);
           }}
-          sessionCode={session?.code || session?.id || "demo-session"}
+          gameSessionId={gameSessionId || 0}
         />
 
         {/* Unlock Session Confirmation Dialog */}

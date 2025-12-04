@@ -168,46 +168,43 @@ export const PlayerDetailsDialog = ({
               </div>
             </div>
 
-            {/* Riddle Journey */}
+            {/* Box Activity - From API Data */}
             <div className="mb-[8px]">
               <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
-                Activity
+                Box Activity
               </h3>
               <div className="space-y-[4px]">
-                {riddleData.map((riddle) => (
-                  <div
-                    key={riddle.id}
-                    className="p-[8px] bg-[#1A1C2A] border border-[#23263A] rounded-[10px] hover:border-[#7B61FF] transition-colors"
-                  >
-                    <div className="flex gap-[6px] items-start">
-                      <div
-                        className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-[2px] ${
-                          riddle.solved
-                            ? "bg-[#39FF14] text-[#0D0F1A]"
-                            : riddle.visited
-                            ? "bg-[#FFD60A] text-[#0D0F1A]"
-                            : "bg-[#2A2D3D] text-gray-400"
-                        }`}
-                      ></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium text-xs line-clamp-2">
-                          {riddle.name}
-                        </p>
+                {activityItems && activityItems.length > 0 ? (
+                  activityItems.map((item, index) => (
+                    <div
+                      key={index}
+                      className="p-[8px] bg-[#1A1C2A] border border-[#23263A] rounded-[10px] hover:border-[#7B61FF] transition-colors"
+                    >
+                      <div className="flex gap-[6px] items-start">
+                        <div
+                          className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-[2px] ${
+                            item.solved === "Yes"
+                              ? "bg-lime-400"
+                              : "bg-amber-300"
+                          }`}
+                        ></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white font-medium text-xs">
+                            Box {item.activeBox}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-[6px] ml-[22px] text-gray-400 text-xs space-y-[2px]">
+                        <p>Attempt: {item.attempt}</p>
+                        <p>Status: {item.solved}</p>
                       </div>
                     </div>
-                    <div className="mt-[6px] ml-[22px] text-gray-400 text-xs space-y-[2px]">
-                      <p>Attempts: {riddle.attempts}</p>
-                      <p>
-                        Status:{" "}
-                        {riddle.solved
-                          ? "Solved"
-                          : riddle.visited
-                          ? "Visited"
-                          : "Not Visited"}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-xs text-center py-4">
+                    No activity data available
+                  </p>
+                )}
               </div>
             </div>
           </div>

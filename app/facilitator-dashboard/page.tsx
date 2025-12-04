@@ -39,6 +39,7 @@ function FacilitatorDashboardContent() {
   const [dashboardPollInterval, setDashboardPollInterval] =
     useState<NodeJS.Timeout | null>(null);
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
+  const [gameSessionId, setGameSessionId] = useState<number | null>(null);
 
   // Verify session from query string on component mount
   useEffect(() => {
@@ -121,7 +122,12 @@ function FacilitatorDashboardContent() {
       // Auto-start timer if session is already unlocked
       start();
     }
-  }, [dashboardData?.sessionUnlocked, start]);
+
+    // Extract gameSessionId from dashboard data
+    if (dashboardData?.gameSessionId) {
+      setGameSessionId(dashboardData.gameSessionId);
+    }
+  }, [dashboardData?.sessionUnlocked, dashboardData?.gameSessionId, start]);
 
   const handleFinish = async () => {
     if (session) {
@@ -279,7 +285,7 @@ function FacilitatorDashboardContent() {
           onClose={() => {
             setShowQR(false);
           }}
-          sessionCode={session?.code || session?.id || "demo-session"}
+          gameSessionId={gameSessionId || 0}
         />
 
         {/* Unlock Session Confirmation Dialog */}

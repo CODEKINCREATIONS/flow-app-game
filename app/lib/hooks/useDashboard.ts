@@ -57,6 +57,8 @@ export const useDashboard = () => {
 
         // Extract the dashboard data (gameSession)
         const dashData = (fullData as any)?.gameSession || fullData;
+        console.log("[useDashboard] Dashboard data:", dashData);
+        console.log("[useDashboard] gameSessionId:", dashData?.gameSessionId);
         setDashboardData(dashData as DashboardData);
 
         // Extract players from playersProgress (should be at same level as gameSession)

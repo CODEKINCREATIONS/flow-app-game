@@ -13,21 +13,23 @@ import {
 interface QRCodeModalProps {
   open: boolean;
   onClose: () => void;
-  sessionCode: string;
+  gameSessionId: number;
 }
 
 export default function QRCodeModal({
   open,
   onClose,
-  sessionCode,
+  gameSessionId,
 }: QRCodeModalProps) {
   const [sessionUrl, setSessionUrl] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setSessionUrl(`${window.location.origin}/player?session=${sessionCode}`);
+      setSessionUrl(
+        `${window.location.origin}/playerlogin?sessionId=${gameSessionId}`
+      );
     }
-  }, [sessionCode]);
+  }, [gameSessionId]);
 
   const handleShare = async () => {
     if (navigator.share) {
