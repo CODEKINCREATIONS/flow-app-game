@@ -1,16 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, Input, Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { validators } from "@/app/lib/utils/validators";
+import { gameService } from "@/app/lib/api/services/game";
 
-export default function PlayerLogin() {
+function PlayerLoginContent() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [language, setLanguage] = useState("");
   const [error, setError] = useState("");
-  const { loginPlayer } = useAuth();
+  const [gameSessionId, setGameSessionId] = useState<number | null>(null);
+  const [playerId, setPlayerId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [sessionCode, setSessionCode] = useState<string | null>(null);
+  const { joinGame } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Read sessionId and sessionCode from query parameters
+  useEffect(() => {
+    const sessionId = searchParams?.get("sessionId");
+    const sCode = searchParams?.get("sessionCode");
+    const pId = searchParams?.get("playerId");
+
+    if (sessionId) {
+      const parsedId = parseInt(sessionId, 10);
+      if (!isNaN(parsedId)) {
+        setGameSessionId(parsedId);
+      }
+    }
+    if (sCode) {
+      setSessionCode(sCode);
+    }
+    if (pId) {
+      const parsedPlayerId = parseInt(pId, 10);
+      if (!isNaN(parsedPlayerId)) {
+        setPlayerId(parsedPlayerId);
+      }
+    }
+  }, [searchParams]);
 
   const handleLogin = async () => {
     // Validation
@@ -34,11 +64,46 @@ export default function PlayerLogin() {
       return;
     }
 
-    // Use the auth hook
-    const result = await loginPlayer(name.trim(), email.trim(), language);
+    if (!gameSessionId && !sessionCode) {
+      setError("Game session is required");
+      return;
+    }
 
-    if (!result.success) {
-      setError(result.error || "Failed to login");
+    setIsLoading(true);
+    setError("");
+
+    try {
+      // Validate session exists if sessionCode is provided
+      if (sessionCode) {
+        const dashboardResponse = await gameService.getDashboard(sessionCode);
+        if (!dashboardResponse.success) {
+          setError("Invalid or expired session code. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Generate a temporary player ID if not provided
+      const tempPlayerId = playerId || Math.floor(Math.random() * 1000000) + 1;
+
+      // Call joinGame API directly - it handles player registration and joining
+      const joinResult = await joinGame(
+        tempPlayerId,
+        name.trim(),
+        email.trim(),
+        language,
+        gameSessionId || 0 // Use 0 as fallback, backend will handle it
+      );
+
+      if (!joinResult.success) {
+        setError(joinResult.error || "Failed to join game");
+        setIsLoading(false);
+        return;
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -131,12 +196,12 @@ export default function PlayerLogin() {
             {/* Button Section */}
             <div className="pt-4">
               <Button
-                disabled={false}
+                disabled={isLoading}
                 onClick={handleLogin}
                 className="!text-base sm:!text-lg md:!text-xl py-3 sm:py-3 md:py-4 mt-[20px]"
                 width="w-full"
               >
-                Join Game
+                {isLoading ? "Joining Game..." : "Join Game"}
               </Button>
 
               {error && (
@@ -149,5 +214,13 @@ export default function PlayerLogin() {
         </Card>
       </main>
     </div>
+  );
+}
+
+export default function PlayerLogin() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlayerLoginContent />
+    </Suspense>
   );
 }

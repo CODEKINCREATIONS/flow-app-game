@@ -12,9 +12,19 @@ export const useAuth = () => {
     useAuthStore();
 
   const handlePlayerLogin = useCallback(
-    async (name: string, email: string, language: string) => {
+    async (
+      name: string,
+      email: string,
+      language: string,
+      gameSessionId?: number | null
+    ) => {
       try {
-        const response = await authService.loginPlayer(name, email, language);
+        const response = await authService.loginPlayer(
+          name,
+          email,
+          language,
+          gameSessionId
+        );
         if (response.success && response.data) {
           loginPlayer(response.data);
           router.push("/Game-page");
@@ -63,6 +73,34 @@ export const useAuth = () => {
     [router]
   );
 
+  const handleJoinGame = useCallback(
+    async (
+      playerId: number,
+      name: string,
+      email: string,
+      language: string,
+      gameSessionId: number
+    ) => {
+      try {
+        const response = await authService.joinGame(
+          playerId,
+          name,
+          email,
+          language,
+          gameSessionId
+        );
+        if (response.success && response.data) {
+          loginPlayer(response.data as any);
+          router.push("/game");
+        }
+        return response;
+      } catch (error) {
+        return { success: false, error: "Failed to join game" };
+      }
+    },
+    [loginPlayer, router]
+  );
+
   const handleLogout = useCallback(async () => {
     try {
       await authService.logout();
@@ -76,6 +114,7 @@ export const useAuth = () => {
     role,
     isAuthenticated,
     loginPlayer: handlePlayerLogin,
+    joinGame: handleJoinGame,
     loginFacilitator: handleFacilitatorLogin,
     verifySession: handleVerifySession,
     logout: handleLogout,

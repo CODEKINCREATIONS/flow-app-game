@@ -10,11 +10,17 @@ export const authService = {
   },
 
   // Player login/registration
-  loginPlayer: async (name: string, email: string, language: string) => {
+  loginPlayer: async (
+    name: string,
+    email: string,
+    language: string,
+    gameSessionId?: number | null
+  ) => {
     return apiClient.post<Player>("/api/auth/player", {
       name,
       email,
       language,
+      gameSessionId,
     });
   },
 
@@ -94,6 +100,26 @@ export const authService = {
         data: null,
       };
     }
+  },
+
+  // Join game
+  joinGame: async (
+    playerId: number,
+    name: string,
+    email: string,
+    language: string,
+    gameSessionId: number
+  ) => {
+    const payload = {
+      playerId,
+      name,
+      email,
+      language: language.toUpperCase(),
+      gameSessionId,
+      createdAt: new Date().toISOString(),
+      playerProgresses: null,
+    };
+    return apiClient.post("/api/player/join-game", payload);
   },
 
   // Logout
