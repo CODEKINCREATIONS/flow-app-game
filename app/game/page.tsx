@@ -60,13 +60,12 @@ export default function PlayerGamePage() {
 
             {/* Buttons Container */}
             <div className="flex flex-wrap gap-[20px] w-full px-4 justify-center items-center mt-[60px] mb-[10px]">
-              {/* Unlocked Boxes Button */}
-              <Button
-                variant="primary"
-                className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider !border-[#FFFFFF] !shadow-none !ring-0 hover:!shadow-none hover:!scale-100"
-              >
-                Unlocked: {unlockedChests.length}/16 Boxes
-              </Button>
+              {/* Unlocked Boxes Display */}
+              <div className="border-0 px-[35px] py-[16px] rounded-[0.35rem] text-[#5d3eff] font-['Orbitron'] tracking-wider rounded-xl bg-[#FFFFFF]">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-bold">
+                  Unlocked: {unlockedChests.length}/16 Boxes
+                </span>
+              </div>
 
               {/* Video Button */}
               <Button
