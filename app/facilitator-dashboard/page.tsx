@@ -228,7 +228,7 @@ function FacilitatorDashboardContent() {
       <div
         style={{
           position: "fixed",
-          inset: 0,
+
           width: "100vw",
           height: "100vh",
           backgroundImage: "url('/assets/Background%20img_gme-dashboard.png')",

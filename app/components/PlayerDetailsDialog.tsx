@@ -97,7 +97,7 @@ export const PlayerDetailsDialog = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] p-[40px] bg-[#0D0F1A] border border-[#23263A] text-white shadow-2xl max-w-xs w-[75vw] max-h-[70vh] overflow-y-auto">
+      <DialogContent className="relative rounded-[10px] p-[30px] sm:p-[24px] md:p-[28px] bg-[#0D0F1A] border border-[#23263A] text-white shadow-2xl w-[75vw] sm:w-[90vw] md:w-[80vw] lg:w-[400px] max-h-[85vh] overflow-y-auto\">
         {/* Close Button - Top Right */}
         <X
           onClick={onClose}
@@ -106,8 +106,8 @@ export const PlayerDetailsDialog = ({
 
         {/* Header */}
         <DialogHeader>
-          <div className="mb-[6px]">
-            <div className="text-sm font-extrabold text-white mb-[2px] break-words truncate">
+          <div className="mb-[4px]">
+            <div className="text-xs sm:text-sm font-extrabold text-white mb-[1px] break-words truncate">
               {playerName}
             </div>
             {playerEmail && (
@@ -140,68 +140,78 @@ export const PlayerDetailsDialog = ({
 
         {/* Content */}
         {!isLoading && (
-          <div className="mt-[8px] mb-[8px]">
+          <div className="mt-[12px]">
             {/* Statistics */}
-            <div className="mb-[8px]">
-              <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+            <div className="mb-[16px]">
+              <h3 className="text-xs sm:text-sm font-semibold text-[#7CE3FF] mb-[10px] border-l-4 border-[#7B61FF] pl-[8px]">
                 Statistics
               </h3>
-              <div className="grid grid-cols-3 gap-[6px]">
-                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                  <div className="text-lg font-bold text-[#7B61FF] mb-[4px]">
+              <div className="grid grid-cols-3 gap-[8px] sm:gap-[10px]">
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[8px] p-[10px] sm:p-[12px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-base sm:text-lg font-bold text-[#7B61FF] mb-[4px]">
                     {solvedRiddles}
                   </div>
-                  <p className="text-gray-400 text-xs">Boxes Solved</p>
+                  <p className="text-gray-400 text-xs leading-tight">
+                    Boxes Solved
+                  </p>
                 </div>
-                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                  <div className="text-lg font-bold text-[#3A8DFF] mb-[4px]">
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[8px] p-[10px] sm:p-[12px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-base sm:text-lg font-bold text-[#3A8DFF] mb-[4px]">
                     {visitedRiddles}
                   </div>
-                  <p className="text-gray-400 text-xs">Boxes Visited</p>
+                  <p className="text-gray-400 text-xs leading-tight">
+                    Boxes Visited
+                  </p>
                 </div>
-                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[10px] p-[8px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
-                  <div className="text-lg font-bold text-[#FFD60A] mb-[4px]">
+                <div className="bg-[#1A1C2A] border border-[#23263A] rounded-[8px] p-[10px] sm:p-[12px] text-center hover:border-[#7B61FF] transition-colors cursor-pointer">
+                  <div className="text-base sm:text-lg font-bold text-[#FFD60A] mb-[4px]">
                     {totalRiddles}
                   </div>
-                  <p className="text-gray-400 text-xs">Total Boxes</p>
+                  <p className="text-gray-400 text-xs leading-tight">
+                    Total Boxes
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Box Activity - From API Data */}
-            <div className="mb-[8px]">
-              <h3 className="text-xs font-semibold text-[#7CE3FF] mb-[6px] border-l-4 border-[#7B61FF] pl-[8px]">
+            <div>
+              <h3 className="text-xs sm:text-sm font-semibold text-[#7CE3FF] mb-[10px] border-l-4 border-[#7B61FF] pl-[8px]">
                 Box Activity
               </h3>
-              <div className="space-y-[4px]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-[8px] sm:gap-[10px]">
                 {activityItems && activityItems.length > 0 ? (
                   activityItems.map((item, index) => (
                     <div
                       key={index}
-                      className="p-[8px] bg-[#1A1C2A] border border-[#23263A] rounded-[10px] hover:border-[#7B61FF] transition-colors"
+                      className="bg-[#1A1C2A] border border-[#23263A] rounded-[8px] p-[12px] sm:p-[14px] hover:border-[#7B61FF] transition-colors flex flex-col justify-between min-h-[85px] sm:min-h-[95px]"
                     >
-                      <div className="flex gap-[6px] items-start">
-                        <div
-                          className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-[2px] ${
-                            item.solved === "Yes"
-                              ? "bg-lime-400"
-                              : "bg-amber-300"
-                          }`}
-                        ></div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium text-xs">
-                            Box {item.activeBox}
-                          </p>
-                        </div>
+                      <div className="mb-[6px]">
+                        <p className="text-[#7CE3FF] font-bold text-sm sm:text-base">
+                          Box {item.activeBox}
+                        </p>
                       </div>
-                      <div className="mt-[6px] ml-[22px] text-gray-400 text-xs space-y-[2px]">
+                      <div className="text-gray-400 text-xs space-y-[3px]">
                         <p>Attempt: {item.attempt}</p>
-                        <p>Status: {item.solved}</p>
+                        <p>
+                          <span className="text-white font-semibold">
+                            Status:{" "}
+                          </span>
+                          <span
+                            className={`font-semibold ${
+                              item.solved === "Yes"
+                                ? "text-[#39FF14]"
+                                : "text-[#FFD60A]"
+                            }`}
+                          >
+                            {item.solved}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-xs text-center py-4">
+                  <p className="text-gray-400 text-xs text-center py-6 col-span-2 sm:col-span-3">
                     No activity data available
                   </p>
                 )}

@@ -40,7 +40,7 @@ export const AppHeader = ({
   // Game Mode Header
   if (mode === "game") {
     return (
-      <header className="sticky top-0 z-50 w-full px-[6px] bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
+      <header className="sticky  z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             {/* Left: Player Name */}

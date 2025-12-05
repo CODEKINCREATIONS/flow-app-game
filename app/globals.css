@@ -85,3 +85,20 @@ select:focus {
   box-shadow: 0 0 0 6px rgba(123, 97, 255, 0.12) !important;
   outline: none !important;
 }
+
+/* Custom responsive padding utility */
+.px-\[6px\] {
+  padding-inline: 6px;
+}
+
+@media (min-width: 640px) {
+  .px-\[6px\] {
+    padding-inline: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .px-\[6px\] {
+    padding-inline: 16px;
+  }
+}
