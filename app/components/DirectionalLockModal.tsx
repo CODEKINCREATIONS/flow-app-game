@@ -7,11 +7,13 @@ import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
 import { X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 
+const lockImg = "/assets/locks/Directional_up_down_red.png";
+
 interface DirectionalLockModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (code: string) => void;
-  lockImage: string;
+  lockImage?: string;
 }
 
 const DIRECTION_MAP = {
@@ -75,7 +77,7 @@ export default function DirectionalLockModal({
         <div className="flex justify-center mb-8">
           <div className="relative w-[300px] h-[300px] mx-auto">
             <Image
-              src={lockImage}
+              src={lockImage || lockImg}
               alt="Directional Lock"
               fill
               style={{ objectFit: "contain" }}
@@ -85,7 +87,7 @@ export default function DirectionalLockModal({
             {/* Up Button */}
             <button
               onClick={() => handleDirectionClick("up")}
-              className="absolute top-[150px] left-[150px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
+              className="absolute top-[140px] left-[145px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
               aria-label="Direction Up"
             >
               <ArrowUp size={18} />
@@ -94,7 +96,7 @@ export default function DirectionalLockModal({
             {/* Down Button */}
             <button
               onClick={() => handleDirectionClick("down")}
-              className="absolute bottom-[30px] left-[150px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
+              className="absolute bottom-[20px] left-[145px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
               aria-label="Direction Down"
             >
               <ArrowDown size={18} />
@@ -103,7 +105,7 @@ export default function DirectionalLockModal({
             {/* Left Button */}
             <button
               onClick={() => handleDirectionClick("left")}
-              className="absolute left-[80px] top-[205] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
+              className="absolute left-[70px] top-[205] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
               aria-label="Direction Left"
             >
               <ArrowLeft size={18} />
@@ -112,7 +114,7 @@ export default function DirectionalLockModal({
             {/* Right Button */}
             <button
               onClick={() => handleDirectionClick("right")}
-              className="absolute right-[85px] top-[205px] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
+              className="absolute right-[85px] top-[205px] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
               aria-label="Direction Right"
             >
               <ArrowRight size={18} />
@@ -143,9 +145,6 @@ export default function DirectionalLockModal({
         {/* Action Buttons */}
         <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button onClick={handleSubmit}>Submit Code</Button>
-          <Button onClick={handleClear} variant="white">
-            Clear
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

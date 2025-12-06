@@ -27,19 +27,19 @@ export const LOCK_CONFIGURATIONS: LockConfig[] = [
   {
     box: 4,
     type: "directional",
-    image: "/assets/locks/Directional_red.png",
+    image: "/assets/locks/Directional_up_down_red.png",
     directionalVariant: "red",
   },
   {
     box: 5,
     type: "directional",
-    image: "/assets/locks/Directional_red.png",
+    image: "/assets/locks/Directional_up_down_red.png",
     directionalVariant: "red",
   },
   {
     box: 6,
     type: "directional",
-    image: "/assets/locks/Directional_red.png",
+    image: "/assets/locks/Directional_up_down_red.png",
     directionalVariant: "red",
   },
 
