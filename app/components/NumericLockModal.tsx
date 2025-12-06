@@ -91,7 +91,7 @@ export default function CodeEntryModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[30px] border border-[#1E2144] text-white shadow-2xl text-center w-[420px]">
+      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
         <div className="flex justify-end mb-8 px-2">
           <X
             onClick={onClose}
@@ -153,7 +153,7 @@ export default function CodeEntryModal({
             {error}
           </div>
         )}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-[30px]">
           <Button
             onClick={handleSubmit}
             className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6"

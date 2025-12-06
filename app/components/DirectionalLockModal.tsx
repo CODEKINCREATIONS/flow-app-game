@@ -63,7 +63,7 @@ export default function DirectionalLockModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[30px] border border-[#1E2144] text-white shadow-2xl text-center w-[420px]">
+      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
         <div className="flex justify-end mb-8 px-2">
           <X
             onClick={onClose}
@@ -85,7 +85,7 @@ export default function DirectionalLockModal({
             {/* Up Button */}
             <button
               onClick={() => handleDirectionClick("up")}
-              className="absolute top-[150px] left-[150px] transform -translate-x-1/2 bg-transparent hover:bg-transparent text-transparent p-2 rounded-lg shadow-none transition-transform duration-300 hover:scale-110 opacity-0"
+              className="absolute top-[150px] left-[150px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
               aria-label="Direction Up"
             >
               <ArrowUp size={18} />
@@ -94,7 +94,7 @@ export default function DirectionalLockModal({
             {/* Down Button */}
             <button
               onClick={() => handleDirectionClick("down")}
-              className="absolute bottom-[30px] left-[150px] transform -translate-x-1/2 bg-transparent hover:bg-transparent text-transparent p-2 rounded-lg shadow-none transition-transform duration-300 hover:scale-110 opacity-0"
+              className="absolute bottom-[30px] left-[150px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
               aria-label="Direction Down"
             >
               <ArrowDown size={18} />
@@ -103,7 +103,7 @@ export default function DirectionalLockModal({
             {/* Left Button */}
             <button
               onClick={() => handleDirectionClick("left")}
-              className="absolute left-[80px] top-[205] transform -translate-y-1/2 bg-transparent hover:bg-transparent text-transparent p-2 rounded-lg shadow-none transition-transform duration-300 hover:scale-110 opacity-0"
+              className="absolute left-[80px] top-[205] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
               aria-label="Direction Left"
             >
               <ArrowLeft size={18} />
@@ -112,7 +112,7 @@ export default function DirectionalLockModal({
             {/* Right Button */}
             <button
               onClick={() => handleDirectionClick("right")}
-              className="absolute right-[85px] top-[205px] transform -translate-y-1/2 bg-transparent hover:bg-transparent text-transparent p-2 rounded-lg shadow-none transition-transform duration-300 hover:scale-110 opacity-0"
+              className="absolute right-[85px] top-[205px] transform -translate-y-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110"
               aria-label="Direction Right"
             >
               <ArrowRight size={18} />
@@ -122,7 +122,7 @@ export default function DirectionalLockModal({
 
         {/* Input Display */}
         <div className="mb-[15px] flex justify-center">
-          <div className="w-[250px]">
+          <div className="w-[300px]">
             <Input
               type="text"
               value={input}
@@ -135,13 +135,13 @@ export default function DirectionalLockModal({
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-500 text-sm font-semibold mb-4 text-center">
+          <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
             {error}
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-[5px] ">
+        <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button onClick={handleSubmit}>Submit Code</Button>
           <Button onClick={handleClear} variant="white">
             Clear
