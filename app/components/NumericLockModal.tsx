@@ -6,7 +6,7 @@ import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import { X, Info } from "lucide-react";
 
-const lockImg = "/assets/lock.png";
+const lockImg = "/assets/locks/Lock_ Numeric.png";
 const DIAL_COLORS = ["red", "yellow", "blue", "green"];
 const DIAL_BG_COLORS = ["#701618", "#4db650", "#d8ca4b", "#6289cb"];
 const DIAL_START = [7, 7, 7, 7];
@@ -15,12 +15,14 @@ interface CodeEntryModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (code: string) => void;
+  lockImage?: string;
 }
 
 export default function CodeEntryModal({
   open,
   onClose,
   onSubmit,
+  lockImage,
 }: CodeEntryModalProps) {
   const [dials, setDials] = useState(DIAL_START);
   const [error, setError] = useState("");
@@ -100,7 +102,7 @@ export default function CodeEntryModal({
         <div className="flex justify-center mb-8">
           <div className="relative w-[300px] h-[300px] mx-auto">
             <Image
-              src={lockImg}
+              src={lockImage || lockImg}
               alt="Lock"
               fill
               style={{ objectFit: "contain" }}

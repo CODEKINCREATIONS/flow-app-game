@@ -6,9 +6,18 @@ import { Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import Image from "next/image";
 import { Video, Check, HelpCircle } from "lucide-react";
-import CodeEntryModal from "@/app/components/CodeEntryModal";
+import NumericLockModal from "@/app/components/NumericLockModal";
+import DirectionalLockModal from "@/app/components/DirectionalLockModal";
+import WordLockModal from "@/app/components/WordLockModal";
+import NumericV1Modal from "@/app/components/NumericV1Modal";
+import NumericV2Modal from "@/app/components/NumericV2Modal";
+import WordMLModal from "@/app/components/WordMLModal";
 import VideoDialog from "@/app/components/VideoDialog";
 import ProgressBar from "@/app/components/ProgressBar";
+import {
+  getLockImageForBox,
+  getLockTypeForBox,
+} from "@/app/lib/config/lockConfig";
 
 export default function PlayerGamePage() {
   const [selectedChest, setSelectedChest] = useState<number | null>(null);
@@ -191,14 +200,71 @@ export default function PlayerGamePage() {
               ))}
             </div>
 
-            {/* Code Entry Modal */}
-            {selectedChest !== null && (
-              <CodeEntryModal
-                open={selectedChest !== null}
-                onClose={() => setSelectedChest(null)}
-                onSubmit={handleSubmitCode}
-              />
-            )}
+            {/* Lock Modals - Render based on lock type */}
+            {selectedChest !== null &&
+              (() => {
+                const lockType = getLockTypeForBox(selectedChest);
+                const lockImage = getLockImageForBox(selectedChest);
+
+                switch (lockType) {
+                  case "numeric":
+                    return (
+                      <NumericLockModal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  case "directional":
+                    return (
+                      <DirectionalLockModal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  case "numericV1":
+                    return (
+                      <NumericV1Modal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  case "word":
+                    return (
+                      <WordLockModal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  case "numericV2":
+                    return (
+                      <NumericV2Modal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  case "wordML":
+                    return (
+                      <WordMLModal
+                        open={true}
+                        onClose={() => setSelectedChest(null)}
+                        onSubmit={handleSubmitCode}
+                        lockImage={lockImage}
+                      />
+                    );
+                  default:
+                    return null;
+                }
+              })()}
 
             {/* Video Dialog */}
             <VideoDialog
