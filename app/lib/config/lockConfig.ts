@@ -19,9 +19,9 @@ interface LockConfig {
 
 export const LOCK_CONFIGURATIONS: LockConfig[] = [
   // Numeric locks (Box 1-3)
-  { box: 1, type: "numeric", image: "/assets/locks/Lock_ Numeric.png" },
-  { box: 2, type: "numeric", image: "/assets/locks/Lock_ Numeric.png" },
-  { box: 3, type: "numeric", image: "/assets/locks/Lock_ Numeric.png" },
+  { box: 1, type: "numeric", image: "/assets/locks/NumericLock.png" },
+  { box: 2, type: "numeric", image: "/assets/locks/NumericLock.png" },
+  { box: 3, type: "numeric", image: "/assets/locks/NumericLock.png" },
 
   // Directional locks (Box 4-6)
   {
@@ -50,7 +50,7 @@ export const LOCK_CONFIGURATIONS: LockConfig[] = [
   { box: 15, type: "numericV1", image: "/assets/locks/NumericV1.png" },
 
   // Word lock (Box 9)
-  { box: 9, type: "word", image: "/assets/locks/Word.png" },
+  { box: 9, type: "word", image: "/assets/locks/WORDLOCK.png" },
 
   // NumericV2 locks (Box 10, 11, 12, 14)
   { box: 10, type: "numericV2", image: "/assets/locks/NumericV2.png" },
@@ -59,7 +59,7 @@ export const LOCK_CONFIGURATIONS: LockConfig[] = [
   { box: 14, type: "numericV2", image: "/assets/locks/NumericV2.png" },
 
   // WordML lock (Box 16)
-  { box: 16, type: "wordML", image: "/assets/locks/WordML.png" },
+  { box: 16, type: "wordML", image: "/assets/locks/WordMLLOCK.png" },
 ];
 
 /**
@@ -74,7 +74,7 @@ export function getLockConfigForBox(boxIndex: number): LockConfig | undefined {
  */
 export function getLockImageForBox(boxIndex: number): string {
   const config = getLockConfigForBox(boxIndex);
-  return config?.image || "/assets/locks/Lock_ Numeric.png"; // Default fallback
+  return config?.image || "/assets/locks/NumericLock.png"; // Default fallback
 }
 
 /**

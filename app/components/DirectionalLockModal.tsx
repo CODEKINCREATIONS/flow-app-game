@@ -4,8 +4,14 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import Input from "@/app/components/ui/Input";
-import { X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  X,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  Delete,
+} from "lucide-react";
 
 const lockImg = "/assets/locks/Directional_up_down_red.png";
 
@@ -122,17 +128,9 @@ export default function DirectionalLockModal({
           </div>
         </div>
 
-        {/* Input Display */}
-        <div className="mb-[15px] flex justify-center">
-          <div className="w-[300px]">
-            <Input
-              type="text"
-              value={input}
-              readOnly
-              onKeyDown={handleKeyDown}
-              placeholder="Enter Code"
-            />
-          </div>
+        {/* Selected Code Display */}
+        <div className="text-center mb-4 px-4">
+          <p className="text-base font-bold text-[#FFFFFF]">{input}</p>
         </div>
 
         {/* Error Message */}
@@ -145,6 +143,14 @@ export default function DirectionalLockModal({
         {/* Action Buttons */}
         <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button onClick={handleSubmit}>Submit Code</Button>
+          <Button
+            onClick={() => setInput((prev) => prev.slice(0, -1))}
+            disabled={input.length === 0}
+            variant="danger"
+            className="w-10 h-10 p-0 text-[#ffffff] "
+          >
+            <Delete size={24} />
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

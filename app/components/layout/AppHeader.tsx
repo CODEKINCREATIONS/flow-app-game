@@ -90,18 +90,18 @@ export const AppHeader = ({
                 alt="Flow Logo"
                 width={80}
                 height={80}
-                className="h-16 w-16 sm:h-20 sm:w-20 object-contain mr-[10px] pl-[5px]"
+                className="h-16 w-16 sm:h-20 sm:w-20 object-contain  pl-[5px]"
               />
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white truncate whitespace-nowrap">
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white truncate whitespace-nowrap">
                 Dashboard
-              </h1>
+              </h2>
             </div>
 
             {/* Timer and Custom Actions */}
             <div className="flex items-center">
               {/* Timer */}
               {showTimer && (
-                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap mr-[10px]">
+                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap ">
                   <Clock className="text-purple-400 w-4 h-4 sm:w-5 sm:h-5 mr-[5px]" />
                   <span className="font-mono text-xs sm:text-sm md:text-base text-gray-100">
                     {formatted}

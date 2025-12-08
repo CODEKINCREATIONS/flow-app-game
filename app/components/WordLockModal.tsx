@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X } from "lucide-react";
+import { X, Delete } from "lucide-react";
 
 interface WordLockModalProps {
   open: boolean;
@@ -13,20 +13,130 @@ interface WordLockModalProps {
   lockImage: string;
 }
 
+const ALPHABETS = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+];
+const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+// Column configuration: 1=alphabets, 2=alphabets, 3=alphabets, 4=alphabets, 5=alphabets
+const COLUMN_DATA = [
+  { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 1: Alphabets
+  { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 2: Alphabets
+  { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 3: Alphabets
+  { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 4: Alphabets
+  { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 5: Alphabets
+];
+
 export default function WordLockModal({
   open,
   onClose,
   onSubmit,
   lockImage,
 }: WordLockModalProps) {
+  const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [selectedValues, setSelectedValues] = useState<string[]>([
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+  ]);
+
+  const handleScroll = (columnIdx: number, e: React.WheelEvent) => {
+    e.preventDefault();
+
+    setScrollOffsets((prev) => {
+      const newOffsets = [...prev];
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const columnData = COLUMN_DATA[columnIdx];
+      let newOffset = newOffsets[columnIdx] + direction;
+
+      // Wrap around
+      if (newOffset < 0) {
+        newOffset = columnData.data.length - 1;
+      } else if (newOffset >= columnData.data.length) {
+        newOffset = 0;
+      }
+
+      newOffsets[columnIdx] = newOffset;
+      setSelectedValues((prevValues) => {
+        const newValues = [...prevValues];
+        newValues[columnIdx] = columnData.data[newOffset];
+        return newValues;
+      });
+
+      return newOffsets;
+    });
+  };
+
+  const handleButtonClick = (columnIdx: number, rowIdx: number) => {
+    setScrollOffsets((prev) => {
+      const newOffsets = [...prev];
+      const columnData = COLUMN_DATA[columnIdx];
+      let baseIndex = newOffsets[columnIdx];
+      let valueIndex =
+        (baseIndex + rowIdx - 1 + columnData.data.length) %
+        columnData.data.length;
+
+      newOffsets[columnIdx] = valueIndex;
+      setSelectedValues((prevValues) => {
+        const newValues = [...prevValues];
+        newValues[columnIdx] = columnData.data[valueIndex];
+        return newValues;
+      });
+
+      return newOffsets;
+    });
+  };
+
+  const getVisibleValues = (columnIdx: number): string[] => {
+    const offset = scrollOffsets[columnIdx];
+    const columnData = COLUMN_DATA[columnIdx];
+    const visible: string[] = [];
+
+    for (let i = -1; i <= 1; i++) {
+      const idx =
+        (offset + i + columnData.data.length) % columnData.data.length;
+      visible.push(columnData.data[idx]);
+    }
+
+    return visible;
+  };
+
   const handleSubmit = () => {
-    onSubmit("word");
+    const code = selectedValues.join("");
+    onSubmit(code);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
+      <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
         <div className="flex justify-end mb-8 px-2">
           <X
             onClick={onClose}
@@ -34,7 +144,7 @@ export default function WordLockModal({
           />
         </div>
 
-        {/* Lock Image */}
+        {/* Lock Image with Overlay Picker */}
         <div className="flex justify-center mb-8">
           <div className="relative w-[300px] h-[300px] mx-auto">
             <Image
@@ -44,16 +154,116 @@ export default function WordLockModal({
               style={{ objectFit: "contain" }}
               priority
             />
+
+            {/* Overlay Scrollable Picker - 5 columns */}
+            <div className="absolute left-[91px] top-[165px] flex gap-[0px]">
+              {[0, 1, 2, 3, 4].map((colIdx) => {
+                const visibleValues = getVisibleValues(colIdx);
+                const columnData = COLUMN_DATA[colIdx];
+                return (
+                  <div
+                    key={colIdx}
+                    className="flex flex-col gap-1 items-center"
+                    onWheel={(e) => handleScroll(colIdx, e)}
+                  >
+                    {/* Top spacer (before first visible value) */}
+                    <button
+                      onClick={() => handleButtonClick(colIdx, 0)}
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-4 border-[#201f2a] ${
+                        colIdx === 0 ? "rounded-tl-[2px]" : ""
+                      } ${colIdx === 4 ? "rounded-tr-[2px]" : ""}`}
+                      style={{
+                        backgroundColor: columnData.color,
+                        color: "white",
+                        paddingTop: "2px",
+                        paddingBottom: "2px",
+                        paddingLeft: "8px",
+                        paddingRight: "8px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {visibleValues[0]}
+                    </button>
+
+                    {/* Middle row - focused/selected */}
+                    <button
+                      onClick={() => handleButtonClick(colIdx, 1)}
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg opacity-100 transition-all transform scale-105 border-4 border-[#201f2a]"
+                      style={{
+                        backgroundColor: columnData.color,
+                        color: "white",
+                        paddingTop: "2px",
+                        paddingBottom: "2px",
+                        paddingLeft: "8px",
+                        paddingRight: "8px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {visibleValues[1]}
+                    </button>
+
+                    {/* Bottom spacer (after second visible value) */}
+                    <button
+                      onClick={() => handleButtonClick(colIdx, 2)}
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-4 border-[#201f2a] ${
+                        colIdx === 0 ? "rounded-bl-[1px]" : ""
+                      } ${colIdx === 4 ? "rounded-br-[1px]" : ""}`}
+                      style={{
+                        backgroundColor: columnData.color,
+                        color: "white",
+                        paddingTop: "2px",
+                        paddingBottom: "2px",
+                        paddingLeft: "8px",
+                        paddingRight: "8px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {visibleValues[2]}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center mb-[30px]">
+        {/* Selected Code Display */}
+        <div className="text-center mb-4 px-4">
+          <p className="text-base font-bold text-[#FFFFFF]">
+            {selectedValues.join("")}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button
             onClick={handleSubmit}
-            className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6"
+            className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Submit Code
+          </Button>
+          <Button
+            onClick={() => {
+              const newValues = [...selectedValues];
+              const defaultValues = ["A", "A", "A", "A", "A"];
+              for (let i = newValues.length - 1; i >= 0; i--) {
+                if (newValues[i] !== defaultValues[i]) {
+                  newValues[i] = defaultValues[i];
+                  setSelectedValues(newValues);
+                  // Reset scroll offset for this column
+                  setScrollOffsets((prev) => {
+                    const newOffsets = [...prev];
+                    newOffsets[i] = 0;
+                    return newOffsets;
+                  });
+                  break;
+                }
+              }
+            }}
+            variant="danger"
+            className="w-10 h-10 p-0 text-[#FFFFFF]"
+          >
+            <Delete size={30} />
           </Button>
         </div>
       </DialogContent>

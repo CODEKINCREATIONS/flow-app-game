@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X } from "lucide-react";
+import { X, Delete } from "lucide-react";
 
 interface WordMLModalProps {
   open: boolean;
@@ -156,7 +156,7 @@ export default function WordMLModal({
             />
 
             {/* Overlay Scrollable Picker - 5 columns */}
-            <div className="absolute left-[110px] top-[159px] flex gap-1">
+            <div className="absolute left-[91px] top-[150px] flex gap-1">
               {[0, 1, 2, 3, 4].map((colIdx) => {
                 const visibleValues = getVisibleValues(colIdx);
                 const columnData = COLUMN_DATA[colIdx];
@@ -169,7 +169,7 @@ export default function WordMLModal({
                     {/* Top spacer (before first visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 0)}
-                      className="w-[8px] h-[27px] flex items-center justify-center text-xs font-bold rounded-lg transition-all border-2 border-[#4e972f]"
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg transition-all border-4 border-[#4e972f]"
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
@@ -177,6 +177,7 @@ export default function WordMLModal({
                         paddingBottom: "2px",
                         paddingLeft: "8px",
                         paddingRight: "8px",
+                        fontWeight: 700,
                       }}
                     >
                       {visibleValues[0]}
@@ -185,7 +186,7 @@ export default function WordMLModal({
                     {/* Middle row - focused/selected */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 1)}
-                      className="w-[8px] h-[27px] flex items-center justify-center text-xs font-bold rounded-lg opacity-100 transition-all transform scale-105 border-2 border-[#4e972f]"
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg opacity-100 transition-all transform scale-105 border-4 border-[#4e972f]"
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
@@ -193,6 +194,7 @@ export default function WordMLModal({
                         paddingBottom: "2px",
                         paddingLeft: "8px",
                         paddingRight: "8px",
+                        fontWeight: 700,
                       }}
                     >
                       {visibleValues[1]}
@@ -201,7 +203,7 @@ export default function WordMLModal({
                     {/* Bottom spacer (after second visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 2)}
-                      className="w-[8px] h-[27px] flex items-center justify-center text-xs font-bold rounded-lg transition-all border-2 border-[#4e972f]"
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg transition-all border-4 border-[#4e972f]"
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
@@ -209,6 +211,7 @@ export default function WordMLModal({
                         paddingBottom: "2px",
                         paddingLeft: "8px",
                         paddingRight: "8px",
+                        fontWeight: 700,
                       }}
                     >
                       {visibleValues[2]}
@@ -222,18 +225,41 @@ export default function WordMLModal({
 
         {/* Selected Code Display */}
         <div className="text-center mb-4 px-4">
-          <p className="text-base font-bold text-[#7B61FF]">
+          <p className="text-base font-bold text-[#FFFFFF]">
             {selectedValues.join("")}
           </p>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center mb-[30px] px-4">
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button
             onClick={handleSubmit}
-            className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6"
+            className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Submit Code
+          </Button>
+          <Button
+            onClick={() => {
+              const newValues = [...selectedValues];
+              const defaultValues = ["A", "0", "A", "A", "0"];
+              for (let i = newValues.length - 1; i >= 0; i--) {
+                if (newValues[i] !== defaultValues[i]) {
+                  newValues[i] = defaultValues[i];
+                  setSelectedValues(newValues);
+                  // Reset scroll offset for this column
+                  setScrollOffsets((prev) => {
+                    const newOffsets = [...prev];
+                    newOffsets[i] = 0;
+                    return newOffsets;
+                  });
+                  break;
+                }
+              }
+            }}
+            variant="danger"
+            className="w-10 h-10 p-0 text-[#FFFFFF]"
+          >
+            <Delete size={30} />
           </Button>
         </div>
       </DialogContent>
