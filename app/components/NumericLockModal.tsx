@@ -129,7 +129,7 @@ export default function CodeEntryModal({
 
         {/* Lock Image with Overlay Picker */}
         <div className="flex justify-center mb-8">
-          <div className="relative w-[300px] h-[300px] mx-auto">
+          <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
             <Image
               src={lockImage || lockImg}
               alt="Numeric Lock"
@@ -238,11 +238,6 @@ export default function CodeEntryModal({
         </div>
 
         {/* Selected Code Display */}
-        <div className="text-center mb-4 px-4">
-          <p className="text-base font-bold text-[#FFFFFF]">
-            {selectedValues.join("")}
-          </p>
-        </div>
 
         {/* Error Message */}
         {error && (
@@ -254,22 +249,6 @@ export default function CodeEntryModal({
         {/* Action Buttons */}
         <div className="flex justify-center gap-[5px] mb-[30px]">
           <Button onClick={handleSubmit}>Submit Code</Button>
-          <Button
-            onClick={() => {
-              const newValues = [...selectedValues];
-              for (let i = newValues.length - 1; i >= 0; i--) {
-                if (newValues[i] !== "0") {
-                  newValues[i] = "0";
-                  setSelectedValues(newValues);
-                  break;
-                }
-              }
-            }}
-            variant="danger"
-            className="w-10 h-10 p-0 text-[#FFFFFF]"
-          >
-            <Delete size={30} />
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

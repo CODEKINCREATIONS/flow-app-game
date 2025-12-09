@@ -146,7 +146,7 @@ export default function WordLockModal({
 
         {/* Lock Image with Overlay Picker */}
         <div className="flex justify-center mb-8">
-          <div className="relative w-[300px] h-[300px] mx-auto">
+          <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
             <Image
               src={lockImage}
               alt="Word Lock"
@@ -222,11 +222,6 @@ export default function WordLockModal({
         </div>
 
         {/* Selected Code Display */}
-        <div className="text-center mb-4 px-4">
-          <p className="text-base font-bold text-[#FFFFFF]">
-            {selectedValues.join("")}
-          </p>
-        </div>
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-[5px] mb-[30px]">
@@ -235,29 +230,6 @@ export default function WordLockModal({
             className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Submit Code
-          </Button>
-          <Button
-            onClick={() => {
-              const newValues = [...selectedValues];
-              const defaultValues = ["A", "A", "A", "A", "A"];
-              for (let i = newValues.length - 1; i >= 0; i--) {
-                if (newValues[i] !== defaultValues[i]) {
-                  newValues[i] = defaultValues[i];
-                  setSelectedValues(newValues);
-                  // Reset scroll offset for this column
-                  setScrollOffsets((prev) => {
-                    const newOffsets = [...prev];
-                    newOffsets[i] = 0;
-                    return newOffsets;
-                  });
-                  break;
-                }
-              }
-            }}
-            variant="danger"
-            className="w-10 h-10 p-0 text-[#FFFFFF]"
-          >
-            <Delete size={30} />
           </Button>
         </div>
       </DialogContent>
