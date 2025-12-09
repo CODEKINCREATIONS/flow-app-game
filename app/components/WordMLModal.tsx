@@ -1,10 +1,50 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import { X, Delete } from "lucide-react";
+
+// Custom styles for button decorative properties
+const buttonStylesBase = {
+  fontFamily: "'Eurostile', 'Microgramma', 'Arial Black', 'Impact', sans-serif",
+  fontStretch: "condensed" as const,
+  letterSpacing: "-0.5px",
+  textShadow:
+    "2px 2px 0px rgba(0, 0, 0, 0.6), -1px -1px 0px rgba(255, 255, 255, 0.3), 3px 3px 5px rgba(0, 0, 0, 0.5)",
+};
+
+const buttonTop = {
+  ...buttonStylesBase,
+  boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
+  border: "4px solid transparent",
+  borderLeftColor: "#4e972f",
+  borderRightColor: "#4e972f",
+  borderBottomColor: "#4e972f",
+  borderTopColor: "transparent",
+  borderTop: "2px solid #b2c8a8",
+};
+
+const buttonMiddle = {
+  ...buttonStylesBase,
+  boxShadow:
+    "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
+  borderLeftColor: "#3d7a23",
+  borderRightColor: "#3d7a23",
+  borderBottomColor: "#b7ceadff",
+  borderTopColor: "#b7ceadff",
+};
+
+const buttonBottom = {
+  ...buttonStylesBase,
+  border: "4px solid transparent",
+  borderLeftColor: "#4e972f",
+  borderRightColor: "#4e972f",
+  borderTopColor: "#4e972f",
+  borderBottomColor: "#4e972f",
+  borderBottom: "2px solid #b2c8a8",
+};
 
 interface WordMLModalProps {
   open: boolean;
@@ -51,6 +91,12 @@ const COLUMN_DATA = [
   { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 4: Alphabets
   { type: "numbers", data: NUMBERS, color: "#56a128" }, // Col 5: Numbers
 ];
+
+// Tailwind color utilities
+const buttonColor = "bg-[#56a128]";
+const buttonBorderColor = "border-[#4e972f]";
+const buttonBorderColorDark = "border-[#3d7a23]";
+const buttonBorderColorLight = "border-[#b7ceadff]";
 
 export default function WordMLModal({
   open,
@@ -136,7 +182,7 @@ export default function WordMLModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
+      <DialogContent className="relative rounded-[10px] bg-black p-1.5 border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
         <div className="flex justify-end mb-8 px-2">
           <X
             onClick={onClose}
@@ -149,35 +195,33 @@ export default function WordMLModal({
           <div className="relative w-[300px] h-[300px] mx-auto">
             <Image
               src={lockImage}
-              alt="WordML Lock"
+              alt="Word Lock"
               fill
-              style={{ objectFit: "contain" }}
+              className="object-contain"
               priority
             />
 
             {/* Overlay Scrollable Picker - 5 columns */}
-            <div className="absolute left-[91px] top-[150px] flex gap-1">
+            <div className="absolute left-[90px] top-[146px] flex gap-px">
               {[0, 1, 2, 3, 4].map((colIdx) => {
                 const visibleValues = getVisibleValues(colIdx);
                 const columnData = COLUMN_DATA[colIdx];
                 return (
                   <div
                     key={colIdx}
-                    className="flex flex-col gap-1 items-center"
+                    className="flex flex-col gap-px items-center tap-transparent"
                     onWheel={(e) => handleScroll(colIdx, e)}
                   >
                     {/* Top spacer (before first visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 0)}
-                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg transition-all border-4 border-[#4e972f]"
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-b-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-t-[10px] text-[22px] uppercase outline-none tap-transparent shadow-lg ${
+                        colIdx === 0 ? "rounded-tl-[10px]" : ""
+                      } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
-                        fontWeight: 700,
+                        ...buttonTop,
                       }}
                     >
                       {visibleValues[0]}
@@ -186,15 +230,11 @@ export default function WordMLModal({
                     {/* Middle row - focused/selected */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 1)}
-                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg opacity-100 transition-all transform scale-105 border-4 border-[#4e972f]"
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs transition-all transform scale-105 border-4 rounded py-0.5 px-1.5 font-black text-[22px] uppercase outline-none tap-transparent border-[#3d7a23]"
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
-                        fontWeight: 700,
+                        ...buttonMiddle,
                       }}
                     >
                       {visibleValues[1]}
@@ -203,15 +243,13 @@ export default function WordMLModal({
                     {/* Bottom spacer (after second visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 2)}
-                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg transition-all border-4 border-[#4e972f]"
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-b-[10px] text-[22px] uppercase outline-none tap-transparent my-0.5 ${
+                        colIdx === 0 ? "rounded-bl-[10px]" : ""
+                      } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
                       style={{
                         backgroundColor: columnData.color,
                         color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
-                        fontWeight: 700,
+                        ...buttonBottom,
                       }}
                     >
                       {visibleValues[2]}
@@ -225,13 +263,13 @@ export default function WordMLModal({
 
         {/* Selected Code Display */}
         <div className="text-center mb-4 px-4">
-          <p className="text-base font-bold text-[#FFFFFF]">
+          <p className="text-base font-bold text-white">
             {selectedValues.join("")}
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-[5px] mb-[30px]">
+        <div className="flex justify-center gap-1 mb-7.5">
           <Button
             onClick={handleSubmit}
             className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"

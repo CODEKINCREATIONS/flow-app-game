@@ -156,29 +156,27 @@ export default function WordLockModal({
             />
 
             {/* Overlay Scrollable Picker - 5 columns */}
-            <div className="absolute left-[91px] top-[165px] flex gap-[0px]">
+            <div className="absolute left-[91px] top-[165px] flex gap-[0.5px]">
               {[0, 1, 2, 3, 4].map((colIdx) => {
                 const visibleValues = getVisibleValues(colIdx);
                 const columnData = COLUMN_DATA[colIdx];
                 return (
                   <div
                     key={colIdx}
-                    className="flex flex-col gap-1 items-center"
+                    className="flex flex-col gap-[1px] items-center"
                     onWheel={(e) => handleScroll(colIdx, e)}
                   >
                     {/* Top spacer (before first visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 0)}
-                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-4 border-[#201f2a] ${
-                        colIdx === 0 ? "rounded-tl-[2px]" : ""
-                      } ${colIdx === 4 ? "rounded-tr-[2px]" : ""}`}
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[22px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
+                        colIdx === 0 ? "rounded-tl-[10px]" : ""
+                      } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
                       style={{
                         backgroundColor: columnData.color,
-                        color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
+                        fontFamily:
+                          "'Condensed', 'Arial Condensed', sans-serif",
+                        boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
                         fontWeight: 700,
                       }}
                     >
@@ -188,14 +186,13 @@ export default function WordLockModal({
                     {/* Middle row - focused/selected */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 1)}
-                      className="w-[27px] h-[43px] flex items-center justify-center text-xs rounded-lg opacity-100 transition-all transform scale-105 border-4 border-[#201f2a]"
+                      className="w-[27px] h-[43px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[22px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
                       style={{
                         backgroundColor: columnData.color,
-                        color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
+                        fontFamily:
+                          "'Condensed', 'Arial Condensed', sans-serif",
+                        boxShadow:
+                          "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
                         fontWeight: 700,
                       }}
                     >
@@ -205,16 +202,13 @@ export default function WordLockModal({
                     {/* Bottom spacer (after second visible value) */}
                     <button
                       onClick={() => handleButtonClick(colIdx, 2)}
-                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-4 border-[#201f2a] ${
-                        colIdx === 0 ? "rounded-bl-[1px]" : ""
-                      } ${colIdx === 4 ? "rounded-br-[1px]" : ""}`}
+                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[22px] py-[2px] px-2 text-[#ffffff] ${
+                        colIdx === 0 ? "rounded-bl-[10px]" : ""
+                      } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
                       style={{
                         backgroundColor: columnData.color,
-                        color: "white",
-                        paddingTop: "2px",
-                        paddingBottom: "2px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
+                        fontFamily:
+                          "'Condensed', 'Arial Condensed', sans-serif",
                         fontWeight: 700,
                       }}
                     >
