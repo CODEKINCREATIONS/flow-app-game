@@ -23,6 +23,9 @@ export default function PlayerGamePage() {
   const [selectedChest, setSelectedChest] = useState<number | null>(null);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
   const [unlockedChests, setUnlockedChests] = useState<number[]>([]);
+  const [submittedCodes, setSubmittedCodes] = useState<{
+    [key: number]: string;
+  }>({});
   const { user, isPlayer } = useAuth();
 
   const handleSubmitCode = (code: string) => {
@@ -34,6 +37,12 @@ export default function PlayerGamePage() {
       }
       return prev;
     });
+
+    // Store the submitted code
+    setSubmittedCodes((prev) => ({
+      ...prev,
+      [selectedChest]: code,
+    }));
   };
 
   const playerName =
@@ -43,11 +52,8 @@ export default function PlayerGamePage() {
     <>
       {/* Full-viewport background (covers header too) */}
       <div
+        className="fixed w-screen h-screen bg-cover bg-center bg-no-repeat -z-10"
         style={{
-          position: "fixed",
-
-          width: "100vw",
-          height: "100vh",
           backgroundImage: "url('/assets/Background%20img_gme-dashboard.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -176,25 +182,41 @@ export default function PlayerGamePage() {
                     </div>
                   )}
                   {unlockedChests.includes(index) && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "-8px",
-                        right: "-8px",
-                        width: "56px",
-                        height: "56px",
-                        backgroundColor: "#22c55e",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        zIndex: 10,
-                        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
-                        border: "3px solid #16a34a",
-                      }}
-                    >
-                      <Check size={40} className="text-white" strokeWidth={4} />
-                    </div>
+                    <>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "-8px",
+                          right: "-8px",
+                          width: "56px",
+                          height: "56px",
+                          backgroundColor: "#22c55e",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 10,
+                          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+                          border: "3px solid #16a34a",
+                        }}
+                      >
+                        <Check
+                          size={40}
+                          className="text-white"
+                          strokeWidth={4}
+                        />
+                      </div>
+                      <div className="absolute bottom-[15px] right-[15px] z-50">
+                        <div className="rounded-[5px] px-[3px] py-[3px] bg-[#00D9FF]">
+                          <span
+                            className="text-[#FFFFFF] text-xl sm:text-2xl font-black tracking-widest drop-shadow-lg"
+                            style={{ fontWeight: 900 }}
+                          >
+                            {submittedCodes[index] || "N/A"}
+                          </span>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               ))}

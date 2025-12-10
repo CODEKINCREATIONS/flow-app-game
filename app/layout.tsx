@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { TimerProvider } from "@/app/lib/context/TimerContext";
 
@@ -34,6 +35,12 @@ export default function RootLayout({
         } as any
       }
     >
+      <head>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className="bg-background text-textPrimary font-orbitron">
         <TimerProvider>{children}</TimerProvider>
       </body>

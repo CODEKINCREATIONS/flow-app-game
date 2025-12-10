@@ -44,10 +44,14 @@ export const LOCK_CONFIGURATIONS: LockConfig[] = [
   },
 
   // NumericV1 locks (Box 7, 8, 13, 15)
-  { box: 7, type: "numericV1", image: "/assets/locks/NumericV1.png" },
-  { box: 8, type: "numericV1", image: "/assets/locks/NumericV1.png" },
-  { box: 13, type: "numericV1", image: "/assets/locks/NumericV1.png" },
-  { box: 15, type: "numericV1", image: "/assets/locks/NumericV1.png" },
+  {
+    box: 7,
+    type: "numericV1",
+    image: "/assets/locks/NumericV1 (2).png",
+  },
+  { box: 8, type: "numericV1", image: "/assets/locks/NumericV1 (2).png" },
+  { box: 13, type: "numericV1", image: "/assets/locks/NumericV1 (2).png" },
+  { box: 15, type: "numericV1", image: "/assets/locks/NumericV1 (2).png" },
 
   // Word lock (Box 9)
   { box: 9, type: "word", image: "/assets/locks/WORDLOCK.png" },

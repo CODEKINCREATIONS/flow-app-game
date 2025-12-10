@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import { X, Delete } from "lucide-react";
+import { triggerDialogConfetti } from "../lib/utils/confetti";
 
 interface WordLockModalProps {
   open: boolean;
@@ -52,12 +53,16 @@ const COLUMN_DATA = [
   { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 5: Alphabets
 ];
 
+const lockImg = "/assets/locks/WORDLOCK.png";
+const unlockImg = "/assets/locks/WordLock2-unlocked.png";
+
 export default function WordLockModal({
   open,
   onClose,
   onSubmit,
   lockImage,
 }: WordLockModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0, 0]);
   const [selectedValues, setSelectedValues] = useState<string[]>([
     "A",
@@ -66,6 +71,22 @@ export default function WordLockModal({
     "A",
     "A",
   ]);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  const [showCountdown, setShowCountdown] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showCountdown && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (showCountdown && countdown === 0) {
+      onClose();
+      setIsUnlocked(false);
+      setCountdown(5);
+      setShowCountdown(false);
+    }
+    return () => clearTimeout(timer);
+  }, [showCountdown, countdown, onClose]);
 
   const handleScroll = (columnIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -130,109 +151,123 @@ export default function WordLockModal({
 
   const handleSubmit = () => {
     const code = selectedValues.join("");
+    triggerDialogConfetti(dialogRef.current);
+    setIsUnlocked(true);
+    setShowCountdown(true);
     onSubmit(code);
-    onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
-        <div className="flex justify-end mb-8 px-2">
-          <X
-            onClick={onClose}
-            className="w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"
-          />
-        </div>
-
-        {/* Lock Image with Overlay Picker */}
-        <div className="flex justify-center mb-8">
-          <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
-            <Image
-              src={lockImage}
-              alt="Word Lock"
-              fill
-              style={{ objectFit: "contain" }}
-              priority
+      <div ref={dialogRef}>
+        <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
+          {showCountdown && (
+            <div className="absolute top-10 left-6 text-sm font-bold text-[#dc2626]">
+              {countdown}s
+            </div>
+          )}
+          <div className="flex justify-end mb-8 px-2 relative">
+            <div
+              className={`absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-r from-[#7B61FF] to-[#6A50DD] rounded-full ${
+                isUnlocked ? "animate-pulse" : ""
+              }`}
             />
+            <X
+              onClick={onClose}
+              className="relative z-10 w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"
+            />
+          </div>
 
-            {/* Overlay Scrollable Picker - 5 columns */}
-            <div className="absolute left-[91px] top-[165px] flex gap-[0.5px]">
-              {[0, 1, 2, 3, 4].map((colIdx) => {
-                const visibleValues = getVisibleValues(colIdx);
-                const columnData = COLUMN_DATA[colIdx];
-                return (
-                  <div
-                    key={colIdx}
-                    className="flex flex-col gap-[1px] items-center"
-                    onWheel={(e) => handleScroll(colIdx, e)}
-                  >
-                    {/* Top spacer (before first visible value) */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 0)}
-                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[22px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
-                        colIdx === 0 ? "rounded-tl-[10px]" : ""
-                      } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
-                      style={{
-                        backgroundColor: columnData.color,
-                        fontFamily:
-                          "'Condensed', 'Arial Condensed', sans-serif",
-                        boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {visibleValues[0]}
-                    </button>
+          {/* Lock Image with Overlay Picker */}
+          <div className="flex justify-center mb-8">
+            <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
+              <Image
+                src={isUnlocked ? unlockImg : lockImage || lockImg}
+                alt="Word Lock"
+                fill
+                style={{ objectFit: "contain" }}
+                priority
+              />
 
-                    {/* Middle row - focused/selected */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 1)}
-                      className="w-[27px] h-[43px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[22px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
-                      style={{
-                        backgroundColor: columnData.color,
-                        fontFamily:
-                          "'Condensed', 'Arial Condensed', sans-serif",
-                        boxShadow:
-                          "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
-                        fontWeight: 700,
-                      }}
+              {/* Overlay Scrollable Picker - 5 columns */}
+              <div className="absolute left-[91px] top-[165px] flex gap-[0.5px]">
+                {[0, 1, 2, 3, 4].map((colIdx) => {
+                  const visibleValues = getVisibleValues(colIdx);
+                  const columnData = COLUMN_DATA[colIdx];
+                  return (
+                    <div
+                      key={colIdx}
+                      className="flex flex-col gap-[1px] items-center"
+                      onWheel={(e) => handleScroll(colIdx, e)}
                     >
-                      {visibleValues[1]}
-                    </button>
+                      {/* Top spacer (before first visible value) */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 0)}
+                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
+                          colIdx === 0 ? "rounded-tl-[10px]" : ""
+                        } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
+                        style={{
+                          backgroundColor: columnData.color,
+                          fontFamily:
+                            "'Condensed', 'Arial Condensed', sans-serif",
+                          boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {visibleValues[0]}
+                      </button>
 
-                    {/* Bottom spacer (after second visible value) */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 2)}
-                      className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[22px] py-[2px] px-2 text-[#ffffff] ${
-                        colIdx === 0 ? "rounded-bl-[10px]" : ""
-                      } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
-                      style={{
-                        backgroundColor: columnData.color,
-                        fontFamily:
-                          "'Condensed', 'Arial Condensed', sans-serif",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {visibleValues[2]}
-                    </button>
-                  </div>
-                );
-              })}
+                      {/* Middle row - focused/selected */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 1)}
+                        className="w-[27px] h-[43px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
+                        style={{
+                          backgroundColor: columnData.color,
+                          fontFamily:
+                            "'Condensed', 'Arial Condensed', sans-serif",
+                          boxShadow:
+                            "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {visibleValues[1]}
+                      </button>
+
+                      {/* Bottom spacer (after second visible value) */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 2)}
+                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
+                          colIdx === 0 ? "rounded-bl-[10px]" : ""
+                        } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
+                        style={{
+                          backgroundColor: columnData.color,
+                          fontFamily:
+                            "'Condensed', 'Arial Condensed', sans-serif",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {visibleValues[2]}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Selected Code Display */}
+          {/* Selected Code Display */}
 
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-[5px] mb-[30px]">
-          <Button
-            onClick={handleSubmit}
-            className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-          >
-            Submit Code
-          </Button>
-        </div>
-      </DialogContent>
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-[5px] mb-[30px]">
+            <Button
+              onClick={handleSubmit}
+              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            >
+              Submit Code
+            </Button>
+          </div>
+        </DialogContent>
+      </div>
     </Dialog>
   );
 }

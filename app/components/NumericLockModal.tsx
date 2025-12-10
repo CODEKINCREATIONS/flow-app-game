@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import { X, Delete, Weight } from "lucide-react";
+import { triggerDialogConfetti } from "../lib/utils/confetti";
 
 const lockImg = "/assets/locks/NumericLock.png";
+const unlockImg = "/assets/locks/NumericLock-unlocked.png";
 const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 // Column configuration: 4 columns with original dial colors and darker borders
@@ -30,6 +32,7 @@ export default function CodeEntryModal({
   onSubmit,
   lockImage,
 }: CodeEntryModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0]);
   const [selectedValues, setSelectedValues] = useState<string[]>([
     "0",
@@ -38,6 +41,22 @@ export default function CodeEntryModal({
     "0",
   ]);
   const [error, setError] = useState("");
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  const [showCountdown, setShowCountdown] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showCountdown && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (showCountdown && countdown === 0) {
+      onClose();
+      setIsUnlocked(false);
+      setCountdown(5);
+      setShowCountdown(false);
+    }
+    return () => clearTimeout(timer);
+  }, [showCountdown, countdown, onClose]);
 
   const handleScroll = (columnIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -105,11 +124,11 @@ export default function CodeEntryModal({
   const handleSubmit = () => {
     const code = selectedValues.join("");
     if (code === "1234") {
-      setSelectedValues(["0", "0", "0", "0"]);
-      setScrollOffsets([0, 0, 0, 0]);
+      triggerDialogConfetti(dialogRef.current);
+      setIsUnlocked(true);
+      setShowCountdown(true);
       setError("");
       onSubmit(code);
-      onClose();
     } else {
       setError("Incorrect code. Try again.");
       setSelectedValues(["0", "0", "0", "0"]);
@@ -119,138 +138,151 @@ export default function CodeEntryModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] bg-[#12142A] p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
-        <div className="flex justify-end mb-8 px-2">
-          <X
-            onClick={onClose}
-            className="w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"
-          />
-        </div>
-
-        {/* Lock Image with Overlay Picker */}
-        <div className="flex justify-center mb-8">
-          <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
-            <Image
-              src={lockImage || lockImg}
-              alt="Numeric Lock"
-              fill
-              style={{ objectFit: "contain" }}
-              priority
+      <div ref={dialogRef}>
+        <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
+          {showCountdown && (
+            <div className="absolute top-10 left-6 text-sm font-bold text-[#dc2626]">
+              {countdown}s
+            </div>
+          )}
+          <div className="flex justify-end mb-8 px-2 relative">
+            <div
+              className={`absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-r from-[#7B61FF] to-[#6A50DD] rounded-full ${
+                isUnlocked ? "animate-pulse" : ""
+              }`}
             />
+            <X
+              onClick={onClose}
+              className="relative z-10 w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"
+            />
+          </div>
 
-            {/* Overlay Scrollable Picker - 4 columns */}
-            <div className="absolute left-[102px] top-[178px] flex gap-[1px]">
-              {[0, 1, 2, 3].map((colIdx) => {
-                const visibleValues = getVisibleValues(colIdx);
-                const columnData = COLUMN_DATA[colIdx];
-                return (
-                  <div
-                    key={colIdx}
-                    className="flex flex-col gap-1 items-center"
-                    onWheel={(e) => handleScroll(colIdx, e)}
-                  >
-                    {/* Top spacer (before first visible value) */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 0)}
-                      className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
-                      style={{
-                        backgroundColor: columnData.color,
-                        border: `4px solid ${columnData.borderColor}`,
-                        borderTop: "4px solid " + columnData.color,
-                        borderLeft:
-                          colIdx === 0
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        borderRight:
-                          colIdx === 3
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        borderTopLeftRadius: colIdx === 0 ? "8px" : undefined,
-                        borderTopRightRadius: colIdx === 3 ? "8px" : undefined,
-                        fontWeight: 900,
-                        fontSize: "20px",
-                        paddingTop: "4px",
-                        paddingBottom: "4px",
-                        paddingLeft: "10px",
-                        paddingRight: "10px",
-                      }}
-                    >
-                      {visibleValues[0]}
-                    </button>
+          {/* Lock Image with Overlay Picker */}
+          <div className="flex justify-center mb-8">
+            <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
+              <Image
+                src={isUnlocked ? unlockImg : lockImage || lockImg}
+                alt="Numeric Lock"
+                fill
+                style={{ objectFit: "contain" }}
+                priority
+              />
 
-                    {/* Middle row - focused/selected */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 1)}
-                      className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg opacity-100 transition-all transform scale-105"
-                      style={{
-                        backgroundColor: columnData.color,
-                        border: `4px solid ${columnData.borderColor}`,
-                        borderLeft:
-                          colIdx === 0
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        borderRight:
-                          colIdx === 3
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        fontWeight: 900,
-                        fontSize: "20px",
-                        paddingTop: "4px",
-                        paddingBottom: "4px",
-                        paddingLeft: "10px",
-                        paddingRight: "10px",
-                      }}
+              {/* Overlay Scrollable Picker - 4 columns */}
+              <div className="absolute left-[102px] top-[178px] flex gap-[1px]">
+                {[0, 1, 2, 3].map((colIdx) => {
+                  const visibleValues = getVisibleValues(colIdx);
+                  const columnData = COLUMN_DATA[colIdx];
+                  return (
+                    <div
+                      key={colIdx}
+                      className="flex flex-col gap-1 items-center"
+                      onWheel={(e) => handleScroll(colIdx, e)}
                     >
-                      {visibleValues[1]}
-                    </button>
+                      {/* Top spacer (before first visible value) */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 0)}
+                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
+                        style={{
+                          backgroundColor: columnData.color,
+                          border: `4px solid ${columnData.borderColor}`,
+                          borderTop: "4px solid " + columnData.color,
+                          borderLeft:
+                            colIdx === 0
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          borderRight:
+                            colIdx === 3
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          borderTopLeftRadius: colIdx === 0 ? "8px" : undefined,
+                          borderTopRightRadius:
+                            colIdx === 3 ? "8px" : undefined,
+                          fontWeight: 900,
+                          fontSize: "25px",
+                          paddingTop: "4px",
+                          paddingBottom: "4px",
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                        }}
+                      >
+                        {visibleValues[0]}
+                      </button>
 
-                    {/* Bottom spacer (after second visible value) */}
-                    <button
-                      onClick={() => handleButtonClick(colIdx, 2)}
-                      className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
-                      style={{
-                        backgroundColor: columnData.color,
-                        border: `4px solid ${columnData.borderColor}`,
-                        borderBottom: "4px solid " + columnData.color,
-                        borderLeft:
-                          colIdx === 0
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        borderRight:
-                          colIdx === 3
-                            ? "none"
-                            : `4px solid ${columnData.borderColor}`,
-                        fontWeight: 900,
-                        fontSize: "20px",
-                        paddingTop: "4px",
-                        paddingBottom: "4px",
-                        paddingLeft: "10px",
-                        paddingRight: "10px",
-                      }}
-                    >
-                      {visibleValues[2]}
-                    </button>
-                  </div>
-                );
-              })}
+                      {/* Middle row - focused/selected */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 1)}
+                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg opacity-100 transition-all transform scale-105"
+                        style={{
+                          backgroundColor: columnData.color,
+                          border: `4px solid ${columnData.borderColor}`,
+                          borderLeft:
+                            colIdx === 0
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          borderRight:
+                            colIdx === 3
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          fontWeight: 900,
+                          fontSize: "29px",
+                          paddingTop: "4px",
+                          paddingBottom: "4px",
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                        }}
+                      >
+                        {visibleValues[1]}
+                      </button>
+
+                      {/* Bottom spacer (after second visible value) */}
+                      <button
+                        onClick={() => handleButtonClick(colIdx, 2)}
+                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
+                        style={{
+                          backgroundColor: columnData.color,
+                          border: `4px solid ${columnData.borderColor}`,
+                          borderBottom: "4px solid " + columnData.color,
+                          borderLeft:
+                            colIdx === 0
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          borderRight:
+                            colIdx === 3
+                              ? "none"
+                              : `4px solid ${columnData.borderColor}`,
+                          fontWeight: 900,
+                          fontSize: "25px",
+                          paddingTop: "4px",
+                          paddingBottom: "4px",
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                        }}
+                      >
+                        {visibleValues[2]}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Selected Code Display */}
+          {/* Selected Code Display */}
 
-        {/* Error Message */}
-        {error && (
-          <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
-            {error}
+          {/* Error Message */}
+          {error && !isUnlocked && (
+            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-[5px] mb-[30px]">
+            <Button onClick={handleSubmit}>Submit Code</Button>
           </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-[5px] mb-[30px]">
-          <Button onClick={handleSubmit}>Submit Code</Button>
-        </div>
-      </DialogContent>
+        </DialogContent>
+      </div>
     </Dialog>
   );
 }

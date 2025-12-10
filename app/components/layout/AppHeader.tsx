@@ -82,26 +82,26 @@ export const AppHeader = ({
     return (
       <header className="sticky top-0 z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5">
-          <div className="flex flex-row items-center justify-between">
-            {/* Left: Dashboard Title with Logo */}
-            <div className="flex items-center gap-3 sm:gap-4">
-              <Image
-                src="/assets/Logo_flow.png"
-                alt="Flow Logo"
-                width={80}
-                height={80}
-                className="h-16 w-16 sm:h-20 sm:w-20 object-contain  pl-[5px]"
-              />
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white truncate whitespace-nowrap">
-                Dashboard
-              </h2>
-            </div>
+          <div className="flex items-center justify-between">
+            {/* Left: Logo */}
+            <Image
+              src="/assets/Logo_flow.png"
+              alt="Flow Logo"
+              width={80}
+              height={80}
+              className="h-16 w-16 sm:h-20 sm:w-20 object-contain pl-[5px] flex-shrink-0"
+            />
 
-            {/* Timer and Custom Actions */}
-            <div className="flex items-center">
+            {/* Center: Dashboard Title */}
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white flex-1 text-center">
+              Dashboard
+            </h2>
+
+            {/* Right: Timer and Custom Actions */}
+            <div className="flex items-center gap-2 flex-shrink-0">
               {/* Timer */}
               {showTimer && (
-                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap ">
+                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap">
                   <Clock className="text-purple-400 w-4 h-4 sm:w-5 sm:h-5 mr-[5px]" />
                   <span className="font-mono text-xs sm:text-sm md:text-base text-gray-100">
                     {formatted}
