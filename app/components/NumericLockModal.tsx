@@ -7,7 +7,7 @@ import Button from "@/app/components/ui/Button";
 import { X, Delete, Weight } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
-const lockImg = "/assets/locks/NumericLock.png";
+const lockImg = "/assets/locks/NumericLock-locked.png";
 const unlockImg = "/assets/locks/NumericLock-unlocked.png";
 const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
@@ -44,6 +44,17 @@ export default function CodeEntryModal({
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setIsUnlocked(false);
+      setCountdown(5);
+      setShowCountdown(false);
+      setScrollOffsets([0, 0, 0, 0]);
+      setSelectedValues(["0", "0", "0", "0"]);
+      setError("");
+    }
+  }, [open]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -159,7 +170,7 @@ export default function CodeEntryModal({
 
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
-            <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
+            <div className="relative mb-[30px] w-[350px] h-[350px] mx-auto">
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Numeric Lock"
@@ -169,7 +180,7 @@ export default function CodeEntryModal({
               />
 
               {/* Overlay Scrollable Picker - 4 columns */}
-              <div className="absolute left-[102px] top-[178px] flex gap-[1px]">
+              <div className="absolute left-[125px] top-[225px] flex gap-[1px]">
                 {[0, 1, 2, 3].map((colIdx) => {
                   const visibleValues = getVisibleValues(colIdx);
                   const columnData = COLUMN_DATA[colIdx];
@@ -182,7 +193,7 @@ export default function CodeEntryModal({
                       {/* Top spacer (before first visible value) */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 0)}
-                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
+                        className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
                         style={{
                           backgroundColor: columnData.color,
                           border: `4px solid ${columnData.borderColor}`,
@@ -199,11 +210,6 @@ export default function CodeEntryModal({
                           borderTopRightRadius:
                             colIdx === 3 ? "8px" : undefined,
                           fontWeight: 900,
-                          fontSize: "25px",
-                          paddingTop: "4px",
-                          paddingBottom: "4px",
-                          paddingLeft: "10px",
-                          paddingRight: "10px",
                         }}
                       >
                         {visibleValues[0]}
@@ -212,7 +218,7 @@ export default function CodeEntryModal({
                       {/* Middle row - focused/selected */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 1)}
-                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg opacity-100 transition-all transform scale-105"
+                        className="w-[28px] h-[40px] flex items-center justify-center text-[29px] font-extrabold rounded-lg opacity-100 transition-all transform scale-105 p-[10px]"
                         style={{
                           backgroundColor: columnData.color,
                           border: `4px solid ${columnData.borderColor}`,
@@ -225,11 +231,6 @@ export default function CodeEntryModal({
                               ? "none"
                               : `4px solid ${columnData.borderColor}`,
                           fontWeight: 900,
-                          fontSize: "29px",
-                          paddingTop: "4px",
-                          paddingBottom: "4px",
-                          paddingLeft: "10px",
-                          paddingRight: "10px",
                         }}
                       >
                         {visibleValues[1]}
@@ -238,7 +239,7 @@ export default function CodeEntryModal({
                       {/* Bottom spacer (after second visible value) */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 2)}
-                        className="w-[27px] h-[39px] flex items-center justify-center text-lg font-extrabold rounded-lg transition-all"
+                        className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
                         style={{
                           backgroundColor: columnData.color,
                           border: `4px solid ${columnData.borderColor}`,
@@ -251,12 +252,11 @@ export default function CodeEntryModal({
                             colIdx === 3
                               ? "none"
                               : `4px solid ${columnData.borderColor}`,
+                          borderBottomLeftRadius:
+                            colIdx === 0 ? "8px" : undefined,
+                          borderBottomRightRadius:
+                            colIdx === 3 ? "8px" : undefined,
                           fontWeight: 900,
-                          fontSize: "25px",
-                          paddingTop: "4px",
-                          paddingBottom: "4px",
-                          paddingLeft: "10px",
-                          paddingRight: "10px",
                         }}
                       >
                         {visibleValues[2]}

@@ -99,8 +99,8 @@ const buttonBorderColor = "border-[#4e972f]";
 const buttonBorderColorDark = "border-[#3d7a23]";
 const buttonBorderColorLight = "border-[#b7ceadff]";
 
-const lockImg = "/assets/locks/WordMLLOCK.png";
-const unlockImg = "/assets/locks/WordLock-unlockedML.png";
+const lockImg = "/assets/locks/WordMLLock-locked.png";
+const unlockImg = "/assets/locks/WordMLLock-unlocked.png";
 
 export default function WordMLModal({
   open,
@@ -226,7 +226,7 @@ export default function WordMLModal({
 
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
-            <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
+            <div className="relative mb-[30px] w-[350px] h-[350px] mx-auto">
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Word ML Lock"
@@ -236,7 +236,7 @@ export default function WordMLModal({
               />
 
               {/* Overlay Scrollable Picker - 5 columns */}
-              <div className="absolute left-[90px] top-[146px] flex gap-px">
+              <div className="absolute left-[113px] top-[197px] flex gap-px">
                 {[0, 1, 2, 3, 4].map((colIdx) => {
                   const visibleValues = getVisibleValues(colIdx);
                   const columnData = COLUMN_DATA[colIdx];

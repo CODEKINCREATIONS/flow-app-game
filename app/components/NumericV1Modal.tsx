@@ -7,8 +7,8 @@ import Button from "@/app/components/ui/Button";
 import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
-const lockImg = "/assets/locks/NumericV1Modal.png";
-const unlockImg = "/assets/locks/NumericV1Modal.png";
+const lockImg = "/assets/locks/NumericV1-Locked.png";
+const unlockImg = "/assets/locks/NumericV1-Unlocked.png";
 
 interface NumericV1ModalProps {
   open: boolean;
@@ -146,9 +146,9 @@ export default function NumericV1Modal({
 
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
-            <div className="relative mb-[30px] w-[300px] h-[300px] mx-auto">
+            <div className="relative mb-[30px] w-[350px] h-[350px] mx-auto">
               <Image
-                src={lockImage}
+                src={isUnlocked ? unlockImg : lockImage}
                 alt="NumericV1 Lock"
                 fill
                 style={{ objectFit: "contain" }}
@@ -156,7 +156,7 @@ export default function NumericV1Modal({
               />
 
               {/* Overlay Scrollable Picker - 3 rows horizontal layout */}
-              <div className="absolute top-[190px] left-[140px] flex flex-col gap-[0px]">
+              <div className="absolute top-[204px] left-[190px] flex flex-col gap-[1px]">
                 {[0, 1, 2].map((rowIdx) => {
                   const visibleValues = getVisibleValues(rowIdx);
                   const rowData = ROW_DATA[rowIdx];
@@ -169,11 +169,12 @@ export default function NumericV1Modal({
                       {/* Left spacer (before first visible value) */}
                       <button
                         onClick={() => handleButtonClick(rowIdx, 0)}
-                        className={`h-[20px] w-[22px] flex items-center justify-center text-xs transition-all border-t-[1px] border-b-[1px] border-l-[2px] border-r-[2px] border-t-[#666666] border-b-[#333333] border-l-[#555555] border-r-[#555555] text-[12px] mb-[6px] py-[2px] px-0 rounded-l-[3px]`}
+                        className={`h-[24px] w-[27px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#faf8f9] border-b-[#faf8f9] border-l-[#666570] border-r-[#606060] text-[16px] mb-[7px] py-[2px] px-0 rounded-l-[5px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)]`}
                         style={{
-                          backgroundColor: "#b8b8b8",
+                          fontWeight: 700,
+                          fontFamily: '"Orbitron", sans-serif',
                           backgroundImage:
-                            "linear-gradient(135deg, #d0d0d0 0%, #999999 100%)",
+                            "linear-gradient(135deg, #ffffff 0%, #494949ff 20%, #b8b8b8 50%, #909090 80%, #c0c0c0 100%)",
                         }}
                       >
                         {visibleValues[0]}
@@ -182,11 +183,12 @@ export default function NumericV1Modal({
                       {/* Middle row - focused/selected */}
                       <button
                         onClick={() => handleButtonClick(rowIdx, 1)}
-                        className="h-[20px] w-[22px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 text-[12px] py-[2px] px-0 border-t-[1px] border-b-[1px] border-l-[2px] border-r-[2px] border-t-[#666666] border-b-[#333333] mb-[6px] border-l-[#555555] border-r-[#555555]"
+                        className="h-[24px] w-[27px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 text-[20px] py-[2px] px-0 border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#faf8f9] border-b-[#faf8f9] mb-[7px] border-l-[#f0f0f0] border-r-[#505050] shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),inset_-1px_-1px_3px_rgba(0,0,0,0.5),0_3px_6px_rgba(0,0,0,0.4)]"
                         style={{
-                          backgroundColor: "#b8b8b8",
+                          fontWeight: 700,
+                          fontFamily: '"Orbitron", sans-serif',
                           backgroundImage:
-                            "linear-gradient(135deg, #d0d0d0 0%, #999999 100%)",
+                            "linear-gradient(135deg, #ffffff 0%, #f0f0f0ff 15%, #c8c8c8 45%, #a8a8a8 75%, #d0d0d0 100%)",
                         }}
                       >
                         {visibleValues[1]}
@@ -195,11 +197,12 @@ export default function NumericV1Modal({
                       {/* Right spacer (after second visible value) */}
                       <button
                         onClick={() => handleButtonClick(rowIdx, 2)}
-                        className={`h-[20px] w-[22px] flex items-center justify-center text-xs transition-all border-t-[1px] border-b-[1px] border-r-[2px] border-l-[2px] border-t-[#666666] border-b-[#333333] border-l-[#555555] border-r-[#555555] mb-[6px] text-[12px] py-[2px] px-0 rounded-r-[3px]`}
+                        className={`h-[24px] w-[27px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-r-[3px] border-l-[2px] border-t-[#faf8f9] border-b-[#faf8f9] border-l-[#606060] border-r-[#666570] mb-[7px] text-[16px] py-[2px] px-0 rounded-r-[7px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)]`}
                         style={{
-                          backgroundColor: "#b8b8b8",
+                          fontWeight: 700,
+                          fontFamily: '"Orbitron", sans-serif',
                           backgroundImage:
-                            "linear-gradient(135deg, #d0d0d0 0%, #999999 100%)",
+                            "linear-gradient(135deg, #ffffff 0%, #494949ff 20%, #b8b8b8 50%, #909090 80%, #c0c0c0 100%)",
                         }}
                       >
                         {visibleValues[2]}

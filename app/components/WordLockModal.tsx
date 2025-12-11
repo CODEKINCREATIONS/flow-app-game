@@ -53,8 +53,8 @@ const COLUMN_DATA = [
   { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 5: Alphabets
 ];
 
-const lockImg = "/assets/locks/WORDLOCK.png";
-const unlockImg = "/assets/locks/WordLock2-unlocked.png";
+const lockImg = "/assets/locks/WordLock-locked.png";
+const unlockImg = "/assets/locks/WordLock-unlocked.png";
 
 export default function WordLockModal({
   open,
@@ -190,7 +190,7 @@ export default function WordLockModal({
               />
 
               {/* Overlay Scrollable Picker - 5 columns */}
-              <div className="absolute left-[91px] top-[165px] flex gap-[0.5px]">
+              <div className="absolute left-[94px] top-[179px] flex gap-[0.5px]">
                 {[0, 1, 2, 3, 4].map((colIdx) => {
                   const visibleValues = getVisibleValues(colIdx);
                   const columnData = COLUMN_DATA[colIdx];
@@ -203,7 +203,7 @@ export default function WordLockModal({
                       {/* Top spacer (before first visible value) */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 0)}
-                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
+                        className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
                           colIdx === 0 ? "rounded-tl-[10px]" : ""
                         } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
                         style={{
@@ -220,7 +220,7 @@ export default function WordLockModal({
                       {/* Middle row - focused/selected */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 1)}
-                        className="w-[27px] h-[43px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
+                        className="w-[25px] h-[40px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
                         style={{
                           backgroundColor: columnData.color,
                           fontFamily:
@@ -236,7 +236,7 @@ export default function WordLockModal({
                       {/* Bottom spacer (after second visible value) */}
                       <button
                         onClick={() => handleButtonClick(colIdx, 2)}
-                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
+                        className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
                           colIdx === 0 ? "rounded-bl-[10px]" : ""
                         } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
                         style={{
