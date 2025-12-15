@@ -36,11 +36,6 @@ export const sessionService = {
     return apiClient.get<Player[]>(`/api/sessions/${sessionId}/players`);
   },
 
-  // Generate QR code for session
-  getQRCode: async (sessionId: string) => {
-    return apiClient.get<string>(`/api/sessions/${sessionId}/qr`);
-  },
-
   // End session
   endSession: async (sessionId: string) => {
     return apiClient.post(`/api/sessions/${sessionId}/end`);

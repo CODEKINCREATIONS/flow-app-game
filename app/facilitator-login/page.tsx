@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, Input, Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { useState } from "react";
@@ -61,10 +62,13 @@ export default function FacilitatorLogin() {
         {/* Title Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center bg-[#1A1C2A] rounded-full w-[145px] h-[145px] mb-4">
-            <img
+            <Image
               src="/assets/Logo_flow.png"
               alt="Flow Logo"
-              className="w-[115px] h-[115px] object-contain"
+              width={115}
+              height={115}
+              className="object-contain"
+              priority
             />
           </div>
           <p className="text-gray-300 mb-9 text-xl">Facilitator Login</p>

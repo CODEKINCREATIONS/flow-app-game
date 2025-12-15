@@ -1,4 +1,4 @@
-// Get dashboard data for a session
+// Get game progress for a session
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/app/lib/config/env";
 
@@ -13,8 +13,11 @@ export async function GET(
     const resolvedParams = await Promise.resolve(params);
     const sessionCode = resolvedParams.sessionCode;
 
-    console.log("Dashboard API - session code:", sessionCode);
-    console.log("Backend URL base:", env.SESSION_VERIFICATION_URL);
+    console.log("[GameProgress API] session code:", sessionCode);
+    console.log(
+      "[GameProgress API] Backend URL base:",
+      env.SESSION_VERIFICATION_URL
+    );
 
     if (!sessionCode) {
       return NextResponse.json(
@@ -24,50 +27,37 @@ export async function GET(
     }
 
     // Call the Azure backend endpoint
-    // Try with path parameter first
-    let backendUrl = `${
+    const backendUrl = `${
       env.SESSION_VERIFICATION_URL
-    }/Dashboard/GetDashboard/${encodeURIComponent(sessionCode)}`;
+    }/GameProgress/GetGameProgress/${encodeURIComponent(sessionCode)}`;
 
-    console.log("Calling backend URL (method 1 - path param):", backendUrl);
+    console.log("[GameProgress API] Calling backend URL:", backendUrl);
 
-    let response = await fetch(backendUrl, {
+    const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    // If first attempt fails with 400, try with query parameter
-    if (response.status === 400) {
-      backendUrl = `${
-        env.SESSION_VERIFICATION_URL
-      }/Dashboard/GetDashboard?sessionCode=${encodeURIComponent(sessionCode)}`;
-
-      console.log("Trying method 2 - query param:", backendUrl);
-
-      response = await fetch(backendUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
-
-    console.log("Backend response status:", response.status);
+    console.log("[GameProgress API] Backend response status:", response.status);
 
     let data;
     try {
       data = await response.json();
     } catch (e) {
-      console.error("Failed to parse response as JSON:", e);
+      console.error("[GameProgress API] Failed to parse response as JSON:", e);
       data = { message: "Failed to parse backend response" };
     }
 
-    console.log("Backend response data:", data);
+    console.log("[GameProgress API] Backend response data:", data);
 
     if (!response.ok) {
-      console.error("Backend returned non-200 status:", response.status, data);
+      console.error(
+        "[GameProgress API] Backend returned non-200 status:",
+        response.status,
+        data
+      );
       return NextResponse.json(
         {
           message: data.message || `Backend error: ${response.statusText}`,
@@ -76,9 +66,10 @@ export async function GET(
       );
     }
 
+    // Return the data directly - the API client will wrap it with success: true
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Dashboard API error:", error);
+    console.error("[GameProgress API] Error:", error);
     return NextResponse.json(
       {
         success: false,

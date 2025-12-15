@@ -1,6 +1,5 @@
 // Authentication API service
 import { apiClient } from "../client";
-import { env } from "@/app/lib/config/env";
 import type { Player, Facilitator } from "@/app/types/auth";
 
 export const authService = {

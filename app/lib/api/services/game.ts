@@ -4,6 +4,7 @@ import type {
   Chest,
   PlayerProgress,
   PlayerActivityData,
+  GameProgressResponse,
 } from "@/app/types/game";
 
 export const gameService = {
@@ -19,12 +20,18 @@ export const gameService = {
     );
   },
 
-  // Unlock a chest
-  unlockChest: async (chestId: number, playerId: string, code: string) => {
-    return apiClient.post(`/api/game/chests/unlock`, {
-      playerId,
-      chestId,
-      code,
+  // Unlock a chest with password verification
+  unlockChest: async (
+    sessionCode: string,
+    boxID: number,
+    password: string,
+    playerId?: number
+  ) => {
+    return apiClient.post(`/api/game/unlock`, {
+      sessionCode,
+      boxID,
+      password,
+      playerId: playerId || 0,
     });
   },
 
@@ -58,11 +65,6 @@ export const gameService = {
     return apiClient.get(`/api/game/players?sessionCode=${sessionCode}`);
   },
 
-  // Get player progress for a specific player
-  getPlayerProgressByPlayerId: async (playerId: string) => {
-    return apiClient.get(`/api/game/player-progress/${playerId}`);
-  },
-
   // Unlock session for players
   unlockSession: async (sessionCode: string) => {
     return apiClient.put(`/api/dashboard/unlock-session/${sessionCode}`);
@@ -72,6 +74,13 @@ export const gameService = {
   getPlayerActivity: async (sessionCode: string, playerId: number | string) => {
     return apiClient.get<PlayerActivityData>(
       `/api/game/player-activity?sessionCode=${sessionCode}&playerId=${playerId}`
+    );
+  },
+
+  // Get game progress (boxes, lock types, and session state)
+  getGameProgress: async (sessionCode: string) => {
+    return apiClient.get<GameProgressResponse>(
+      `/api/game/game-progress/${sessionCode}`
     );
   },
 };

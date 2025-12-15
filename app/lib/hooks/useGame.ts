@@ -29,7 +29,7 @@ export const useGame = () => {
           setChests(response.data);
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Failed to fetch chests" };
       }
     },
@@ -39,12 +39,12 @@ export const useGame = () => {
   const unlockChest = useCallback(
     async (chestId: number, playerId: string, code: string) => {
       try {
-        const response = await gameService.unlockChest(chestId, playerId, code);
+        const response = await gameService.unlockChest(playerId, chestId, code);
         if (response.success && response.data) {
           unlockChestInStore(chestId, playerId, code);
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Failed to unlock chest" };
       }
     },
@@ -66,7 +66,7 @@ export const useGame = () => {
           setPlayerProgress(response.data);
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Failed to fetch progress" };
       }
     },
@@ -74,7 +74,7 @@ export const useGame = () => {
   );
 
   const updatePlayerProgress = useCallback(
-    (playerId: string, updates: any) => {
+    (playerId: string, updates: Record<string, unknown>) => {
       updatePlayerProgressInStore(playerId, updates);
     },
     [updatePlayerProgressInStore]

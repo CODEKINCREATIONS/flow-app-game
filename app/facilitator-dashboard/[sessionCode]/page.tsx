@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { AppLayout } from "@/app/components/layout";
 import { SessionDetails } from "@/app/components/SessionDetails";
@@ -8,7 +8,6 @@ import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
-import { useAuth } from "@/app/lib/hooks";
 import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import { authService } from "@/app/lib/api/services/auth";
 import { gameService } from "@/app/lib/api/services/game";
@@ -26,9 +25,8 @@ function FacilitatorDashboardWithCodeContent() {
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const { endSession, session } = useSession();
   const { start } = useTimerContext();
-  const { user } = useAuth();
   const { setSession } = useSessionStore();
-  const { dashboardData, fetchDashboard, fetchDashboardData } = useDashboard();
+  const { dashboardData, fetchDashboard } = useDashboard();
 
   const [verificationState, setVerificationState] = useState({
     isVerifying: true,
@@ -39,9 +37,8 @@ function FacilitatorDashboardWithCodeContent() {
   // Track unlock state from dashboard response (persistent across refreshes)
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
   const [gameSessionId, setGameSessionId] = useState<number | null>(null);
-  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
-  const [dashboardPollInterval, setDashboardPollInterval] =
-    useState<NodeJS.Timeout | null>(null);
+  const unlockedRef = useRef(false);
+  const gameSessionIdRef = useRef<number | null>(null);
 
   // Verify session from URL parameter on component mount
   useEffect(() => {
@@ -119,20 +116,11 @@ function FacilitatorDashboardWithCodeContent() {
         });
       }, 5000);
 
-      setPollInterval(interval);
-
       return () => {
-        if (interval) clearInterval(interval);
+        clearInterval(interval);
       };
     }
   }, [verificationState.isVerified, session?.id, sessionCode, setSession]);
-
-  // Reset QR dialog when session changes
-  useEffect(() => {
-    if (!session) {
-      setShowQR(false);
-    }
-  }, [session]);
 
   // Fetch and poll dashboard data
   useEffect(() => {
@@ -146,26 +134,39 @@ function FacilitatorDashboardWithCodeContent() {
       fetchDashboard(sessionCode);
     }, 5000);
 
-    setDashboardPollInterval(interval);
-
     return () => {
-      if (interval) clearInterval(interval);
+      clearInterval(interval);
     };
   }, [sessionCode, fetchDashboard]);
 
   // Sync unlock state from dashboard data (persistent across page refreshes)
   useEffect(() => {
-    if (dashboardData?.sessionUnlocked === true) {
+    if (dashboardData?.sessionUnlocked === true && !unlockedRef.current) {
+      unlockedRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSessionUnlocked(true);
       // Auto-start timer if session is already unlocked
       start();
     }
 
     // Extract gameSessionId from dashboard data
-    if (dashboardData?.gameSessionId) {
+    if (
+      dashboardData?.gameSessionId &&
+      gameSessionIdRef.current !== dashboardData.gameSessionId
+    ) {
+      gameSessionIdRef.current = dashboardData.gameSessionId;
       setGameSessionId(dashboardData.gameSessionId);
+      console.log("[FacilitatorDashboard] gameSessionId extracted:", {
+        gameSessionId: dashboardData.gameSessionId,
+        sessionCode: sessionCode,
+      });
     }
-  }, [dashboardData?.sessionUnlocked, dashboardData?.gameSessionId, start]);
+  }, [
+    dashboardData?.sessionUnlocked,
+    dashboardData?.gameSessionId,
+    sessionCode,
+    start,
+  ]);
 
   const handleFinish = async () => {
     if (session) {
@@ -306,13 +307,22 @@ function FacilitatorDashboardWithCodeContent() {
         </main>
 
         {/* QR Code Dialog */}
-        <QRCodeDialog
-          open={showQR}
-          onClose={() => {
-            setShowQR(false);
-          }}
-          gameSessionId={gameSessionId || 0}
-        />
+        {(() => {
+          console.log("[FacilitatorDashboard] QRCodeDialog rendering with:", {
+            gameSessionId,
+            sessionCode,
+          });
+          return (
+            <QRCodeDialog
+              open={showQR}
+              onClose={() => {
+                setShowQR(false);
+              }}
+              gameSessionId={gameSessionId || 0}
+              sessionCode={sessionCode}
+            />
+          );
+        })()}
 
         {/* Unlock Session Confirmation Dialog */}
         <UnlockSessionDialog

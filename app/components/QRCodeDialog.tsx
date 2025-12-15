@@ -1,8 +1,7 @@
 "use client";
 import Button from "@/app/components/ui/Button";
-import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Share2, X, Printer, Copy } from "lucide-react";
+import { Share2, X, Copy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,22 +13,35 @@ interface QRCodeModalProps {
   open: boolean;
   onClose: () => void;
   gameSessionId: number;
+  sessionCode?: string;
 }
 
 export default function QRCodeModal({
   open,
   onClose,
   gameSessionId,
+  sessionCode,
 }: QRCodeModalProps) {
-  const [sessionUrl, setSessionUrl] = useState("");
+  // Compute URL directly from props - no need for state to avoid cascading renders
+  let url = "";
+  if (typeof window !== "undefined") {
+    console.log("[QRCodeDialog] Received props:", {
+      gameSessionId,
+      sessionCode,
+    });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setSessionUrl(
-        `${window.location.origin}/playerlogin?sessionId=${gameSessionId}`
-      );
+    url = `${window.location.origin}/playerlogin?sessionId=${gameSessionId}`;
+    if (sessionCode) {
+      url += `&sessionCode=${sessionCode}`;
+      console.log("[QRCodeDialog] Adding sessionCode to URL:", sessionCode);
+    } else {
+      console.warn("[QRCodeDialog] sessionCode is not provided or is null");
     }
-  }, [gameSessionId]);
+
+    console.log("[QRCodeDialog] Final URL:", url);
+  }
+
+  const sessionUrl = url;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -39,7 +51,7 @@ export default function QRCodeModal({
           text: "Scan this QR code to join the game session!",
           url: sessionUrl,
         });
-      } catch (err) {}
+      } catch {}
     } else {
       alert("Sharing is not supported on this device.");
     }

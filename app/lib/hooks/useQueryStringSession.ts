@@ -1,11 +1,10 @@
 // Custom hook for verifying session from query string
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { authService } from "@/app/lib/api/services/auth";
 import { useSessionStore } from "@/app/lib/store/sessionStore";
-import type { Session } from "@/app/types/session";
 
 interface QueryStringSessionVerificationState {
   isVerifying: boolean;

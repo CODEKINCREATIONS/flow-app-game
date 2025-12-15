@@ -25,7 +25,6 @@ export default function VideoDialog({
   open,
   onClose,
   videoUrl,
-  password,
 }: VideoDialogProps) {
   const [stage, setStage] = useState<DialogStage>("password");
   const [inputPassword, setInputPassword] = useState("");
@@ -52,7 +51,7 @@ export default function VideoDialog({
         setError(response.error || "Incorrect password. Please try again.");
         setInputPassword("");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while verifying password. Please try again.");
     } finally {
       setIsLoading(false);

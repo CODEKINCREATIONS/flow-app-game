@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { TimerProvider } from "@/app/lib/context/TimerContext";
+import RootLayoutClient from "./layout-client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,7 @@ export default function RootLayout({
         {
           "--font-geist-sans": geistSans.variable,
           "--font-geist-mono": geistMono.variable,
-        } as any
+        } as Record<string, string>
       }
     >
       <head>
@@ -41,8 +42,13 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="bg-background text-textPrimary font-orbitron">
-        <TimerProvider>{children}</TimerProvider>
+      <body
+        className="bg-background text-textPrimary font-orbitron"
+        suppressHydrationWarning
+      >
+        <TimerProvider>
+          <RootLayoutClient>{children}</RootLayoutClient>
+        </TimerProvider>
       </body>
     </html>
   );

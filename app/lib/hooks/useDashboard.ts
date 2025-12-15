@@ -1,7 +1,7 @@
 // Custom hook for dashboard data management
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { gameService } from "@/app/lib/api/services/game";
 
 export interface DashboardPlayer {
@@ -25,7 +25,7 @@ export interface DashboardData {
   sessionUnlocked?: boolean;
   sessionStarted?: string;
   sessionDuration?: number;
-  playersProgress?: any[];
+  playersProgress?: DashboardPlayer[];
 }
 
 export const useDashboard = () => {
@@ -48,37 +48,49 @@ export const useDashboard = () => {
         // The API response structure from backend is:
         // {success: true, data: {data: {gameSession: {...}, playersProgress: [...]}}}
         // OR {success: true, data: {gameSession: {...}, playersProgress: [...]}}
-        let fullData = response.data;
+        let fullData = response.data as Record<string, unknown>;
 
         // Unwrap nested data if it exists
-        if ((fullData as any)?.data) {
-          fullData = (fullData as any).data;
+        if ((fullData as Record<string, unknown>)?.data) {
+          fullData = (fullData as Record<string, unknown>).data as Record<
+            string,
+            unknown
+          >;
         }
 
         // Extract the dashboard data (gameSession)
-        const dashData = (fullData as any)?.gameSession || fullData;
+        const dashData =
+          (fullData as Record<string, unknown>)?.gameSession || fullData;
         console.log("[useDashboard] Dashboard data:", dashData);
-        console.log("[useDashboard] gameSessionId:", dashData?.gameSessionId);
+        console.log(
+          "[useDashboard] gameSessionId:",
+          (dashData as Record<string, unknown>)?.gameSessionId
+        );
         setDashboardData(dashData as DashboardData);
 
         // Extract players from playersProgress (should be at same level as gameSession)
-        let playersData = (fullData as any)?.playersProgress || [];
+        const playersData =
+          (fullData as Record<string, unknown>)?.playersProgress || [];
 
         if (Array.isArray(playersData) && playersData.length > 0) {
-          const mappedPlayers: DashboardPlayer[] = playersData.map(
-            (p: any) => ({
-              id: p.playerId || p.id || `player-${Math.random()}`,
-              playerId: p.playerId || p.id,
-              name: p.playerName || p.name,
-              playerName: p.playerName || p.name,
-              email: p.email,
-              activeRiddle: p.activeBox || p.riddleAccess || p.activeRiddle,
-              riddleAccess: p.activeBox || p.riddleAccess || p.activeRiddle,
-              attempt: p.attempt || p.attempts,
-              attempts: p.attempt || p.attempts,
-              solved: p.solved === "Yes" || p.solved === true || p.solved === 1,
-            })
-          );
+          const mappedPlayers: DashboardPlayer[] = (
+            playersData as Record<string, unknown>[]
+          ).map((p: Record<string, unknown>) => ({
+            id: String(p.playerId || p.id || `player-${Math.random()}`),
+            playerId: String(p.playerId || p.id || ""),
+            name: String(p.playerName || p.name || ""),
+            playerName: String(p.playerName || p.name || ""),
+            email: String(p.email || ""),
+            activeRiddle:
+              Number(p.activeBox || p.riddleAccess || p.activeRiddle || 0) ||
+              undefined,
+            riddleAccess:
+              Number(p.activeBox || p.riddleAccess || p.activeRiddle || 0) ||
+              undefined,
+            attempt: Number(p.attempt || p.attempts || 0) || undefined,
+            attempts: Number(p.attempt || p.attempts || 0) || undefined,
+            solved: p.solved === "Yes" || p.solved === true || p.solved === 1,
+          }));
           setPlayers(mappedPlayers);
         } else {
           setPlayers([]);
@@ -102,7 +114,9 @@ export const useDashboard = () => {
 
       if (response.success) {
         // Response structure: {success: true, data: {...}} where data can be wrapped
-        let playersArray = response.data;
+        let playersArray = response.data as
+          | Record<string, unknown>
+          | Record<string, unknown>[];
 
         // Handle different response structures
         if (
@@ -110,32 +124,35 @@ export const useDashboard = () => {
           typeof playersArray === "object" &&
           "data" in playersArray
         ) {
-          playersArray = (playersArray as any).data;
+          playersArray = (playersArray as Record<string, unknown>)
+            .data as Record<string, unknown>[];
         }
 
         if (Array.isArray(playersArray)) {
           // Map API response to component-friendly format
-          const mappedPlayers: DashboardPlayer[] = (playersArray as any[]).map(
-            (p: any) => ({
-              id: p.playerId || p.id,
-              playerId: p.playerId || p.id,
-              name: p.playerName || p.name,
-              playerName: p.playerName || p.name,
-              email: p.email,
-              activeRiddle: p.riddleAccess || p.activeBox,
-              riddleAccess: p.riddleAccess || p.activeBox,
-              attempt: p.attempts || p.attempt,
-              attempts: p.attempts || p.attempt,
-              solved: p.solved === true || p.solved === "Yes" || p.solved === 1,
-            })
-          );
+          const mappedPlayers: DashboardPlayer[] = (
+            playersArray as Record<string, unknown>[]
+          ).map((p: Record<string, unknown>) => ({
+            id: String(p.playerId || p.id || `player-${Math.random()}`),
+            playerId: String(p.playerId || p.id || ""),
+            name: String(p.playerName || p.name || ""),
+            playerName: String(p.playerName || p.name || ""),
+            email: String(p.email || ""),
+            activeRiddle:
+              Number(p.riddleAccess || p.activeBox || 0) || undefined,
+            riddleAccess:
+              Number(p.riddleAccess || p.activeBox || 0) || undefined,
+            attempt: Number(p.attempts || p.attempt || 0) || undefined,
+            attempts: Number(p.attempts || p.attempt || 0) || undefined,
+            solved: p.solved === true || p.solved === "Yes" || p.solved === 1,
+          }));
           // Only update if we have players (fallback)
           if (mappedPlayers.length > 0) {
             setPlayers(mappedPlayers);
           }
         }
       }
-    } catch (err) {
+    } catch {
       // Silent fail - fallback function
     }
   }, []);

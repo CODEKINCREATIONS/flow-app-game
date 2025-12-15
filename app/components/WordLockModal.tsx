@@ -4,13 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X, Delete } from "lucide-react";
+import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
 interface WordLockModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => void;
+  onSubmit: (code: string) => Promise<void>;
   lockImage: string;
 }
 
@@ -42,7 +42,6 @@ const ALPHABETS = [
   "Y",
   "Z",
 ];
-const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 // Column configuration: 1=alphabets, 2=alphabets, 3=alphabets, 4=alphabets, 5=alphabets
 const COLUMN_DATA = [
@@ -71,7 +70,9 @@ export default function WordLockModal({
     "A",
     "A",
   ]);
+  const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -119,8 +120,8 @@ export default function WordLockModal({
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
       const columnData = COLUMN_DATA[columnIdx];
-      let baseIndex = newOffsets[columnIdx];
-      let valueIndex =
+      const baseIndex = newOffsets[columnIdx];
+      const valueIndex =
         (baseIndex + rowIdx - 1 + columnData.data.length) %
         columnData.data.length;
 
@@ -149,12 +150,23 @@ export default function WordLockModal({
     return visible;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const code = selectedValues.join("");
-    triggerDialogConfetti(dialogRef.current);
-    setIsUnlocked(true);
-    setShowCountdown(true);
-    onSubmit(code);
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(code);
+      triggerDialogConfetti(dialogRef.current);
+      setIsUnlocked(true);
+      setShowCountdown(true);
+    } catch (err) {
+      console.error("[WordLockModal] Code rejected:", err);
+      setError("Incorrect code. Try again.");
+      setSelectedValues(["A", "A", "A", "A", "A"]);
+      setScrollOffsets([0, 0, 0, 0, 0]);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -257,13 +269,21 @@ export default function WordLockModal({
 
           {/* Selected Code Display */}
 
+          {/* Error Message */}
+          {error && !isUnlocked && (
+            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
+              {error}
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex justify-center gap-[5px] mb-[30px]">
             <Button
               onClick={handleSubmit}
-              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+              disabled={isSubmitting}
+              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Code
+              {isSubmitting ? "Verifying..." : "Submit Code"}
             </Button>
           </div>
         </DialogContent>

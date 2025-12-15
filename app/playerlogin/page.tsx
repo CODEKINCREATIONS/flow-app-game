@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Card, Input, Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
@@ -25,19 +26,28 @@ function PlayerLoginContent() {
     const sCode = searchParams?.get("sessionCode");
     const pId = searchParams?.get("playerId");
 
+    console.log("[PlayerLogin] Query params:", {
+      sessionId,
+      sessionCode: sCode,
+      playerId: pId,
+    });
+
     if (sessionId) {
       const parsedId = parseInt(sessionId, 10);
       if (!isNaN(parsedId)) {
         setGameSessionId(parsedId);
+        console.log("[PlayerLogin] gameSessionId set to:", parsedId);
       }
     }
     if (sCode) {
       setSessionCode(sCode);
+      console.log("[PlayerLogin] sessionCode set to:", sCode);
     }
     if (pId) {
       const parsedPlayerId = parseInt(pId, 10);
       if (!isNaN(parsedPlayerId)) {
         setPlayerId(parsedPlayerId);
+        console.log("[PlayerLogin] playerId set to:", parsedPlayerId);
       }
     }
   }, [searchParams]);
@@ -69,18 +79,29 @@ function PlayerLoginContent() {
       return;
     }
 
+    console.log("[PlayerLogin] handleLogin - About to join game with:", {
+      gameSessionId,
+      sessionCode,
+      playerId,
+      name,
+      email,
+      language,
+    });
+
     setIsLoading(true);
     setError("");
 
     try {
       // Validate session exists if sessionCode is provided
       if (sessionCode) {
+        console.log("[PlayerLogin] Validating session with code:", sessionCode);
         const dashboardResponse = await gameService.getDashboard(sessionCode);
         if (!dashboardResponse.success) {
           setError("Invalid or expired session code. Please try again.");
           setIsLoading(false);
           return;
         }
+        console.log("[PlayerLogin] Session validated successfully");
       }
 
       // Generate a temporary player ID if not provided
@@ -101,6 +122,7 @@ function PlayerLoginContent() {
         return;
       }
     } catch (err) {
+      console.error("[PlayerLogin] Error during login:", err);
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -117,10 +139,13 @@ function PlayerLoginContent() {
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center bg-[#1A1C2A] rounded-full w-[145px] h-[145px] mb-4">
-            <img
+            <Image
               src="/assets/Logo_flow.png"
               alt="Flow Logo"
-              className="w-[115px] h-[115px] object-contain"
+              width={115}
+              height={115}
+              className="object-contain"
+              priority
             />
           </div>
           <p className="text-gray-300 mb-9 text-2xl">Player Login</p>

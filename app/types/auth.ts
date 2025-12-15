@@ -6,6 +6,8 @@ export interface Player {
   email: string;
   language: string;
   joinedAt: string;
+  gameSessionId?: number;
+  sessionCode?: string;
 }
 
 export interface Facilitator {

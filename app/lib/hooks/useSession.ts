@@ -4,6 +4,7 @@
 import { useSessionStore } from "@/app/lib/store/sessionStore";
 import { sessionService } from "@/app/lib/api/services/sessions";
 import { useCallback } from "react";
+import type { Player } from "@/app/types/auth";
 
 export const useSession = () => {
   const {
@@ -112,8 +113,17 @@ export const useSession = () => {
   );
 
   const addPlayer = useCallback(
-    (player: any) => {
-      addPlayerToStore(player);
+    (player: Record<string, unknown>) => {
+      const playerData: Player = {
+        id: String(player.id || ""),
+        name: String(player.name || ""),
+        email: String(player.email || ""),
+        language: String(player.language || "en"),
+        joinedAt: String(player.joinedAt || new Date().toISOString()),
+        gameSessionId: player.gameSessionId as number | undefined,
+        sessionCode: player.sessionCode as string | undefined,
+      };
+      addPlayerToStore(playerData);
     },
     [addPlayerToStore]
   );

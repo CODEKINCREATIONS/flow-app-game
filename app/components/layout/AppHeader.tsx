@@ -7,7 +7,6 @@ import { Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { LogOut, User, Clock, Settings } from "lucide-react";
 import { useTimerContext } from "@/app/lib/context/TimerContext";
-import { useState } from "react";
 
 interface AppHeaderProps {
   mode?: "default" | "game" | "dashboard";
@@ -27,7 +26,7 @@ export const AppHeader = ({
   const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();
   const { formatted } = useTimerContext();
-  const [language, setLanguage] = useState("en");
+  const language = (user as Record<string, unknown>)?.language || "en";
 
   // Don't show header on login pages
   if (

@@ -12,7 +12,7 @@ const unlockImg = "/assets/locks/NumericV2-Unlocked.png";
 interface NumericV2ModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => void;
+  onSubmit: (code: string) => Promise<void>;
   lockImage: string;
 }
 
@@ -32,7 +32,9 @@ export default function NumericV2Modal({
     "0",
     "0",
   ]);
+  const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -78,8 +80,8 @@ export default function NumericV2Modal({
   const handleButtonClick = (rowIdx: number, colIdx: number) => {
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
-      let baseIndex = newOffsets[rowIdx];
-      let valueIndex =
+      const baseIndex = newOffsets[rowIdx];
+      const valueIndex =
         (baseIndex + colIdx - 1 + NUMBERS.length) % NUMBERS.length;
 
       newOffsets[rowIdx] = valueIndex;
@@ -105,12 +107,23 @@ export default function NumericV2Modal({
     return visible;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const code = selectedValues.join("");
-    triggerDialogConfetti(dialogRef.current);
-    setIsUnlocked(true);
-    setShowCountdown(true);
-    onSubmit(code);
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(code);
+      triggerDialogConfetti(dialogRef.current);
+      setIsUnlocked(true);
+      setShowCountdown(true);
+    } catch (err) {
+      console.error("[NumericV2Modal] Code rejected:", err);
+      setError("Incorrect code. Try again.");
+      setSelectedValues(["0", "0", "0", "0"]);
+      setScrollOffsets([0, 0, 0, 0]);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -194,13 +207,21 @@ export default function NumericV2Modal({
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && !isUnlocked && (
+            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
+              {error}
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="flex justify-center mb-[30px]">
             <Button
               onClick={handleSubmit}
-              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6"
+              disabled={isSubmitting}
+              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Code
+              {isSubmitting ? "Verifying..." : "Submit Code"}
             </Button>
           </div>
         </DialogContent>

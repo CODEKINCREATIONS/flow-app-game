@@ -5,7 +5,6 @@ const lockImg = "/assets/lock.png";
 
 const DIAL_COLORS = ["red", "yellow", "blue", "green"];
 const DIAL_START = [7, 7, 7, 7];
-const DIAL_RANGE = [6, 7, 8, 9];
 
 export default function AnimatedLock() {
   const [dials, setDials] = useState(DIAL_START);

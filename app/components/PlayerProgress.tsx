@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
-import { useDashboard } from "@/app/lib/hooks/useDashboard";
+import {
+  useDashboard,
+  type DashboardPlayer,
+} from "@/app/lib/hooks/useDashboard";
 import { PlayerDetailsDialog } from "@/app/components/PlayerDetailsDialog";
 
 interface PlayerProgressProps {
@@ -15,12 +18,13 @@ export const PlayerProgress = ({
 }: PlayerProgressProps = {}) => {
   const { session } = useSession();
   const { players, fetchDashboardData, error, loading } = useDashboard();
-  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<DashboardPlayer | null>(
+    null
+  );
   const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<number | null>(
     null
   );
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Use prop sessionCode as fallback
   const effectiveSessionCode = propSessionCode || session?.code;
@@ -36,10 +40,8 @@ export const PlayerProgress = ({
         fetchDashboardData(effectiveSessionCode);
       }, 5000); // Poll every 5 seconds
 
-      setPollInterval(interval);
-
       return () => {
-        if (interval) clearInterval(interval);
+        clearInterval(interval);
       };
     }
   }, [effectiveSessionCode, fetchDashboardData]);
@@ -69,7 +71,7 @@ export const PlayerProgress = ({
   };
 
   // Sample riddle data for demo
-  const getRiddleData = (playerId: string) => [
+  const getRiddleData = () => [
     {
       id: 1,
       name: "Riddle 1: Logic Puzzle",
@@ -93,7 +95,7 @@ export const PlayerProgress = ({
     },
   ];
 
-  const handleViewPlayer = (player: any, index: number) => {
+  const handleViewPlayer = (player: DashboardPlayer, index: number) => {
     setSelectedPlayer(player);
     setSelectedPlayerIndex(index + 1); // API expects 1-based index
     setShowDetailsDialog(true);
@@ -160,26 +162,26 @@ export const PlayerProgress = ({
 
           <tbody>
             {displayPlayers.length > 0 ? (
-              displayPlayers.map((p: any, index: number) => (
+              displayPlayers.map((p: DashboardPlayer, index: number) => (
                 <tr
                   key={p.id || p.playerId}
                   className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
                 >
                   <td className="py-4 px-4 text-[#D1D5DB] font-medium">
-                    {p.name || p.playerName || "Unknown"}
+                    {(p.name || p.playerName || "Unknown") as string}
                   </td>
                   <td className="py-4 px-4 text-[#D1D5DB]">
-                    {p.activeRiddle ?? p.riddleAccess ?? "—"}
+                    {String(p.activeRiddle ?? p.riddleAccess ?? "—")}
                   </td>
                   <td className="py-4 px-4 text-[#D1D5DB]">
-                    {p.attempt ?? p.attempts ?? "—"}
+                    {String(p.attempt ?? p.attempts ?? "—")}
                   </td>
-                  <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
+                  <td className={`py-4 px-4 ${solveColor(String(p.solved))}`}>
                     {typeof p.solved === "boolean"
                       ? p.solved
                         ? "✔ Yes"
                         : "In Progress"
-                      : p.solved}
+                      : String(p.solved)}
                   </td>
                   <td className="py-4 px-4 text-center">
                     <Button
@@ -215,11 +217,9 @@ export const PlayerProgress = ({
             setSelectedPlayer(null);
             setSelectedPlayerIndex(null);
           }}
-          playerName={selectedPlayer.name || selectedPlayer.playerName}
-          playerEmail={selectedPlayer.email}
-          riddleData={getRiddleData(
-            selectedPlayer.id || selectedPlayer.playerId
-          )}
+          playerName={String(selectedPlayer.name || selectedPlayer.playerName)}
+          playerEmail={String(selectedPlayer.email || "")}
+          riddleData={getRiddleData()}
           sessionCode={effectiveSessionCode}
           playerId={selectedPlayerIndex} // Pass numeric index (1, 2, 3, etc.)
         />

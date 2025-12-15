@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X, Delete } from "lucide-react";
+import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
 // Custom styles for button decorative properties
@@ -50,7 +50,7 @@ const buttonBottom = {
 interface WordMLModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => void;
+  onSubmit: (code: string) => Promise<void>;
   lockImage: string;
 }
 
@@ -93,12 +93,7 @@ const COLUMN_DATA = [
   { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 5: Alphabets
 ];
 
-// Tailwind color utilities
-const buttonColor = "bg-[#56a128]";
-const buttonBorderColor = "border-[#4e972f]";
-const buttonBorderColorDark = "border-[#3d7a23]";
-const buttonBorderColorLight = "border-[#b7ceadff]";
-
+// Styling for modal dialog
 const lockImg = "/assets/locks/WordMLLock-locked.png";
 const unlockImg = "/assets/locks/WordMLLock-unlocked.png";
 
@@ -117,7 +112,9 @@ export default function WordMLModal({
     "A",
     "A",
   ]);
+  const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -165,8 +162,8 @@ export default function WordMLModal({
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
       const columnData = COLUMN_DATA[columnIdx];
-      let baseIndex = newOffsets[columnIdx];
-      let valueIndex =
+      const baseIndex = newOffsets[columnIdx];
+      const valueIndex =
         (baseIndex + rowIdx - 1 + columnData.data.length) %
         columnData.data.length;
 
@@ -195,12 +192,23 @@ export default function WordMLModal({
     return visible;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const code = selectedValues.join("");
-    triggerDialogConfetti(dialogRef.current);
-    setIsUnlocked(true);
-    setShowCountdown(true);
-    onSubmit(code);
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(code);
+      triggerDialogConfetti(dialogRef.current);
+      setIsUnlocked(true);
+      setShowCountdown(true);
+    } catch (err) {
+      console.error("[WordMLModal] Code rejected:", err);
+      setError("Incorrect code. Try again.");
+      setSelectedValues(["0", "A", "A", "A", "A"]);
+      setScrollOffsets([0, 0, 0, 0, 0]);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -297,13 +305,21 @@ export default function WordMLModal({
 
           {/* Selected Code Display */}
 
+          {/* Error Message */}
+          {error && !isUnlocked && (
+            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
+              {error}
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex justify-center mb-[50px] gap-1 mb-7.5">
             <Button
               onClick={handleSubmit}
-              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+              disabled={isSubmitting}
+              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Code
+              {isSubmitting ? "Verifying..." : "Submit Code"}
             </Button>
           </div>
         </DialogContent>

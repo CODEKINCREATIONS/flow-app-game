@@ -30,7 +30,7 @@ export const useAuth = () => {
           router.push("/Game-page");
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Login failed" };
       }
     },
@@ -46,7 +46,7 @@ export const useAuth = () => {
           router.push("/facilitator-dashboard");
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Login failed" };
       }
     },
@@ -62,7 +62,7 @@ export const useAuth = () => {
           router.push(`/facilitator-dashboard/${sessionCode}`);
         }
         return response;
-      } catch (error) {
+      } catch {
         return {
           success: false,
           error: "Session verification failed",
@@ -90,11 +90,20 @@ export const useAuth = () => {
           gameSessionId
         );
         if (response.success && response.data) {
-          loginPlayer(response.data as any);
+          const playerData = response.data as Record<string, unknown>;
+          loginPlayer({
+            id: String(playerData.id || ""),
+            name: String(playerData.name || ""),
+            email: String(playerData.email || ""),
+            language: String(playerData.language || "en"),
+            joinedAt: String(playerData.joinedAt || new Date().toISOString()),
+            gameSessionId: playerData.gameSessionId as number | undefined,
+            sessionCode: playerData.sessionCode as string | undefined,
+          });
           router.push("/game");
         }
         return response;
-      } catch (error) {
+      } catch {
         return { success: false, error: "Failed to join game" };
       }
     },
@@ -106,7 +115,7 @@ export const useAuth = () => {
       await authService.logout();
       logout();
       router.push("/");
-    } catch (error) {}
+    } catch {}
   }, [logout, router]);
 
   return {

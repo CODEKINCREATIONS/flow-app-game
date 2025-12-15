@@ -20,7 +20,7 @@ const unlockImg = "/assets/locks/Directional-unlocked.png";
 interface DirectionalLockModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => void;
+  onSubmit: (code: string) => Promise<void>;
   lockImage?: string;
 }
 
@@ -41,6 +41,7 @@ export default function DirectionalLockModal({
   const [input, setInput] = useState<string>("");
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -64,28 +65,27 @@ export default function DirectionalLockModal({
     setError("");
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      setInput((prev) => prev.slice(0, -1));
-      setError("");
-    }
-  };
-
-  const handleClear = () => {
-    setInput("");
-    setError("");
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!input.trim()) {
       setError("Please enter a direction sequence.");
       return;
     }
-    triggerDialogConfetti(dialogRef.current);
-    setIsUnlocked(true);
-    setShowCountdown(true);
-    onSubmit(input);
+
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(input);
+      triggerDialogConfetti(dialogRef.current);
+      setIsUnlocked(true);
+      setShowCountdown(true);
+      setError("");
+    } catch (err) {
+      console.error("[DirectionalLockModal] Code rejected:", err);
+      setError("Incorrect code. Try again.");
+      setInput("");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -180,7 +180,9 @@ export default function DirectionalLockModal({
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-[5px] mb-[30px]">
-            <Button onClick={handleSubmit}>Submit Code</Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Verifying..." : "Submit Code"}
+            </Button>
             <Button
               onClick={() => setInput((prev) => prev.slice(0, -1))}
               disabled={input.length === 0}

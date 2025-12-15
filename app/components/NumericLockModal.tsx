@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
-import { X, Delete, Weight } from "lucide-react";
+import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
 const lockImg = "/assets/locks/NumericLock-locked.png";
@@ -22,7 +22,7 @@ const COLUMN_DATA = [
 interface CodeEntryModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => void;
+  onSubmit: (code: string) => Promise<void>;
   lockImage?: string;
 }
 
@@ -42,6 +42,7 @@ export default function CodeEntryModal({
   ]);
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -101,8 +102,8 @@ export default function CodeEntryModal({
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
       const columnData = COLUMN_DATA[columnIdx];
-      let baseIndex = newOffsets[columnIdx];
-      let valueIndex =
+      const baseIndex = newOffsets[columnIdx];
+      const valueIndex =
         (baseIndex + rowIdx - 1 + columnData.data.length) %
         columnData.data.length;
 
@@ -132,18 +133,27 @@ export default function CodeEntryModal({
     return visible;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const code = selectedValues.join("");
-    if (code === "1234") {
+    setIsSubmitting(true);
+
+    try {
+      // Call the parent's onSubmit and wait for backend response
+      await onSubmit(code);
+
+      // If we get here, the backend accepted the code
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
       setShowCountdown(true);
       setError("");
-      onSubmit(code);
-    } else {
+    } catch (err) {
+      // Backend rejected the code
+      console.error("[NumericLockModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setSelectedValues(["0", "0", "0", "0"]);
       setScrollOffsets([0, 0, 0, 0]);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -279,7 +289,9 @@ export default function CodeEntryModal({
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-[5px] mb-[30px]">
-            <Button onClick={handleSubmit}>Submit Code</Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Verifying..." : "Submit Code"}
+            </Button>
           </div>
         </DialogContent>
       </div>

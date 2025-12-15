@@ -42,17 +42,13 @@ export async function PUT(
     if (!response.ok) {
       return NextResponse.json(
         {
-          success: false,
           message: data.message || "Failed to unlock session",
         },
         { status: response.status }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: data,
-    });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Unlock session error:", error);
     return NextResponse.json(
