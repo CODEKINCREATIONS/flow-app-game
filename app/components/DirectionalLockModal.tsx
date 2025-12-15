@@ -65,6 +65,22 @@ export default function DirectionalLockModal({
     setError("");
   };
 
+  const convertDirectionsToLetters = (directionInput: string): string => {
+    // Map arrow symbols to letters
+    const letterMap: { [key: string]: string } = {
+      "↑": "u",
+      "↓": "d",
+      "←": "l",
+      "→": "r",
+    };
+
+    return directionInput
+      .split("")
+      .map((char) => letterMap[char] || char)
+      .join("")
+      .toUpperCase(); // Convert to uppercase to match database format
+  };
+
   const handleSubmit = async () => {
     if (!input.trim()) {
       setError("Please enter a direction sequence.");
@@ -74,7 +90,17 @@ export default function DirectionalLockModal({
     setIsSubmitting(true);
 
     try {
-      await onSubmit(input);
+      // Convert arrow symbols to letters (u, r, d, l)
+      const letterCode = convertDirectionsToLetters(input);
+      console.log(
+        "[DirectionalLockModal] Converting to letters:",
+        input,
+        "->",
+        letterCode
+      );
+
+      // Submit the letter code to backend for verification
+      await onSubmit(letterCode);
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
       setShowCountdown(true);
@@ -167,7 +193,7 @@ export default function DirectionalLockModal({
           </div>
 
           {/* Selected Code Display */}
-          <div className="text-center mb-4 px-4">
+          <div className="text-center my-[20px] px-[4px] h-[10px] flex items-center justify-center">
             <p className="text-base font-bold text-[#FFFFFF]">{input}</p>
           </div>
 

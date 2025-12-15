@@ -230,8 +230,8 @@ function PlayerLoginContent() {
               </Button>
 
               {error && (
-                <div className="text-center mt-[10px] bg-[#ffffff] rounded-[5px] px-[4px] py-[2px] text-[#d60000]">
-                  <span>{error}</span>
+                <div className="text-center mt-[10px] bg-[#ffffff] rounded-[5px] px-[4px] py-[2px]">
+                  <span className="text-[#d60000]">{error}</span>
                 </div>
               )}
             </div>

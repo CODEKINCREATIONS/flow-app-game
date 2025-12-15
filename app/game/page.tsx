@@ -199,7 +199,7 @@ export default function PlayerGamePage() {
       <AppLayout
         headerMode="game"
         playerName="Player"
-        showTimer={false}
+        showTimer={true}
         showLanguage={false}
         transparentBackground={true}
       >
@@ -223,7 +223,7 @@ export default function PlayerGamePage() {
       <AppLayout
         headerMode="game"
         playerName="Player"
-        showTimer={false}
+        showTimer={true}
         showLanguage={false}
         transparentBackground={true}
       >

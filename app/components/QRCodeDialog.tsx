@@ -27,16 +27,9 @@ export default function QRCodeModal({
   if (typeof window !== "undefined") {
     console.log("[QRCodeDialog] Received props:", {
       gameSessionId,
-      sessionCode,
     });
 
     url = `${window.location.origin}/playerlogin?sessionId=${gameSessionId}`;
-    if (sessionCode) {
-      url += `&sessionCode=${sessionCode}`;
-      console.log("[QRCodeDialog] Adding sessionCode to URL:", sessionCode);
-    } else {
-      console.warn("[QRCodeDialog] sessionCode is not provided or is null");
-    }
 
     console.log("[QRCodeDialog] Final URL:", url);
   }
@@ -59,7 +52,7 @@ export default function QRCodeModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] p-[50px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center">
+      <DialogContent className="relative rounded-[10px] p-[25px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center">
         {/* ❌ icon in top-right corner */}
         <X
           onClick={onClose}
