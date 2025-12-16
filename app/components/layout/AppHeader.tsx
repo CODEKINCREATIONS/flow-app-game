@@ -26,7 +26,8 @@ export const AppHeader = ({
   const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();
   const { formatted } = useTimerContext();
-  const language = (user as Record<string, unknown>)?.language || "en";
+  const language =
+    (user as unknown as Record<string, unknown>)?.language || "en";
 
   // Don't show header on login pages
   if (
@@ -66,7 +67,7 @@ export const AppHeader = ({
                   className="mr-[5px] brightness-0 invert"
                 />
                 <span className="text-white font-medium text-lg mr-[10px]">
-                  {language.toUpperCase()}
+                  {(language as string).toUpperCase()}
                 </span>
               </div>
             )}
