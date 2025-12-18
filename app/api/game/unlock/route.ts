@@ -29,7 +29,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the game progress to find the stored password hash
-    const gameProgressUrl = `${env.SESSION_VERIFICATION_URL}/GameProgress/GetGameProgress/${sessionCode}`;
+    // Use new endpoint: /GameProgress/SessionCode/{sessionCode}/PlayerId/{playerId}
+    const gameProgressUrl = `${
+      env.SESSION_VERIFICATION_URL
+    }/GameProgress/SessionCode/${sessionCode}/PlayerId/${playerId || 1}`;
 
     console.log("[Unlock API] Fetching game progress from:", gameProgressUrl);
 
@@ -57,8 +60,14 @@ export async function POST(request: NextRequest) {
       gameData.gameProgress?.length
     );
 
+    // Handle nested data structure from backend
+    let gameProgressArray = gameData.gameProgress;
+    if (!gameProgressArray && gameData.data && gameData.data.gameProgress) {
+      gameProgressArray = gameData.data.gameProgress;
+    }
+
     // Find the matching box
-    const targetBox = gameData.gameProgress.find(
+    const targetBox = gameProgressArray.find(
       (box: GameBox) => box.boxID === boxID
     );
 

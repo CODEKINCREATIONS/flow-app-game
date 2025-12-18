@@ -1,4 +1,4 @@
-// Get game progress for a session
+// Get game progress for a player in a session
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/app/lib/config/env";
 
@@ -13,23 +13,34 @@ export async function GET(
     const resolvedParams = await Promise.resolve(params);
     const sessionCode = resolvedParams.sessionCode;
 
-    console.log("[GameProgress API] session code:", sessionCode);
+    // Get playerId from query params
+    const { searchParams } = new URL(request.url);
+    const playerId = searchParams.get("playerId");
+
+    console.log(
+      "[GameProgress API] session code:",
+      sessionCode,
+      "playerId:",
+      playerId
+    );
     console.log(
       "[GameProgress API] Backend URL base:",
       env.SESSION_VERIFICATION_URL
     );
 
-    if (!sessionCode) {
+    if (!sessionCode || !playerId) {
       return NextResponse.json(
-        { success: false, error: "Session code is required" },
+        { success: false, error: "Session code and playerId are required" },
         { status: 400 }
       );
     }
 
-    // Call the Azure backend endpoint
+    // Call the new Azure backend endpoint: /GameProgress/SessionCode/{sessionCode}/PlayerId/{playerId}
     const backendUrl = `${
       env.SESSION_VERIFICATION_URL
-    }/GameProgress/GetGameProgress/${encodeURIComponent(sessionCode)}`;
+    }/GameProgress/SessionCode/${encodeURIComponent(
+      sessionCode
+    )}/PlayerId/${encodeURIComponent(playerId)}`;
 
     console.log("[GameProgress API] Calling backend URL:", backendUrl);
 
@@ -66,8 +77,12 @@ export async function GET(
       );
     }
 
-    // Return the data directly - the API client will wrap it with success: true
-    return NextResponse.json(data);
+    // Extract the nested data structure from backend response
+    // Backend returns: { message, data: { gameSession, gameProgress } }
+    // We return just the inner data so apiClient wraps it correctly
+    const innerData = data.data || data;
+
+    return NextResponse.json(innerData);
   } catch (error) {
     console.error("[GameProgress API] Error:", error);
     return NextResponse.json(

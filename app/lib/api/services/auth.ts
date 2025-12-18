@@ -110,13 +110,10 @@ export const authService = {
     gameSessionId: number
   ) => {
     const payload = {
-      playerId,
-      name,
-      email,
-      language: language.toUpperCase(),
-      gameSessionId,
-      createdAt: new Date().toISOString(),
-      playerProgresses: null,
+      Name: name,
+      Email: email,
+      Language: language.toUpperCase(),
+      GameSessionId: gameSessionId,
     };
     return apiClient.post("/api/player/join-game", payload);
   },

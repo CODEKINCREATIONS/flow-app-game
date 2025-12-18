@@ -43,32 +43,15 @@ export default function CodeEntryModal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [countdown, setCountdown] = useState(5);
-  const [showCountdown, setShowCountdown] = useState(false);
 
   useEffect(() => {
     if (open) {
       setIsUnlocked(false);
-      setCountdown(5);
-      setShowCountdown(false);
       setScrollOffsets([0, 0, 0, 0]);
       setSelectedValues(["0", "0", "0", "0"]);
       setError("");
     }
   }, [open]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (showCountdown && countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (showCountdown && countdown === 0) {
-      onClose();
-      setIsUnlocked(false);
-      setCountdown(5);
-      setShowCountdown(false);
-    }
-    return () => clearTimeout(timer);
-  }, [showCountdown, countdown, onClose]);
 
   const handleScroll = (columnIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -144,7 +127,6 @@ export default function CodeEntryModal({
       // If we get here, the backend accepted the code
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
-      setShowCountdown(true);
       setError("");
     } catch (err) {
       // Backend rejected the code
@@ -161,11 +143,6 @@ export default function CodeEntryModal({
     <Dialog open={open} onClose={onClose}>
       <div ref={dialogRef}>
         <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
-          {showCountdown && (
-            <div className="absolute top-10 left-6 text-sm font-bold text-[#dc2626]">
-              {countdown}s
-            </div>
-          )}
           <div className="flex justify-end mb-8 px-2 relative">
             <div
               className={`absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-r from-[#7B61FF] to-[#6A50DD] rounded-full ${
@@ -289,8 +266,15 @@ export default function CodeEntryModal({
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-[5px] mb-[30px]">
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "Verifying..." : "Submit Code"}
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting || isUnlocked}
+            >
+              {isSubmitting
+                ? "Verifying..."
+                : isUnlocked
+                ? "Unlocked"
+                : "Submit Code"}
             </Button>
           </div>
         </DialogContent>

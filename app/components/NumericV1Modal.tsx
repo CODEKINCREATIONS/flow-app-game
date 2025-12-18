@@ -41,21 +41,6 @@ export default function NumericV1Modal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [countdown, setCountdown] = useState(5);
-  const [showCountdown, setShowCountdown] = useState(false);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (showCountdown && countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (showCountdown && countdown === 0) {
-      onClose();
-      setIsUnlocked(false);
-      setCountdown(5);
-      setShowCountdown(false);
-    }
-    return () => clearTimeout(timer);
-  }, [showCountdown, countdown, onClose]);
 
   const handleScroll = (rowIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -124,7 +109,6 @@ export default function NumericV1Modal({
       await onSubmit(code);
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
-      setShowCountdown(true);
     } catch (err) {
       console.error("[NumericV1Modal] Code rejected:", err);
       setError("Incorrect code. Try again.");
@@ -139,11 +123,6 @@ export default function NumericV1Modal({
     <Dialog open={open} onClose={onClose}>
       <div ref={dialogRef}>
         <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
-          {showCountdown && (
-            <div className="absolute top-10 left-6 text-sm font-bold text-[#dc2626]">
-              {countdown}s
-            </div>
-          )}
           <div className="flex justify-end mb-8 px-2 relative">
             <div
               className={`absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-r from-[#7B61FF] to-[#6A50DD] rounded-full ${
@@ -236,10 +215,14 @@ export default function NumericV1Modal({
           <div className="flex justify-center mb-[30px]">
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUnlocked}
               className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Verifying..." : "Submit Code"}
+              {isSubmitting
+                ? "Verifying..."
+                : isUnlocked
+                ? "Unlocked"
+                : "Submit Code"}
             </Button>
           </div>
         </DialogContent>

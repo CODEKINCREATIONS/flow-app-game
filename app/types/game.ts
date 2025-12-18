@@ -52,16 +52,15 @@ export interface GameState {
 // Player Activity API types
 export interface PlayerStats {
   playerName: string;
-  boxesSolved: number;
-  boxesVisited: number;
-  totalBoxes: number;
+  solved: number;
+  unSolved: number;
+  total: number;
 }
 
 export interface PlayerActivityItem {
-  playerName: string;
   activeBox: number;
   attempt: number;
-  solved: "Yes" | "No" | string;
+  solved: string;
 }
 
 export interface PlayerActivityData {

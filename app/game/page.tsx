@@ -64,20 +64,33 @@ export default function PlayerGamePage() {
       setError(null);
 
       try {
-        // Get session code from user (stored after login)
+        // Get session code and player ID from user (stored after login)
         if (!user) {
           throw new Error("User not found");
         }
 
         let sessionCode = "SHI-HDS-XkkKi"; // Default fallback for testing
+        let playerId: number | string | undefined;
 
         if ("sessionCode" in user && user.sessionCode) {
           sessionCode = user.sessionCode;
         }
 
-        console.log("[Game] Fetching game progress for session:", sessionCode);
+        if ("id" in user && user.id) {
+          playerId = user.id;
+        }
 
-        const response = await gameService.getGameProgress(sessionCode);
+        console.log(
+          "[Game] Fetching game progress for session:",
+          sessionCode,
+          "playerId:",
+          playerId
+        );
+
+        const response = await gameService.getGameProgress(
+          sessionCode,
+          playerId
+        );
 
         if (!response.success) {
           throw new Error(response.error || "Failed to fetch game progress");
@@ -90,12 +103,22 @@ export default function PlayerGamePage() {
         console.log("[Game] Full response:", response);
         console.log("[Game] Response data:", response.data);
 
+        // Handle both direct response and wrapped response structures
+        let gameData: any = response.data;
+
+        // If response has nested data wrapper, unwrap it
+        if (gameData && typeof gameData === "object" && "data" in gameData) {
+          gameData = gameData.data;
+        }
+
         // Extract gameProgress from response data
-        const gameProgressData = response.data.gameProgress;
+        const gameProgressData = gameData?.gameProgress;
 
         if (!Array.isArray(gameProgressData)) {
           throw new Error(
-            `Invalid game progress data format: expected array but got ${typeof gameProgressData}`
+            `Invalid game progress data format: expected array but got ${typeof gameProgressData}. Full data: ${JSON.stringify(
+              gameData
+            )}`
           );
         }
 
@@ -169,6 +192,36 @@ export default function PlayerGamePage() {
 
       console.log("[Game] Code accepted by backend!");
 
+      // Verify password using dedicated endpoint (for testing/auditing)
+      try {
+        const verifyResponse = await gameService.verifyBoxPassword(
+          playerId,
+          code
+        );
+        console.log(
+          "[Game] Password verification response:",
+          verifyResponse
+        );
+      } catch (verifyErr) {
+        console.warn("[Game] Password verification call failed:", verifyErr);
+        // Don't fail the unlock process if verification call fails
+      }
+
+      // Record the box attempt
+      try {
+        await gameService.recordBoxAttempt(playerId, boxID);
+        console.log("[Game] Box attempt recorded successfully");
+      } catch (attemptErr) {
+        const errorMsg = attemptErr instanceof Error ? attemptErr.message : String(attemptErr);
+        // "Already Exist" means the record was already created, which is fine
+        if (errorMsg.includes("Already Exist") || errorMsg.includes("already exist")) {
+          console.log("[Game] Box attempt already recorded (expected behavior)");
+        } else {
+          console.warn("[Game] Failed to record box attempt:", attemptErr);
+        }
+        // Don't fail the whole process if recording attempt fails
+      }
+
       // Code was correct - update UI state
       setUnlockedChests((prev) => {
         if (!prev.includes(selectedChest)) {
@@ -191,6 +244,24 @@ export default function PlayerGamePage() {
       console.error("[Game] Error submitting code:", err);
       throw err; // Re-throw so modal can catch it and show error
     }
+  };
+
+  // Get language-specific video URL
+  const getVideoUrl = (): string => {
+    let language = "en"; // Default to English
+
+    if (user && "language" in user && user.language) {
+      language = (user.language as string).toLowerCase();
+    }
+
+    // Map language codes to video file paths
+    const videoMap: Record<string, string> = {
+      en: "/assets/language_Videos/English.mp4",
+      es: "/assets/language_Videos/Flow - Video de God Of War ES.mp4",
+      pt: "/assets/language_Videos/Flow - Video de God Of War PT.mp4",
+    };
+
+    return videoMap[language] || videoMap["en"]; // Default to English if language not found
   };
 
   // Show loading state while hydrating from localStorage
@@ -529,7 +600,7 @@ export default function PlayerGamePage() {
             <VideoDialog
               open={showVideoDialog}
               onClose={() => setShowVideoDialog(false)}
-              videoUrl="/assets/language_Videos/English.mp4"
+              videoUrl={getVideoUrl()}
               password=""
             />
           </div>

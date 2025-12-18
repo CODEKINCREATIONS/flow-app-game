@@ -14,6 +14,7 @@ import { gameService } from "@/app/lib/api/services/game";
 import { useSessionStore } from "@/app/lib/store/sessionStore";
 import QRCodeDialog from "@/app/components/QRCodeDialog";
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
+import FinishSessionDialog from "@/app/components/FinishSessionDialog";
 import { QrCode } from "lucide-react";
 
 function FacilitatorDashboardWithCodeContent() {
@@ -23,6 +24,7 @@ function FacilitatorDashboardWithCodeContent() {
 
   const [showQR, setShowQR] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
+  const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const { endSession, session } = useSession();
   const { start } = useTimerContext();
   const { setSession } = useSessionStore();
@@ -182,6 +184,12 @@ function FacilitatorDashboardWithCodeContent() {
       return;
     }
 
+    // Show finish confirmation dialog instead of directly finishing
+    setShowFinishConfirm(true);
+  };
+
+  const handleConfirmFinish = async () => {
+    setShowFinishConfirm(false);
     // If already unlocked, treat click as Finish (end session)
     await handleFinish();
   };
@@ -196,7 +204,6 @@ function FacilitatorDashboardWithCodeContent() {
         setIsSessionUnlocked(true);
         setShowUnlockConfirm(false);
         start();
-        setShowQR(true);
       } else {
         alert(`Failed to unlock session: ${response.error}`);
       }
@@ -331,6 +338,15 @@ function FacilitatorDashboardWithCodeContent() {
             setShowUnlockConfirm(false);
           }}
           onConfirm={handleConfirmUnlock}
+        />
+
+        {/* Finish Session Confirmation Dialog */}
+        <FinishSessionDialog
+          open={showFinishConfirm}
+          onClose={() => {
+            setShowFinishConfirm(false);
+          }}
+          onConfirm={handleConfirmFinish}
         />
       </AppLayout>
     </>

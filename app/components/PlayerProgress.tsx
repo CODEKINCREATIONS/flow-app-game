@@ -53,21 +53,49 @@ export const PlayerProgress = ({
         : "text-[#FFD60A] font-semibold";
     }
 
-    const solvedStr = String(solved).toLowerCase();
+    const solvedStr = String(solved).toLowerCase().trim();
+
+    // Check for solved states
     if (
       solvedStr === "yes" ||
       solvedStr === "solved" ||
-      solvedStr === "✔ yes"
+      solvedStr === "✔ yes" ||
+      solvedStr === "true"
     ) {
       return "text-[#39FF14] font-semibold"; // neon green
     }
-    if (solvedStr === "failed" || solvedStr === "no") {
+
+    // Check for failed states
+    if (solvedStr === "failed" || solvedStr === "no" || solvedStr === "false") {
       return "text-red-400 font-semibold";
     }
-    if (solvedStr === "inprogress" || solvedStr === "in progress") {
+
+    // Check for in progress states
+    if (
+      solvedStr === "in progress" ||
+      solvedStr === "inprogress" ||
+      solvedStr === "in-progress"
+    ) {
       return "text-[#FFD60A] font-semibold"; // neon yellow
     }
+
     return "text-gray-300";
+  };
+
+  const getSolvedDisplay = (solved: boolean | string) => {
+    if (typeof solved === "boolean") {
+      return solved ? "✔ Yes" : "In Progress";
+    }
+
+    const solvedStr = String(solved).toLowerCase().trim();
+    if (solvedStr === "yes" || solvedStr === "true") {
+      return "✔ Yes";
+    }
+    if (solvedStr === "no" || solvedStr === "false") {
+      return "✗ No";
+    }
+
+    return String(solved);
   };
 
   // Sample riddle data for demo
@@ -176,12 +204,8 @@ export const PlayerProgress = ({
                   <td className="py-4 px-4 text-[#D1D5DB]">
                     {String(p.attempt ?? p.attempts ?? "—")}
                   </td>
-                  <td className={`py-4 px-4 ${solveColor(String(p.solved))}`}>
-                    {typeof p.solved === "boolean"
-                      ? p.solved
-                        ? "✔ Yes"
-                        : "In Progress"
-                      : String(p.solved)}
+                  <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
+                    {getSolvedDisplay(p.solved)}
                   </td>
                   <td className="py-4 px-4 text-center">
                     <Button

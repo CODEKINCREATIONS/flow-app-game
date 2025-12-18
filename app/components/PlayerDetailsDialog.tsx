@@ -86,11 +86,11 @@ export const PlayerDetailsDialog = ({
   }, [open, sessionCode, playerId]);
 
   // Use API data if available, otherwise fall back to props data
-  const totalRiddles = playerStats?.totalBoxes ?? riddleData.length;
+  const totalRiddles = playerStats?.total ?? riddleData.length;
   const solvedRiddles =
-    playerStats?.boxesSolved ?? riddleData.filter((r) => r.solved).length;
+    playerStats?.solved ?? riddleData.filter((r) => r.solved).length;
   const visitedRiddles =
-    playerStats?.boxesVisited ?? riddleData.filter((r) => r.visited).length;
+    playerStats?.unSolved ?? riddleData.filter((r) => r.visited).length;
 
   if (!open) return null;
 

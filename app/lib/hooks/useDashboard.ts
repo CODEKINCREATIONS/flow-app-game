@@ -89,7 +89,7 @@ export const useDashboard = () => {
               undefined,
             attempt: Number(p.attempt || p.attempts || 0) || undefined,
             attempts: Number(p.attempt || p.attempts || 0) || undefined,
-            solved: p.solved === "Yes" || p.solved === true || p.solved === 1,
+            solved: String(p.solved || "In Progress"),
           }));
           setPlayers(mappedPlayers);
         } else {
@@ -144,7 +144,7 @@ export const useDashboard = () => {
               Number(p.riddleAccess || p.activeBox || 0) || undefined,
             attempt: Number(p.attempts || p.attempt || 0) || undefined,
             attempts: Number(p.attempts || p.attempt || 0) || undefined,
-            solved: p.solved === true || p.solved === "Yes" || p.solved === 1,
+            solved: String(p.solved || "In Progress"),
           }));
           // Only update if we have players (fallback)
           if (mappedPlayers.length > 0) {

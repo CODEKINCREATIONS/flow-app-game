@@ -90,15 +90,21 @@ export const useAuth = () => {
           gameSessionId
         );
         if (response.success && response.data) {
+          // Handle both direct response and wrapped response
+          const playerResponse = response.data as Record<string, unknown>;
           const playerData = response.data as Record<string, unknown>;
+          const gameSessionData = playerData.gameSession as
+            | Record<string, unknown>
+            | undefined;
+
           loginPlayer({
-            id: String(playerData.id || ""),
+            id: String(playerData.playerId || ""),
             name: String(playerData.name || ""),
             email: String(playerData.email || ""),
             language: String(playerData.language || "en"),
-            joinedAt: String(playerData.joinedAt || new Date().toISOString()),
+            joinedAt: String(playerData.createdAt || new Date().toISOString()),
             gameSessionId: playerData.gameSessionId as number | undefined,
-            sessionCode: playerData.sessionCode as string | undefined,
+            sessionCode: gameSessionData?.sessionCode as string | undefined,
           });
           router.push("/game");
         }

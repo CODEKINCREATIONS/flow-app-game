@@ -77,10 +77,30 @@ export const gameService = {
     );
   },
 
-  // Get game progress (boxes, lock types, and session state)
-  getGameProgress: async (sessionCode: string) => {
-    return apiClient.get<GameProgressResponse>(
-      `/api/game/game-progress/${sessionCode}`
-    );
+  // Get game progress (boxes, lock types, and session state) for a specific player
+  getGameProgress: async (sessionCode: string, playerId?: number | string) => {
+    const url = playerId
+      ? `/api/game/game-progress/${sessionCode}?playerId=${playerId}`
+      : `/api/game/game-progress/${sessionCode}`;
+    return apiClient.get<GameProgressResponse>(url);
+  },
+
+  // Record a player's box attempt
+  recordBoxAttempt: async (playerId: number | string, boxId: number) => {
+    return apiClient.post(`/api/game/player-progress`, {
+      playerId,
+      boxId,
+    });
+  },
+
+  // Verify password for a box
+  verifyBoxPassword: async (
+    playerId: number | string,
+    padlockPassword: string
+  ) => {
+    return apiClient.put(`/api/game/player-progress`, {
+      playerId,
+      padlockPassword,
+    });
   },
 };
