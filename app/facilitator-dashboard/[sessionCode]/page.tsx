@@ -276,6 +276,8 @@ function FacilitatorDashboardWithCodeContent() {
         headerMode="dashboard"
         showTimer={true}
         transparentBackground={true}
+        sessionUnlockedAt={dashboardData?.sessionUnlockedAt}
+        sessionDuration={dashboardData?.sessionDuration}
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 space-y-8 font-sans mx-[30px] min-h-screen">
           {/* Action Buttons */}

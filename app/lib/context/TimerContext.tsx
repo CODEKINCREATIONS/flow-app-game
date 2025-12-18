@@ -21,7 +21,7 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const { secondsRemaining, isRunning, start, pause, reset, formatted } =
     useCountdownTimer({
       initialSeconds: DEFAULT_DURATION,
-      autoStart: true,
+      autoStart: false,
     });
 
   const value = useMemo(

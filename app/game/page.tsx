@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { AppLayout } from "@/app/components/layout";
 import { Button } from "@/app/components/ui";
@@ -34,9 +34,12 @@ export default function PlayerGamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrating, setIsHydrating] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sessionUnlockedAt, setSessionUnlockedAt] = useState<string>();
+  const [sessionDuration, setSessionDuration] = useState<number>(60);
   const { user, isPlayer } = useAuth();
   const isHydrated = useHydration();
   const router = useRouter();
+  const initialFetchDone = useRef(false);
 
   // Wait for hydration to complete before showing any content
   useEffect(() => {
@@ -60,7 +63,10 @@ export default function PlayerGamePage() {
     if (!isHydrated || !user || !isPlayer) return;
 
     const fetchGameProgress = async () => {
-      setIsLoading(true);
+      // Only show loading on initial fetch, not on polling
+      if (!initialFetchDone.current) {
+        setIsLoading(true);
+      }
       setError(null);
 
       try {
@@ -111,6 +117,17 @@ export default function PlayerGamePage() {
           gameData = gameData.data;
         }
 
+        // Extract session data for timer
+        const gameSession = gameData?.gameSession;
+        if (gameSession) {
+          if (gameSession.sessionUnlockedAt) {
+            setSessionUnlockedAt(gameSession.sessionUnlockedAt);
+          }
+          if (gameSession.sessionDuration) {
+            setSessionDuration(gameSession.sessionDuration);
+          }
+        }
+
         // Extract gameProgress from response data
         const gameProgressData = gameData?.gameProgress;
 
@@ -143,11 +160,22 @@ export default function PlayerGamePage() {
         console.error("[Game] Error fetching game progress:", errorMsg);
         setError(errorMsg);
       } finally {
-        setIsLoading(false);
+        // Only hide loading on initial fetch
+        if (!initialFetchDone.current) {
+          setIsLoading(false);
+          initialFetchDone.current = true;
+        }
       }
     };
 
     fetchGameProgress();
+
+    // Poll every 5 seconds for game progress (includes session data for timer)
+    const pollInterval = setInterval(() => {
+      fetchGameProgress();
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
   }, [isHydrated, user, isPlayer]);
 
   const playerName =
@@ -192,19 +220,24 @@ export default function PlayerGamePage() {
 
       console.log("[Game] Code accepted by backend!");
 
-      // Verify password using dedicated endpoint (for testing/auditing)
+      // Verify password using dedicated endpoint (for auditing)
+      // This is optional - if it fails, we still proceed
       try {
         const verifyResponse = await gameService.verifyBoxPassword(
           playerId,
           code
         );
-        console.log(
-          "[Game] Password verification response:",
-          verifyResponse
-        );
+        console.log("[Game] Password verification response:", verifyResponse);
       } catch (verifyErr) {
-        console.warn("[Game] Password verification call failed:", verifyErr);
-        // Don't fail the unlock process if verification call fails
+        const errorMsg =
+          verifyErr instanceof Error ? verifyErr.message : String(verifyErr);
+        // Log but don't fail - this endpoint is for auditing only
+        if (!errorMsg.includes("Already Exist")) {
+          console.warn(
+            "[Game] Password verification failed (non-critical):",
+            verifyErr
+          );
+        }
       }
 
       // Record the box attempt
@@ -212,10 +245,16 @@ export default function PlayerGamePage() {
         await gameService.recordBoxAttempt(playerId, boxID);
         console.log("[Game] Box attempt recorded successfully");
       } catch (attemptErr) {
-        const errorMsg = attemptErr instanceof Error ? attemptErr.message : String(attemptErr);
+        const errorMsg =
+          attemptErr instanceof Error ? attemptErr.message : String(attemptErr);
         // "Already Exist" means the record was already created, which is fine
-        if (errorMsg.includes("Already Exist") || errorMsg.includes("already exist")) {
-          console.log("[Game] Box attempt already recorded (expected behavior)");
+        if (
+          errorMsg.includes("Already Exist") ||
+          errorMsg.includes("already exist")
+        ) {
+          console.log(
+            "[Game] Box attempt already recorded (expected behavior)"
+          );
         } else {
           console.warn("[Game] Failed to record box attempt:", attemptErr);
         }
@@ -259,9 +298,17 @@ export default function PlayerGamePage() {
       en: "/assets/language_Videos/English.mp4",
       es: "/assets/language_Videos/Flow - Video de God Of War ES.mp4",
       pt: "/assets/language_Videos/Flow - Video de God Of War PT.mp4",
+      fr: "/assets/language_Videos/English.mp4", // Fallback to English for French
     };
 
-    return videoMap[language] || videoMap["en"]; // Default to English if language not found
+    const videoUrl = videoMap[language] || videoMap["en"];
+    console.log(
+      "[Game] getVideoUrl - Language:",
+      language,
+      "Video URL:",
+      videoUrl
+    );
+    return videoUrl;
   };
 
   // Show loading state while hydrating from localStorage
@@ -273,6 +320,8 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={false}
         transparentBackground={true}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
           <div className="text-center">
@@ -297,6 +346,8 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={false}
         transparentBackground={true}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
           <div className="text-center">
@@ -322,6 +373,8 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={true}
         transparentBackground={true}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
           <div className="text-center">
@@ -383,6 +436,8 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={true}
         transparentBackground={true}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
       >
         <div className="w-full min-h-screen">
           <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">

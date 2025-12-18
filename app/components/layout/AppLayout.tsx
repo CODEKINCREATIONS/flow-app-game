@@ -13,6 +13,8 @@ interface AppLayoutProps {
   showLanguage?: boolean;
   transparentBackground?: boolean;
   customActions?: React.ReactNode;
+  sessionUnlockedAt?: string;
+  sessionDuration?: number;
 }
 
 export const AppLayout = ({
@@ -23,6 +25,8 @@ export const AppLayout = ({
   showLanguage = false,
   transparentBackground = false,
   customActions,
+  sessionUnlockedAt,
+  sessionDuration = 60,
 }: AppLayoutProps) => {
   return (
     <TimerProvider>
@@ -37,6 +41,8 @@ export const AppLayout = ({
           showTimer={showTimer}
           showLanguage={showLanguage}
           customActions={customActions}
+          sessionUnlockedAt={sessionUnlockedAt}
+          sessionDuration={sessionDuration}
         />
         <main className="flex-1">{children}</main>
         <AppFooter />

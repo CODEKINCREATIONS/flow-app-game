@@ -171,12 +171,14 @@ export async function PUT(request: NextRequest) {
     )}`;
 
     console.log("[PlayerProgress PUT] Calling:", externalApiUrl);
+    console.log("[PlayerProgress PUT] Payload:", { playerId, padlockPassword });
 
     const response = await fetch(externalApiUrl, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({}), // Send empty body as password is in URL
     });
 
     const data = await response.json();

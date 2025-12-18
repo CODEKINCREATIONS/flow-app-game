@@ -211,8 +211,8 @@ function PlayerLoginContent() {
                   <option value="pt" className="text-gray-300 bg-[#0F111A]">
                     PT — Português
                   </option>
-                  <option value="fr" className="text-gray-300 bg-[#0F111A]">
-                    FR — Français
+                  <option value="es" className="text-gray-300 bg-[#0F111A]">
+                    ES — Español
                   </option>
                 </select>
               </div>
