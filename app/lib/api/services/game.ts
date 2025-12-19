@@ -27,12 +27,42 @@ export const gameService = {
     password: string,
     playerId?: number
   ) => {
-    return apiClient.post(`/api/game/unlock`, {
-      sessionCode,
-      boxID,
-      password,
-      playerId: playerId || 0,
-    });
+    try {
+      console.log("[unlockChest] Starting unlock process:", {
+        boxID,
+        playerId,
+      });
+
+      // Call the API route which handles the backend communication
+      const response = await apiClient.post("/api/game/player-progress", {
+        playerId: playerId || 0,
+        boxId: boxID,
+        password,
+      });
+
+      console.log("[unlockChest] Response:", response);
+
+      if (!response.success) {
+        return {
+          success: false,
+          error: response.error || "Failed to unlock chest",
+        };
+      }
+
+      // Return the response data
+      return {
+        success: (response.data as any)?.message === "Success",
+        message: (response.data as any)?.message,
+        data: (response.data as any)?.data,
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error("[unlockChest] Error:", errorMsg);
+      return {
+        success: false,
+        error: errorMsg || "Failed to unlock chest",
+      };
+    }
   },
 
   // Get player progress

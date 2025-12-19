@@ -31,6 +31,10 @@ export default function PlayerGamePage() {
   const [submittedCodes, setSubmittedCodes] = useState<{
     [key: number]: string;
   }>({});
+  const [physicalCode, setPhysicalCode] = useState<string | null>(null);
+  const [physicalCodesByBox, setPhysicalCodesByBox] = useState<{
+    [key: number]: string | null;
+  }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrating, setIsHydrating] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -154,6 +158,14 @@ export default function PlayerGamePage() {
           .map((box: { status: number; boxID: number }) => box.boxID - 1); // Convert to 0-indexed
 
         setUnlockedChests(unlockedIds);
+
+        // Store physical codes by box ID
+        const physicalCodesMap: { [key: number]: string | null } = {};
+        gameProgressData.forEach((box: any) => {
+          physicalCodesMap[box.boxID - 1] = box.physicalCode; // Convert to 0-indexed
+        });
+        setPhysicalCodesByBox(physicalCodesMap);
+        console.log("[Game] Physical codes loaded:", physicalCodesMap);
         console.log("[Game] Unlocked chests initialized:", unlockedIds);
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Unknown error";
@@ -203,7 +215,7 @@ export default function PlayerGamePage() {
         codeLength: code.length,
       });
 
-      // Call backend to verify password
+      // Call backend to verify password - single API call handles unlock + verification
       const response = await gameService.unlockChest(
         sessionCode,
         boxID,
@@ -220,45 +232,10 @@ export default function PlayerGamePage() {
 
       console.log("[Game] Code accepted by backend!");
 
-      // Verify password using dedicated endpoint (for auditing)
-      // This is optional - if it fails, we still proceed
-      try {
-        const verifyResponse = await gameService.verifyBoxPassword(
-          playerId,
-          code
-        );
-        console.log("[Game] Password verification response:", verifyResponse);
-      } catch (verifyErr) {
-        const errorMsg =
-          verifyErr instanceof Error ? verifyErr.message : String(verifyErr);
-        // Log but don't fail - this endpoint is for auditing only
-        if (!errorMsg.includes("Already Exist")) {
-          console.warn(
-            "[Game] Password verification failed (non-critical):",
-            verifyErr
-          );
-        }
-      }
-
-      // Record the box attempt
-      try {
-        await gameService.recordBoxAttempt(playerId, boxID);
-        console.log("[Game] Box attempt recorded successfully");
-      } catch (attemptErr) {
-        const errorMsg =
-          attemptErr instanceof Error ? attemptErr.message : String(attemptErr);
-        // "Already Exist" means the record was already created, which is fine
-        if (
-          errorMsg.includes("Already Exist") ||
-          errorMsg.includes("already exist")
-        ) {
-          console.log(
-            "[Game] Box attempt already recorded (expected behavior)"
-          );
-        } else {
-          console.warn("[Game] Failed to record box attempt:", attemptErr);
-        }
-        // Don't fail the whole process if recording attempt fails
+      // Capture the physical code from the response
+      if (response.data) {
+        setPhysicalCode(String(response.data));
+        console.log("[Game] Physical code received:", response.data);
       }
 
       // Code was correct - update UI state
@@ -478,6 +455,7 @@ export default function PlayerGamePage() {
                       // Only open modal if chest is not already unlocked
                       if (!isUnlocked) {
                         setSelectedChest(boxIndex);
+                        setPhysicalCode(null); // Clear physical code when opening a new chest
                       }
                     }}
                     className={`
@@ -528,6 +506,15 @@ export default function PlayerGamePage() {
                     <div className="absolute top-[15px] left-[15px] z-50 text-white font-black text-lg bg-black bg-opacity-50 px-2 py-1 rounded">
                       Box {gameBox.boxID}
                     </div>
+                    {physicalCodesByBox[boxIndex] && (
+                      <div className="absolute inset-0 flex items-start justify-center mt-[100px] bg-black bg-opacity-60 rounded-xl z-30">
+                        <div className="text-center">
+                          <p className="text-white font-mono font-bold text-lg sm:text-xl md:text-2xl tracking-wider">
+                            {physicalCodesByBox[boxIndex]}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                     {!isUnlocked && (
                       <div
                         style={{
@@ -599,6 +586,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   case "directional":
@@ -608,6 +596,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   case "numericV1":
@@ -617,6 +606,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   case "word":
@@ -626,6 +616,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   case "numericV2":
@@ -635,6 +626,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   case "wordML":
@@ -644,6 +636,7 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        physicalCode={physicalCode}
                       />
                     );
                   default:

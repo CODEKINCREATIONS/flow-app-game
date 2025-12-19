@@ -73,19 +73,20 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST - Record a player's box attempt
- * Endpoint: POST /api/game/player-progress
- * Body: { playerId, boxId }
- * Proxies to: POST /PlayerProgress/PlayerId/{playerId}/BoxId/{boxId}
+ * POST - Record a player's box attempt OR unlock a box with password
+ * Two modes:
+ * 1. Record attempt (backward compatible): POST with { playerId, boxId }
+ * 2. Unlock box: POST with { playerId, boxId, password }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { playerId, boxId } = body;
+    const { playerId, boxId, password } = body;
 
-    console.log("[PlayerProgress POST] Recording attempt:", {
+    console.log("[PlayerProgress POST] Request:", {
       playerId,
       boxId,
+      hasPassword: !!password,
     });
 
     if (!playerId || !boxId) {
@@ -94,6 +95,82 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // If password is provided, do full unlock flow
+    if (password) {
+      console.log("[PlayerProgress POST] Unlock flow with password");
+
+      // Step 1: Get the progressId by posting PlayerId and BoxId
+      const getProgressUrl = `${env.SESSION_VERIFICATION_URL}/PlayerProgress/PlayerId/${playerId}/BoxId/${boxId}`;
+      console.log(
+        "[PlayerProgress POST] Getting progress from:",
+        getProgressUrl
+      );
+
+      const getProgressResponse = await fetch(getProgressUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      const getProgressData = await getProgressResponse.json();
+      console.log(
+        "[PlayerProgress POST] Get progress response:",
+        getProgressData
+      );
+
+      // Extract progressId - handle both success and "Already Exist" responses
+      let progressId = null;
+
+      if (getProgressData.data) {
+        progressId = getProgressData.data;
+      } else if (
+        getProgressData.message &&
+        getProgressData.message.toLowerCase().includes("already exist")
+      ) {
+        // For "Already Exist", the data field contains the progressId
+        progressId = getProgressData.data;
+      }
+
+      if (!progressId) {
+        console.error(
+          "[PlayerProgress POST] No progressId found in response:",
+          getProgressData
+        );
+        return NextResponse.json(
+          {
+            message: getProgressData.message || "Failed to get progress record",
+          },
+          { status: 400 }
+        );
+      }
+
+      console.log("[PlayerProgress POST] Got progressId:", progressId);
+
+      // Step 2: Verify password by putting the password with progressId
+      const verifyUrl = `${env.SESSION_VERIFICATION_URL}/PlayerProgress/${progressId}/PadlockPassword/${password}`;
+      console.log("[PlayerProgress POST] Verifying password at:", verifyUrl);
+
+      const verifyResponse = await fetch(verifyUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      const verifyData = await verifyResponse.json();
+      console.log("[PlayerProgress POST] Verify response:", verifyData);
+
+      return NextResponse.json(verifyData, {
+        status: verifyResponse.status,
+      });
+    }
+
+    // Otherwise, just record the attempt (backward compatible)
+    console.log("[PlayerProgress POST] Recording attempt (no password)");
 
     // Call external API
     const externalApiUrl = `${env.SESSION_VERIFICATION_URL}/PlayerProgress/PlayerId/${playerId}/BoxId/${boxId}`;
@@ -142,66 +219,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
 /**
- * PUT - Verify/update password for a box
- * Endpoint: PUT /api/game/player-progress/verify
- * Body: { playerId, padlockPassword }
- * Proxies to: PUT /PlayerProgress/{playerId}/PadlockPassword/{padlockPassword}
+ * PUT - REMOVED - No longer needed
+ * Password verification is now handled in the POST endpoint
  */
-export async function PUT(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { playerId, padlockPassword } = body;
-
-    console.log("[PlayerProgress PUT] Verifying password:", { playerId });
-
-    if (!playerId || !padlockPassword) {
-      return NextResponse.json(
-        { error: "playerId and padlockPassword are required" },
-        { status: 400 }
-      );
-    }
-
-    // Call external API
-    const externalApiUrl = `${
-      env.SESSION_VERIFICATION_URL
-    }/PlayerProgress/${playerId}/PadlockPassword/${encodeURIComponent(
-      padlockPassword
-    )}`;
-
-    console.log("[PlayerProgress PUT] Calling:", externalApiUrl);
-    console.log("[PlayerProgress PUT] Payload:", { playerId, padlockPassword });
-
-    const response = await fetch(externalApiUrl, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}), // Send empty body as password is in URL
-    });
-
-    const data = await response.json();
-    console.log("[PlayerProgress PUT] Response:", data);
-
-    if (!response.ok) {
-      console.error(`[PlayerProgress PUT] Error: ${response.status}`, data);
-      return NextResponse.json(
-        {
-          error: `Failed to verify password: ${
-            data.message || response.statusText
-          }`,
-        },
-        { status: response.status }
-      );
-    }
-
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error("[PlayerProgress PUT] Error:", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
-    );
-  }
-}

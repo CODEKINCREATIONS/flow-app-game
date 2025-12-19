@@ -12,6 +12,7 @@ interface WordLockModalProps {
   onClose: () => void;
   onSubmit: (code: string) => Promise<void>;
   lockImage: string;
+  physicalCode?: string | null;
 }
 
 const ALPHABETS = [
@@ -60,6 +61,7 @@ export default function WordLockModal({
   onClose,
   onSubmit,
   lockImage,
+  physicalCode,
 }: WordLockModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0, 0]);
@@ -157,7 +159,7 @@ export default function WordLockModal({
     <Dialog open={open} onClose={onClose}>
       <div ref={dialogRef}>
         <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
-          <div className="flex justify-end mb-8 px-2 relative">
+          <div className="flex justify-end mb-4 px-2 relative">
             <div
               className={`absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-r from-[#7B61FF] to-[#6A50DD] rounded-full ${
                 isUnlocked ? "animate-pulse" : ""
@@ -168,6 +170,27 @@ export default function WordLockModal({
               className="relative z-10 w-6 h-6 text-gray-400 hover:text-[#7B61FF] transition-colors cursor-pointer"
             />
           </div>
+
+          {/* Physical Code Display - Red bold text below X icon */}
+          {isUnlocked && physicalCode && (
+            <div className="mb-6 animate-fade-in-slide-down">
+              <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
+                Congratulation!
+              </p>
+              <p
+                className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
+                style={{ animationDelay: "0.1s" }}
+              >
+                Your Physical Code is:
+              </p>
+              <p
+                className="text-3xl font-bold text-[#FF0000] mt-2 tracking-wider animate-bounce-slow"
+                style={{ animationDelay: "0.2s" }}
+              >
+                {physicalCode}
+              </p>
+            </div>
+          )}
 
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
