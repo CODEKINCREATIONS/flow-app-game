@@ -6,8 +6,7 @@ import { AppLayout } from "@/app/components/layout";
 import { SessionDetails } from "@/app/components/SessionDetails";
 import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { Button } from "@/app/components/ui";
-import { useSession } from "@/app/lib/hooks";
-import { useTimerContext } from "@/app/lib/context/TimerContext";
+import { useSession, useTimer } from "@/app/lib/hooks";
 import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import { authService } from "@/app/lib/api/services/auth";
 import { gameService } from "@/app/lib/api/services/game";
@@ -21,12 +20,12 @@ function FacilitatorDashboardWithCodeContent() {
   const params = useParams();
   const router = useRouter();
   const sessionCode = params?.sessionCode as string;
+  const { start } = useTimer({ autoStart: false });
 
   const [showQR, setShowQR] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const { endSession, session } = useSession();
-  const { start } = useTimerContext();
   const { setSession } = useSessionStore();
   const { dashboardData, fetchDashboard } = useDashboard();
 
@@ -167,7 +166,6 @@ function FacilitatorDashboardWithCodeContent() {
     dashboardData?.sessionUnlocked,
     dashboardData?.gameSessionId,
     sessionCode,
-    start,
   ]);
 
   const handleFinish = async () => {
@@ -276,6 +274,7 @@ function FacilitatorDashboardWithCodeContent() {
         headerMode="dashboard"
         showTimer={true}
         transparentBackground={true}
+        sessionCreated={dashboardData?.sessionCreated}
         sessionUnlockedAt={dashboardData?.sessionUnlockedAt}
         sessionDuration={dashboardData?.sessionDuration}
       >

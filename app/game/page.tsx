@@ -38,6 +38,7 @@ export default function PlayerGamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrating, setIsHydrating] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sessionCreated, setSessionCreated] = useState<string>();
   const [sessionUnlockedAt, setSessionUnlockedAt] = useState<string>();
   const [sessionDuration, setSessionDuration] = useState<number>(60);
   const { user, isPlayer } = useAuth();
@@ -124,6 +125,9 @@ export default function PlayerGamePage() {
         // Extract session data for timer
         const gameSession = gameData?.gameSession;
         if (gameSession) {
+          if (gameSession.sessionCreated) {
+            setSessionCreated(gameSession.sessionCreated);
+          }
           if (gameSession.sessionUnlockedAt) {
             setSessionUnlockedAt(gameSession.sessionUnlockedAt);
           }
@@ -297,6 +301,7 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={false}
         transparentBackground={true}
+        sessionCreated={sessionCreated}
         sessionUnlockedAt={sessionUnlockedAt}
         sessionDuration={sessionDuration}
       >
@@ -323,6 +328,7 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={false}
         transparentBackground={true}
+        sessionCreated={sessionCreated}
         sessionUnlockedAt={sessionUnlockedAt}
         sessionDuration={sessionDuration}
       >
@@ -350,6 +356,7 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={true}
         transparentBackground={true}
+        sessionCreated={sessionCreated}
         sessionUnlockedAt={sessionUnlockedAt}
         sessionDuration={sessionDuration}
       >
@@ -413,6 +420,7 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={true}
         transparentBackground={true}
+        sessionCreated={sessionCreated}
         sessionUnlockedAt={sessionUnlockedAt}
         sessionDuration={sessionDuration}
       >

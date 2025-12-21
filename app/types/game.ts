@@ -14,7 +14,9 @@ export interface GameSessionData {
   status: number;
   playersJoined: number;
   sessionUnlocked: boolean;
-  sessionStarted: string;
+  sessionStarted?: string;
+  sessionCreated?: string;
+  sessionUnlockedAt?: string;
   sessionDuration: number;
 }
 

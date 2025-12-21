@@ -3,7 +3,6 @@
 import { ReactNode } from "react";
 import { AppHeader } from "./AppHeader";
 import { AppFooter } from "./AppFooter";
-import { TimerProvider } from "@/app/lib/context/TimerContext";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -13,6 +12,7 @@ interface AppLayoutProps {
   showLanguage?: boolean;
   transparentBackground?: boolean;
   customActions?: React.ReactNode;
+  sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionDuration?: number;
 }
@@ -25,28 +25,28 @@ export const AppLayout = ({
   showLanguage = false,
   transparentBackground = false,
   customActions,
+  sessionCreated,
   sessionUnlockedAt,
   sessionDuration = 60,
 }: AppLayoutProps) => {
   return (
-    <TimerProvider>
-      <div
-        className={`min-h-screen flex flex-col ${
-          transparentBackground ? "bg-transparent" : "bg-[#0F1125]"
-        }`}
-      >
-        <AppHeader
-          mode={headerMode}
-          playerName={playerName}
-          showTimer={showTimer}
-          showLanguage={showLanguage}
-          customActions={customActions}
-          sessionUnlockedAt={sessionUnlockedAt}
-          sessionDuration={sessionDuration}
-        />
-        <main className="flex-1">{children}</main>
-        <AppFooter />
-      </div>
-    </TimerProvider>
+    <div
+      className={`min-h-screen flex flex-col ${
+        transparentBackground ? "bg-transparent" : "bg-[#0F1125]"
+      }`}
+    >
+      <AppHeader
+        mode={headerMode}
+        playerName={playerName}
+        showTimer={showTimer}
+        showLanguage={showLanguage}
+        customActions={customActions}
+        sessionCreated={sessionCreated}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
+      />
+      <main className="flex-1">{children}</main>
+      <AppFooter />
+    </div>
   );
 };

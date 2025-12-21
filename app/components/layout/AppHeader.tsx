@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { LogOut, User, Clock, Settings } from "lucide-react";
-import { useTimerContext } from "@/app/lib/context/TimerContext";
 import { useEffect, useState } from "react";
 import { calculateRemainingTime } from "@/app/lib/utils/calculateRemainingTime";
 
@@ -16,6 +15,7 @@ interface AppHeaderProps {
   showTimer?: boolean;
   showLanguage?: boolean;
   customActions?: React.ReactNode;
+  sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionDuration?: number;
 }
@@ -26,14 +26,14 @@ export const AppHeader = ({
   showTimer = false,
   showLanguage = false,
   customActions,
+  sessionCreated,
   sessionUnlockedAt,
   sessionDuration = 60,
 }: AppHeaderProps) => {
   const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();
-  const { formatted } = useTimerContext();
   const [dynamicTime, setDynamicTime] = useState<string>(
-    calculateRemainingTime(sessionUnlockedAt, sessionDuration)
+    calculateRemainingTime(sessionCreated, sessionUnlockedAt, sessionDuration)
   );
   const language =
     (user as unknown as Record<string, unknown>)?.language || "en";
@@ -44,12 +44,16 @@ export const AppHeader = ({
 
     const interval = setInterval(() => {
       setDynamicTime(
-        calculateRemainingTime(sessionUnlockedAt, sessionDuration)
+        calculateRemainingTime(
+          sessionCreated,
+          sessionUnlockedAt,
+          sessionDuration
+        )
       );
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [sessionUnlockedAt, sessionDuration]);
+  }, [sessionCreated, sessionUnlockedAt, sessionDuration]);
 
   // Use dynamic time if available, otherwise show 60:00 (not from context)
   const displayTime = sessionUnlockedAt ? dynamicTime : "60:00";
@@ -193,7 +197,7 @@ export const AppHeader = ({
                   <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap ml-[10px]">
                     <Clock className="text-purple-400 w-4 h-4 sm:w-5 sm:h-5 mr-[5px]" />
                     <span className="font-mono text-xs sm:text-sm md:text-base text-gray-100">
-                      {formatted}
+                      {displayTime}
                     </span>
                   </div>
                 )}

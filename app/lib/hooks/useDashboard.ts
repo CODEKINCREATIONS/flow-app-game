@@ -23,6 +23,7 @@ export interface DashboardData {
   status?: string;
   playersJoined?: number;
   sessionUnlocked?: boolean;
+  sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionStarted?: string;
   sessionDuration?: number;

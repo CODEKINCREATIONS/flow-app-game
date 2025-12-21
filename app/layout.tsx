@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { TimerProvider } from "@/app/lib/context/TimerContext";
 import RootLayoutClient from "./layout-client";
 
 const geistSans = Geist({
@@ -46,9 +45,7 @@ export default function RootLayout({
         className="bg-background text-textPrimary font-orbitron"
         suppressHydrationWarning
       >
-        <TimerProvider>
-          <RootLayoutClient>{children}</RootLayoutClient>
-        </TimerProvider>
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );

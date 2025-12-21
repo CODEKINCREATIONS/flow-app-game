@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, Suspense, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { AppLayout } from "@/app/components/layout";
 import { SessionDetails } from "@/app/components/SessionDetails";
 import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
-import { useTimerContext } from "@/app/lib/context/TimerContext";
+
 import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
@@ -18,7 +19,6 @@ function FacilitatorDashboardContent() {
   const [showQR, setShowQR] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const { endSession, session, fetchSessionDetails } = useSession();
-  const { start } = useTimerContext();
   const { dashboardData, fetchDashboard } = useDashboard();
   const {
     isVerifying,
@@ -28,6 +28,7 @@ function FacilitatorDashboardContent() {
     verifyFromQueryString,
     redirectToError,
   } = useQueryStringSession();
+  const router = useRouter();
 
   const [sessionVerificationChecked, setSessionVerificationChecked] =
     useState(false);
@@ -35,6 +36,13 @@ function FacilitatorDashboardContent() {
   const [gameSessionId, setGameSessionId] = useState<number | null>(null);
   const unlockedRef = useRef(false);
   const gameSessionIdRef = useRef<number | null>(null);
+
+  // Redirect to facilitator login if no session code provided
+  useEffect(() => {
+    if (sessionVerificationChecked && !sessionCode) {
+      router.push("/facilitator-login");
+    }
+  }, [sessionVerificationChecked, sessionCode, router]);
 
   // Log sessionCode updates
   useEffect(() => {
@@ -118,8 +126,6 @@ function FacilitatorDashboardContent() {
       unlockedRef.current = true;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSessionUnlocked(true);
-      // Auto-start timer if session is already unlocked
-      start();
     }
 
     // Extract gameSessionId from dashboard data
@@ -135,7 +141,7 @@ function FacilitatorDashboardContent() {
         dashboardData,
       });
     }
-  }, [dashboardData, sessionCode, start]);
+  }, [dashboardData, sessionCode]);
 
   const handleFinish = async () => {
     if (session) {
@@ -216,7 +222,6 @@ function FacilitatorDashboardContent() {
         // Session unlocked successfully
         setIsSessionUnlocked(true);
         setShowUnlockConfirm(false);
-        start();
         setShowQR(true);
       } else {
         alert(`Failed to unlock session: ${response.error}`);
