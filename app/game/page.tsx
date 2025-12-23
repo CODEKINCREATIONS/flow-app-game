@@ -656,7 +656,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={user?.language as string}
+                        language={("language" in user ? user.language : "en") as string}
                       />
                     );
                   default:
