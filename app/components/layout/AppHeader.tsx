@@ -71,7 +71,7 @@ export const AppHeader = ({
     return (
       <header className="sticky  z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center px-[30px]">
             {/* Left: Player Name */}
             <h1 className="text-2xl font-bold text-white">
               {playerName || "Player"}
@@ -109,9 +109,9 @@ export const AppHeader = ({
   // Dashboard Mode Header
   if (mode === "dashboard") {
     return (
-      <header className="sticky top-0 z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5">
-          <div className="flex items-center justify-between">
+      <header className="sticky top-0 z-50  w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)] ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 ">
+          <div className="flex items-center justify-between px-[30px]">
             {/* Left: Logo */}
             <Image
               src="/assets/Logo_flow.png"
@@ -130,8 +130,8 @@ export const AppHeader = ({
             <div className="flex items-center gap-2 flex-shrink-0">
               {/* Timer */}
               {showTimer && (
-                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg whitespace-nowrap">
-                  <Clock className="text-purple-400 w-4 h-4 sm:w-5 sm:h-5 mr-[5px]" />
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap h-[30px] w-[100px]">
+                  <Clock className="text-purple-400  sm:w-5 sm:h-5 mr-[5px]" />
                   <span className="font-mono text-xs sm:text-sm md:text-base text-gray-100">
                     {displayTime}
                   </span>

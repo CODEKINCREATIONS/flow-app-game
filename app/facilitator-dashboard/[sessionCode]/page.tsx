@@ -14,6 +14,7 @@ import { useSessionStore } from "@/app/lib/store/sessionStore";
 import QRCodeDialog from "@/app/components/QRCodeDialog";
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
 import FinishSessionDialog from "@/app/components/FinishSessionDialog";
+import SessionExpiredDialog from "@/app/components/SessionExpiredDialog";
 import { QrCode } from "lucide-react";
 
 function FacilitatorDashboardWithCodeContent() {
@@ -25,9 +26,11 @@ function FacilitatorDashboardWithCodeContent() {
   const [showQR, setShowQR] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
   const { endSession, session } = useSession();
   const { setSession } = useSessionStore();
-  const { dashboardData, fetchDashboard } = useDashboard();
+  const { dashboardData, fetchDashboard, players, loading, error } =
+    useDashboard();
 
   const [verificationState, setVerificationState] = useState({
     isVerifying: true,
@@ -128,11 +131,11 @@ function FacilitatorDashboardWithCodeContent() {
     if (!sessionCode) return;
 
     // Fetch immediately
-    fetchDashboard(sessionCode);
+    fetchDashboard(sessionCode, false);
 
-    // Poll every 5 seconds
+    // Poll every 5 seconds (background fetch - no loading indicator)
     const interval = setInterval(() => {
-      fetchDashboard(sessionCode);
+      fetchDashboard(sessionCode, true);
     }, 5000);
 
     return () => {
@@ -150,6 +153,11 @@ function FacilitatorDashboardWithCodeContent() {
       start();
     }
 
+    // Check if session has expired (status = 2 means finished)
+    if (String(dashboardData?.status) === "2" && !showSessionExpired) {
+      setShowSessionExpired(true);
+    }
+
     // Extract gameSessionId from dashboard data
     if (
       dashboardData?.gameSessionId &&
@@ -165,14 +173,34 @@ function FacilitatorDashboardWithCodeContent() {
   }, [
     dashboardData?.sessionUnlocked,
     dashboardData?.gameSessionId,
+    dashboardData?.status,
     sessionCode,
   ]);
 
   const handleFinish = async () => {
-    if (session) {
-      await endSession(session.id);
+    try {
+      // Call the finish session API
+      const response = await gameService.finishSession(sessionCode);
+
+      if (response.success) {
+        // Session finished successfully, redirect to login
+        console.log(
+          "[handleFinish] Session finished successfully:",
+          response.data
+        );
+        window.location.href = "/facilitator-login";
+      } else {
+        const errorMsg =
+          response.error || response.message || "Failed to finish session";
+        alert(`Failed to finish session: ${errorMsg}`);
+        setShowFinishConfirm(false);
+      }
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to finish session";
+      alert(`Error: ${errorMsg}`);
+      setShowFinishConfirm(false);
     }
-    window.location.href = "/facilitator-login";
   };
 
   const handleUnlock = async () => {
@@ -310,7 +338,12 @@ function FacilitatorDashboardWithCodeContent() {
               <SessionDetails sessionCode={sessionCode} />
             </div>
 
-            <PlayerProgress sessionCode={sessionCode} />
+            <PlayerProgress
+              sessionCode={sessionCode}
+              players={players}
+              loading={loading}
+              error={error}
+            />
           </div>
         </main>
 
@@ -348,6 +381,17 @@ function FacilitatorDashboardWithCodeContent() {
             setShowFinishConfirm(false);
           }}
           onConfirm={handleConfirmFinish}
+        />
+
+        {/* Session Expired Dialog */}
+        <SessionExpiredDialog
+          open={showSessionExpired}
+          onClose={() => {
+            setShowSessionExpired(false);
+          }}
+          onConfirm={() => {
+            window.location.href = "/facilitator-dashboard";
+          }}
         />
       </AppLayout>
     </>

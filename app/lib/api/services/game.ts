@@ -100,6 +100,11 @@ export const gameService = {
     return apiClient.put(`/api/dashboard/unlock-session/${sessionCode}`);
   },
 
+  // Finish/end a session
+  finishSession: async (sessionCode: string) => {
+    return apiClient.put(`/api/dashboard/finish-session/${sessionCode}`);
+  },
+
   // Get player activity (statistics and progress)
   getPlayerActivity: async (sessionCode: string, playerId: number | string) => {
     return apiClient.get<PlayerActivityData>(

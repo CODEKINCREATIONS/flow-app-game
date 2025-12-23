@@ -52,7 +52,7 @@ export default function QRCodeModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] p-[25px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center">
+      <DialogContent className="bg-[#0D0F1A] text-white rounded-[0.8rem] border border-[#23263A] shadow-lg p-[25px] sm:p-[20px] md:p-[25px] w-[72vw]  ">
         {/* ❌ icon in top-right corner */}
         <X
           onClick={onClose}
@@ -80,14 +80,17 @@ export default function QRCodeModal({
             )}
           </div>
 
-          <p className="text-base text-white px-6 leading-relaxed mb-4 font-medium">
+          <p
+            className="text-base text-white px-6 leading-relaxed mb-4 font-medium"
+            style={{ fontSize: "18px", color: "white" }}
+          >
             Ask players to scan this QR code with their phone cameras to join
             the session.
           </p>
 
           {/* Link Input with Copy Button */}
           <div className="w-full max-w-md relative">
-            <div className="flex">
+            <div className="flex mx-[15px]">
               <input
                 type="text"
                 readOnly

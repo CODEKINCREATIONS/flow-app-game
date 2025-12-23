@@ -53,6 +53,7 @@ interface WordMLModalProps {
   onSubmit: (code: string) => Promise<void>;
   lockImage: string;
   physicalCode?: string | null;
+  language?: string;
 }
 
 const ALPHABETS = [
@@ -85,14 +86,30 @@ const ALPHABETS = [
 ];
 const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-// Column configuration: 1=numbers, 2=alphabets, 3=alphabets, 4=alphabets, 5=alphabets
-const COLUMN_DATA = [
-  { type: "numbers", data: NUMBERS, color: "#56a128" }, // Col 1: Numbers
-  { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 2: Alphabets
-  { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 3: Alphabets
-  { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 4: Alphabets
-  { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 5: Alphabets
-];
+// Get column configuration based on language
+const getColumnData = (language: string = "en") => {
+  const lang = (language || "en").toLowerCase();
+
+  // For Portuguese: 1 numeric + 4 alphabetic columns
+  if (lang === "pt") {
+    return [
+      { type: "numbers", data: NUMBERS, color: "#56a128" }, // Col 1: Numbers
+      { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 2: Alphabets
+      { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 3: Alphabets
+      { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 4: Alphabets
+      { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 5: Alphabets
+    ];
+  }
+
+  // For English and Spanish: 1 alphabetic + 4 alphabetic columns
+  return [
+    { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 1: Alphabets
+    { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 2: Alphabets
+    { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 3: Alphabets
+    { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 4: Alphabets
+    { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 5: Alphabets
+  ];
+};
 
 // Styling for modal dialog
 const lockImg = "/assets/locks/WordMLLock-locked.png";
@@ -104,16 +121,17 @@ export default function WordMLModal({
   onSubmit,
   lockImage,
   physicalCode,
+  language = "en",
 }: WordMLModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0, 0]);
-  const [selectedValues, setSelectedValues] = useState<string[]>([
-    "0",
-    "A",
-    "A",
-    "A",
-    "A",
-  ]);
+  const columnData = getColumnData(language);
+  const initialScrollOffsets = Array(columnData.length).fill(0);
+  const initialSelectedValues = columnData.map((col) => col.data[0]);
+  const [scrollOffsets, setScrollOffsets] =
+    useState<number[]>(initialScrollOffsets);
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    initialSelectedValues
+  );
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,20 +142,20 @@ export default function WordMLModal({
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
       const direction = e.deltaY > 0 ? 1 : -1;
-      const columnData = COLUMN_DATA[columnIdx];
+      const col = columnData[columnIdx];
       let newOffset = newOffsets[columnIdx] + direction;
 
       // Wrap around
       if (newOffset < 0) {
-        newOffset = columnData.data.length - 1;
-      } else if (newOffset >= columnData.data.length) {
+        newOffset = col.data.length - 1;
+      } else if (newOffset >= col.data.length) {
         newOffset = 0;
       }
 
       newOffsets[columnIdx] = newOffset;
       setSelectedValues((prevValues) => {
         const newValues = [...prevValues];
-        newValues[columnIdx] = columnData.data[newOffset];
+        newValues[columnIdx] = col.data[newOffset];
         return newValues;
       });
 
@@ -148,16 +166,15 @@ export default function WordMLModal({
   const handleButtonClick = (columnIdx: number, rowIdx: number) => {
     setScrollOffsets((prev) => {
       const newOffsets = [...prev];
-      const columnData = COLUMN_DATA[columnIdx];
+      const col = columnData[columnIdx];
       const baseIndex = newOffsets[columnIdx];
       const valueIndex =
-        (baseIndex + rowIdx - 1 + columnData.data.length) %
-        columnData.data.length;
+        (baseIndex + rowIdx - 1 + col.data.length) % col.data.length;
 
       newOffsets[columnIdx] = valueIndex;
       setSelectedValues((prevValues) => {
         const newValues = [...prevValues];
-        newValues[columnIdx] = columnData.data[valueIndex];
+        newValues[columnIdx] = col.data[valueIndex];
         return newValues;
       });
 
@@ -167,13 +184,12 @@ export default function WordMLModal({
 
   const getVisibleValues = (columnIdx: number): string[] => {
     const offset = scrollOffsets[columnIdx];
-    const columnData = COLUMN_DATA[columnIdx];
+    const col = columnData[columnIdx];
     const visible: string[] = [];
 
     for (let i = -1; i <= 1; i++) {
-      const idx =
-        (offset + i + columnData.data.length) % columnData.data.length;
-      visible.push(columnData.data[idx]);
+      const idx = (offset + i + col.data.length) % col.data.length;
+      visible.push(col.data[idx]);
     }
 
     return visible;
@@ -190,8 +206,8 @@ export default function WordMLModal({
     } catch (err) {
       console.error("[WordMLModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
-      setSelectedValues(["0", "A", "A", "A", "A"]);
-      setScrollOffsets([0, 0, 0, 0, 0]);
+      setSelectedValues(columnData.map((col) => col.data[0]));
+      setScrollOffsets(Array(columnData.length).fill(0));
     } finally {
       setIsSubmitting(false);
     }
@@ -245,62 +261,72 @@ export default function WordMLModal({
                 priority
               />
 
-              {/* Overlay Scrollable Picker - 5 columns */}
+              {/* Overlay Scrollable Picker - Dynamic columns */}
               <div className="absolute left-[113px] top-[197px] flex gap-px">
-                {[0, 1, 2, 3, 4].map((colIdx) => {
-                  const visibleValues = getVisibleValues(colIdx);
-                  const columnData = COLUMN_DATA[colIdx];
-                  return (
-                    <div
-                      key={colIdx}
-                      className="flex flex-col gap-px items-center tap-transparent"
-                      onWheel={(e) => handleScroll(colIdx, e)}
-                    >
-                      {/* Top spacer (before first visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 0)}
-                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-b-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-t-[10px] text-[23px] uppercase outline-none tap-transparent shadow-lg ${
-                          colIdx === 0 ? "rounded-tl-[10px]" : ""
-                        } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
-                        style={{
-                          backgroundColor: columnData.color,
-                          color: "white",
-                          ...buttonTop,
-                        }}
+                {Array.from({ length: columnData.length }, (_, idx) => idx).map(
+                  (colIdx) => {
+                    const visibleValues = getVisibleValues(colIdx);
+                    const col = columnData[colIdx];
+                    return (
+                      <div
+                        key={colIdx}
+                        className="flex flex-col gap-px items-center tap-transparent"
+                        onWheel={(e) => handleScroll(colIdx, e)}
                       >
-                        {visibleValues[0]}
-                      </button>
+                        {/* Top spacer (before first visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 0)}
+                          className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-b-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-t-[10px] text-[23px] uppercase outline-none tap-transparent shadow-lg ${
+                            colIdx === 0 ? "rounded-tl-[10px]" : ""
+                          } ${
+                            colIdx === columnData.length - 1
+                              ? "rounded-tr-[10px]"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor: col.color,
+                            color: "white",
+                            ...buttonTop,
+                          }}
+                        >
+                          {visibleValues[0]}
+                        </button>
 
-                      {/* Middle row - focused/selected */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 1)}
-                        className="w-[27px] h-[43px] flex items-center justify-center text-xs transition-all transform scale-105 border-4 rounded py-0.5 px-1.5 font-black text-[26px] uppercase outline-none tap-transparent border-[#3d7a23]"
-                        style={{
-                          backgroundColor: columnData.color,
-                          color: "white",
-                          ...buttonMiddle,
-                        }}
-                      >
-                        {visibleValues[1]}
-                      </button>
+                        {/* Middle row - focused/selected */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 1)}
+                          className="w-[27px] h-[43px] flex items-center justify-center text-xs transition-all transform scale-105 border-4 rounded py-0.5 px-1.5 font-black text-[26px] uppercase outline-none tap-transparent border-[#3d7a23]"
+                          style={{
+                            backgroundColor: col.color,
+                            color: "white",
+                            ...buttonMiddle,
+                          }}
+                        >
+                          {visibleValues[1]}
+                        </button>
 
-                      {/* Bottom spacer (after second visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 2)}
-                        className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-b-[10px] text-[23px] uppercase outline-none tap-transparent my-0.5 ${
-                          colIdx === 0 ? "rounded-bl-[10px]" : ""
-                        } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
-                        style={{
-                          backgroundColor: columnData.color,
-                          color: "white",
-                          ...buttonBottom,
-                        }}
-                      >
-                        {visibleValues[2]}
-                      </button>
-                    </div>
-                  );
-                })}
+                        {/* Bottom spacer (after second visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 2)}
+                          className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-b-[10px] text-[23px] uppercase outline-none tap-transparent my-0.5 ${
+                            colIdx === 0 ? "rounded-bl-[10px]" : ""
+                          } ${
+                            colIdx === columnData.length - 1
+                              ? "rounded-br-[10px]"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor: col.color,
+                            color: "white",
+                            ...buttonBottom,
+                          }}
+                        >
+                          {visibleValues[2]}
+                        </button>
+                      </div>
+                    );
+                  }
+                )}
               </div>
             </div>
           </div>

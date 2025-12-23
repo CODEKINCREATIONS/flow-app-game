@@ -7,7 +7,6 @@ import { SessionDetails } from "@/app/components/SessionDetails";
 import { PlayerProgress } from "@/app/components/PlayerProgress";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
-
 import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import QRCodeDialog from "@/app/components/QRCodeDialog"; // import your existing dialog
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";

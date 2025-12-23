@@ -1,9 +1,8 @@
 // API proxy for player authentication
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "@/app/lib/config/env";
 
-const AZURE_API_URL =
-  process.env.NEXT_PUBLIC_SESSION_VERIFICATION_URL ||
-  "https://flowapp-hdx-d5d7hvdeeee4g3dr.uaenorth-01.azurewebsites.net";
+const AZURE_API_URL = env.SESSION_VERIFICATION_URL;
 
 export async function POST(request: NextRequest) {
   try {

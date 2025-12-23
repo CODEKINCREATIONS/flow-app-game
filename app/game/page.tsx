@@ -16,6 +16,7 @@ import NumericV1Modal from "@/app/components/NumericV1Modal";
 import NumericV2Modal from "@/app/components/NumericV2Modal";
 import WordMLModal from "@/app/components/WordMLModal";
 import VideoDialog from "@/app/components/VideoDialog";
+import SessionExpiredDialog from "@/app/components/SessionExpiredDialog";
 import ProgressBar from "@/app/components/ProgressBar";
 import type { GameBox } from "@/app/types/game";
 import {
@@ -41,6 +42,8 @@ export default function PlayerGamePage() {
   const [sessionCreated, setSessionCreated] = useState<string>();
   const [sessionUnlockedAt, setSessionUnlockedAt] = useState<string>();
   const [sessionDuration, setSessionDuration] = useState<number>(60);
+  const [sessionStatus, setSessionStatus] = useState<number | null>(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
   const { user, isPlayer } = useAuth();
   const isHydrated = useHydration();
   const router = useRouter();
@@ -133,6 +136,11 @@ export default function PlayerGamePage() {
           }
           if (gameSession.sessionDuration) {
             setSessionDuration(gameSession.sessionDuration);
+          }
+          // Check if session has expired (status = 2 means finished)
+          if (gameSession.status === 2 && !showSessionExpired) {
+            setSessionStatus(gameSession.status);
+            setShowSessionExpired(true);
           }
         }
 
@@ -517,7 +525,10 @@ export default function PlayerGamePage() {
                     {physicalCodesByBox[boxIndex] && (
                       <div className="absolute inset-0 flex items-start justify-center mt-[100px] bg-black bg-opacity-60 rounded-xl z-30">
                         <div className="text-center">
-                          <p className="text-white font-mono font-bold text-lg sm:text-xl md:text-2xl tracking-wider">
+                          <p
+                            className="text-[#000] font-mono text-[22px] tracking-wider"
+                            style={{ fontWeight: 700 }}
+                          >
                             {physicalCodesByBox[boxIndex]}
                           </p>
                         </div>
@@ -645,6 +656,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
+                        language={user?.language as string}
                       />
                     );
                   default:
@@ -658,6 +670,17 @@ export default function PlayerGamePage() {
               onClose={() => setShowVideoDialog(false)}
               videoUrl={getVideoUrl()}
               password=""
+            />
+
+            {/* Session Expired Dialog */}
+            <SessionExpiredDialog
+              open={showSessionExpired}
+              onClose={() => {
+                setShowSessionExpired(false);
+              }}
+              onConfirm={() => {
+                window.location.href = "/playerlogin";
+              }}
             />
           </div>
         </div>

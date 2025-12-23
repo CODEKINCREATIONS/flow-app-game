@@ -1,23 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/app/components/ui";
 import { useSession } from "@/app/lib/hooks";
-import {
-  useDashboard,
-  type DashboardPlayer,
-} from "@/app/lib/hooks/useDashboard";
+import type { DashboardPlayer } from "@/app/lib/hooks/useDashboard";
 import { PlayerDetailsDialog } from "@/app/components/PlayerDetailsDialog";
 
 interface PlayerProgressProps {
   sessionCode?: string;
+  players?: DashboardPlayer[];
+  loading?: boolean;
+  error?: string | null;
 }
 
 export const PlayerProgress = ({
   sessionCode: propSessionCode,
+  players: propsPlayers = [],
+  loading: propsLoading = false,
+  error: propsError = null,
 }: PlayerProgressProps = {}) => {
   const { session } = useSession();
-  const { players, fetchDashboardData, error, loading } = useDashboard();
   const [selectedPlayer, setSelectedPlayer] = useState<DashboardPlayer | null>(
     null
   );
@@ -29,22 +31,10 @@ export const PlayerProgress = ({
   // Use prop sessionCode as fallback
   const effectiveSessionCode = propSessionCode || session?.code;
 
-  // Fetch data on mount and set up polling
-  useEffect(() => {
-    if (effectiveSessionCode) {
-      // Initial fetch
-      fetchDashboardData(effectiveSessionCode);
-
-      // Set up polling for real-time updates
-      const interval = setInterval(() => {
-        fetchDashboardData(effectiveSessionCode);
-      }, 5000); // Poll every 5 seconds
-
-      return () => {
-        clearInterval(interval);
-      };
-    }
-  }, [effectiveSessionCode, fetchDashboardData]);
+  // Use players from props (passed by parent component with polling)
+  const players = propsPlayers;
+  const loading = propsLoading;
+  const error = propsError;
 
   const solveColor = (solved: boolean | string) => {
     if (typeof solved === "boolean") {
@@ -193,18 +183,22 @@ export const PlayerProgress = ({
               displayPlayers.map((p: DashboardPlayer, index: number) => (
                 <tr
                   key={p.id || p.playerId}
-                  className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-200"
+                  className="border-b border-[#1F2130] bg-[#0D0F1A] hover:bg-[#081025] transition-all duration-300 ease-in-out"
                 >
-                  <td className="py-4 px-4 text-[#D1D5DB] font-medium">
+                  <td className="py-4 px-4 text-[#D1D5DB] font-medium transition-colors duration-300">
                     {(p.name || p.playerName || "Unknown") as string}
                   </td>
-                  <td className="py-4 px-4 text-[#D1D5DB]">
+                  <td className="py-4 px-4 text-[#D1D5DB] transition-colors duration-300">
                     {String(p.activeRiddle ?? p.riddleAccess ?? "—")}
                   </td>
-                  <td className="py-4 px-4 text-[#D1D5DB]">
+                  <td className="py-4 px-4 text-[#D1D5DB] transition-colors duration-300">
                     {String(p.attempt ?? p.attempts ?? "—")}
                   </td>
-                  <td className={`py-4 px-4 ${solveColor(p.solved)}`}>
+                  <td
+                    className={`py-4 px-4 ${solveColor(
+                      p.solved
+                    )} transition-colors duration-300`}
+                  >
                     {getSolvedDisplay(p.solved)}
                   </td>
                   <td className="py-4 px-4 text-center">
