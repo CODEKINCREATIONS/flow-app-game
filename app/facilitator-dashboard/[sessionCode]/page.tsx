@@ -11,6 +11,7 @@ import { useDashboard } from "@/app/lib/hooks/useDashboard";
 import { authService } from "@/app/lib/api/services/auth";
 import { gameService } from "@/app/lib/api/services/game";
 import { useSessionStore } from "@/app/lib/store/sessionStore";
+import { calculateRemainingTime } from "@/app/lib/utils/calculateRemainingTime";
 import QRCodeDialog from "@/app/components/QRCodeDialog";
 import UnlockSessionDialog from "@/app/components/UnlockSessionDialog";
 import FinishSessionDialog from "@/app/components/FinishSessionDialog";
@@ -41,8 +42,10 @@ function FacilitatorDashboardWithCodeContent() {
   // Track unlock state from dashboard response (persistent across refreshes)
   const [isSessionUnlocked, setIsSessionUnlocked] = useState(false);
   const [gameSessionId, setGameSessionId] = useState<number | null>(null);
+  const [remainingTime, setRemainingTime] = useState<string>("00:00");
   const unlockedRef = useRef(false);
   const gameSessionIdRef = useRef<number | null>(null);
+  const autoFinishCalledRef = useRef(false);
 
   // Verify session from URL parameter on component mount
   useEffect(() => {
@@ -176,7 +179,38 @@ function FacilitatorDashboardWithCodeContent() {
     dashboardData?.status,
     sessionCode,
   ]);
+  // Monitor remaining time and auto-finish session when timer reaches 0:00
+  useEffect(() => {
+    if (
+      !dashboardData?.sessionUnlockedAt ||
+      !dashboardData?.sessionDuration ||
+      autoFinishCalledRef.current
+    ) {
+      return;
+    }
 
+    const interval = setInterval(() => {
+      const newRemainingTime = calculateRemainingTime(
+        dashboardData?.sessionCreated,
+        dashboardData?.sessionUnlockedAt,
+        dashboardData?.sessionDuration
+      );
+      setRemainingTime(newRemainingTime);
+
+      // When timer reaches 0:00, automatically call finish session
+      if (newRemainingTime === "00:00" && !autoFinishCalledRef.current) {
+        autoFinishCalledRef.current = true;
+        console.log("[Dashboard] Timer reached 0:00, auto-finishing session");
+        handleFinish();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [
+    dashboardData?.sessionUnlockedAt,
+    dashboardData?.sessionDuration,
+    dashboardData?.sessionCreated,
+  ]);
   const handleFinish = async () => {
     try {
       // Call the finish session API
@@ -313,7 +347,8 @@ function FacilitatorDashboardWithCodeContent() {
               <Button
                 variant="white"
                 onClick={() => setShowQR(true)}
-                className="!h-11 flex items-center justify-center mr-[5px] ml-[5px] !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-6 whitespace-nowrap"
+                disabled={showSessionExpired}
+                className="!h-11 flex items-center justify-center mr-[5px] ml-[5px] !text-sm font-medium bg-white shadow-sm hover:bg-gray-50 !px-6 whitespace-nowrap disabled:cursor-not-allowed disabled:hover:shadow-sm disabled:hover:bg-white"
               >
                 <QrCode className="w-5 h-5 mr-[5px]" />
                 <span>QR Code</span>
@@ -322,7 +357,8 @@ function FacilitatorDashboardWithCodeContent() {
             <Button
               variant={isSessionUnlocked ? "danger" : "primary"}
               onClick={handleUnlock}
-              className="!h-14 flex items-center justify-center gap-2 !text-base font-medium !px-8 whitespace-nowrap order-1 mb-[5px] sm:order-2"
+              disabled={showSessionExpired}
+              className="!h-14 flex items-center justify-center gap-2 !text-base font-medium !px-8 whitespace-nowrap order-1 mb-[5px] sm:order-2 disabled:cursor-not-allowed"
             >
               <span style={{ color: "white" }}>
                 {isSessionUnlocked

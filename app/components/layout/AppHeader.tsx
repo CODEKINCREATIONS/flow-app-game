@@ -18,6 +18,7 @@ interface AppHeaderProps {
   sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionDuration?: number;
+  sessionCode?: string;
 }
 
 export const AppHeader = ({
@@ -29,6 +30,7 @@ export const AppHeader = ({
   sessionCreated,
   sessionUnlockedAt,
   sessionDuration = 60,
+  sessionCode,
 }: AppHeaderProps) => {
   const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();

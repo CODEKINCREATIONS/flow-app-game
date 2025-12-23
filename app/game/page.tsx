@@ -388,6 +388,9 @@ export default function PlayerGamePage() {
         showTimer={true}
         showLanguage={true}
         transparentBackground={true}
+        sessionCreated={sessionCreated}
+        sessionUnlockedAt={sessionUnlockedAt}
+        sessionDuration={sessionDuration}
       >
         <main className="text-white px-4 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 flex items-center justify-center min-h-screen">
           <div className="text-center">
@@ -450,7 +453,8 @@ export default function PlayerGamePage() {
               <Button
                 variant="primary"
                 onClick={() => setShowVideoDialog(true)}
-                className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider !border-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05]"
+                disabled={showSessionExpired}
+                className="!px-4 sm:!px-6 md:!px-8 !py-2 sm:!py-3 md:!py-4 !text-sm sm:!text-base md:!text-lg font-['Orbitron'] tracking-wider !border-[#FFFFFF] hover:shadow-[0_0_20px_rgba(123,97,255,0.6)] hover:!scale-[1.05] disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:scale-100"
               >
                 <div className="flex items-center justify-center gap-2 ">
                   <Video size={25} />
@@ -468,8 +472,8 @@ export default function PlayerGamePage() {
                   <div
                     key={gameBox.boxID}
                     onClick={() => {
-                      // Only open modal if chest is not already unlocked
-                      if (!isUnlocked) {
+                      // Only open modal if chest is not already unlocked and session is not expired
+                      if (!isUnlocked && !showSessionExpired) {
                         setSelectedChest(boxIndex);
                         setPhysicalCode(null); // Clear physical code when opening a new chest
                       }
@@ -489,7 +493,11 @@ export default function PlayerGamePage() {
                 hover:scale-105 
                 transition-transform
                 duration-300
-                ${!isUnlocked ? "cursor-pointer" : "cursor-default"}
+                ${
+                  !isUnlocked && !showSessionExpired
+                    ? "cursor-pointer"
+                    : "cursor-default"
+                }
                 w-full
                 max-w-[350px]
                 h-[180px]
@@ -504,6 +512,9 @@ export default function PlayerGamePage() {
                   isUnlocked
                     ? "shadow-[0_0_15px_rgba(0,255,140,0.4)]"
                     : "shadow-[0_0_15px_rgba(255,0,0,0.4)]"
+                }
+                ${
+                  showSessionExpired && !isUnlocked ? "pointer-events-none" : ""
                 }
               `}
                   >

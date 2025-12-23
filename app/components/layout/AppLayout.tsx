@@ -15,6 +15,7 @@ interface AppLayoutProps {
   sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionDuration?: number;
+  sessionCode?: string;
 }
 
 export const AppLayout = ({
@@ -28,6 +29,7 @@ export const AppLayout = ({
   sessionCreated,
   sessionUnlockedAt,
   sessionDuration = 60,
+  sessionCode,
 }: AppLayoutProps) => {
   return (
     <div
@@ -43,6 +45,7 @@ export const AppLayout = ({
         customActions={customActions}
         sessionCreated={sessionCreated}
         sessionUnlockedAt={sessionUnlockedAt}
+        sessionCode={sessionCode}
         sessionDuration={sessionDuration}
       />
       <main className="flex-1">{children}</main>
