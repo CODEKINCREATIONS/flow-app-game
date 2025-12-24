@@ -75,13 +75,13 @@ export const AppHeader = ({
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center px-[30px]">
             {/* Left: Player Name */}
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-white flex-1">
               {playerName || "Player"}
             </h1>
 
             {/* Center: Timer with Clock Icon */}
             {showTimer && (
-              <div className="flex items-center gap-2 font-mono text-white">
+              <div className="flex items-center gap-2 font-mono text-white justify-center flex-1">
                 <Clock className="w-5 h-5 text-white mr-[5px]" />
                 {displayTime}
               </div>
@@ -89,7 +89,7 @@ export const AppHeader = ({
 
             {/* Right: Language */}
             {showLanguage && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 justify-end flex-1">
                 <Image
                   src="/assets/icons8-globe-50.png"
                   alt="Language"
@@ -102,6 +102,7 @@ export const AppHeader = ({
                 </span>
               </div>
             )}
+            {!showLanguage && showTimer && <div className="flex-1"></div>}
           </div>
         </div>
       </header>
@@ -112,27 +113,78 @@ export const AppHeader = ({
   if (mode === "dashboard") {
     return (
       <header className="sticky top-0 z-50  w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)] ">
+        <style>{`
+          @media (max-width: 768px) {
+            .dashboard-header-container {
+              display: flex;
+              flex-direction: column;
+              gap: 0.1rem;
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+            }
+            .dashboard-logo {
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              padding: 8px;
+              background: radial-gradient(circle, rgba(77, 49, 221, 0.26) 0%, rgba(58, 141, 255, 0.05) 100%);
+              border-radius: 50%;
+              width: 80px;
+              height: 80px;
+              margin: 0;
+            }
+            .dashboard-title {
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              margin: 0;
+
+            }
+            .dashboard-actions {
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              flex-wrap: wrap;
+              gap: 0rem;
+              background-color: #7ce3ff !important;
+              color: black !important;
+              font-weight: 800 !important;
+              border: 0px !important;
+              
+              
+            }
+            .dashboard-timer {
+              background-color: transparent !important;
+              color: inherit !important;
+              font-weight: inherit !important;
+            }
+          }
+        `}</style>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 ">
-          <div className="flex items-center justify-between px-[30px]">
+          <div className="flex items-center justify-between px-[30px] py-[2px] dashboard-header-container">
             {/* Left: Logo */}
-            <Image
-              src="/assets/Logo_flow.png"
-              alt="Flow Logo"
-              width={80}
-              height={80}
-              className="h-16 w-16 sm:h-20 sm:w-20 object-contain pl-[5px] flex-shrink-0"
-            />
+            <div className="dashboard-logo">
+              <Image
+                src="/assets/Logo_flow.png"
+                alt="Flow Logo"
+                width={80}
+                height={80}
+                className="h-16 w-16 sm:h-20 sm:w-20 object-contain pl-[5px] flex-shrink-0"
+              />
+            </div>
 
             {/* Center: Dashboard Title */}
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white flex-1 text-center">
-              Dashboard
-            </h2>
+            <div className="dashboard-title">
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white flex-1 text-center">
+                Dashboard
+              </h2>
+            </div>
 
             {/* Right: Timer and Custom Actions */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0 dashboard-actions">
               {/* Timer */}
               {showTimer && (
-                <div className="flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap h-[30px] w-[100px]">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap h-[30px] w-[100px] dashboard-timer">
                   <Clock className="text-purple-400  sm:w-5 sm:h-5 mr-[5px]" />
                   <span className="font-mono text-xs sm:text-sm md:text-base text-gray-100">
                     {displayTime}

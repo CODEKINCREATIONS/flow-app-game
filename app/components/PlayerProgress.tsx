@@ -74,7 +74,7 @@ export const PlayerProgress = ({
 
   const getSolvedDisplay = (solved: boolean | string) => {
     if (typeof solved === "boolean") {
-      return solved ? "✔ Yes" : "In Progress";
+      return solved ? "✔ Yes" : "-";
     }
 
     const solvedStr = String(solved).toLowerCase().trim();
@@ -83,6 +83,9 @@ export const PlayerProgress = ({
     }
     if (solvedStr === "no" || solvedStr === "false") {
       return "✗ No";
+    }
+    if (solvedStr === "-") {
+      return "-";
     }
 
     return String(solved);

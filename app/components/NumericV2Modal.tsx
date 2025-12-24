@@ -151,7 +151,7 @@ export default function NumericV2Modal({
 
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
-            <div className="relative mb-[30px] w-[350px] h-[350px] mx-auto">
+            <div className="relative mb-[15px] w-[350px] h-[350px] mx-auto">
               <Image
                 src={isUnlocked ? unlockImg : lockImage}
                 alt="NumericV2 Lock"
@@ -209,12 +209,14 @@ export default function NumericV2Modal({
             </div>
           </div>
 
-          {/* Error Message */}
-          {error && !isUnlocked && (
-            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
-              {error}
-            </div>
-          )}
+          {/* Error Message with Reserved Space */}
+          <div className="h-[24px] flex items-center justify-center mb-[15px]">
+            {error && !isUnlocked && (
+              <div className="text-red-500 text-sm font-semibold text-center">
+                {error}
+              </div>
+            )}
+          </div>
 
           {/* Submit Button */}
           <div className="flex justify-center mb-[30px]">

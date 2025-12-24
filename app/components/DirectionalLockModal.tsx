@@ -139,7 +139,7 @@ export default function DirectionalLockModal({
 
           {/* Lock Image with Directional Buttons Overlay */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-[300px] h-[300px] mx-auto">
+            <div className="relative mb-[15px] w-[300px] h-[300px] mx-auto">
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Directional Lock"
@@ -194,17 +194,16 @@ export default function DirectionalLockModal({
             </div>
           </div>
 
-          {/* Selected Code Display */}
-          <div className="text-center my-[20px] px-[4px] h-[10px] flex items-center justify-center">
-            <p className="text-base font-bold text-[#FFFFFF]">{input}</p>
+          {/* Selected Code Display / Error Message */}
+          <div className="text-center h-[24px] flex items-center justify-center mb-[15px]">
+            {error && !isUnlocked ? (
+              <div className="text-red-500 text-sm font-semibold text-center">
+                {error}
+              </div>
+            ) : (
+              <p className="text-base font-bold text-[#FFFFFF]">{input}</p>
+            )}
           </div>
-
-          {/* Error Message */}
-          {error && !isUnlocked && (
-            <div className="text-red-500 text-sm font-semibold mb-[4px] text-center">
-              {error}
-            </div>
-          )}
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-[5px] mb-[30px]">
