@@ -75,6 +75,7 @@ export default function WordLockModal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleScroll = (columnIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -195,15 +196,22 @@ export default function WordLockModal({
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
             <div className="relative mb-[15px] w-[300px] h-[300px] mx-auto">
+              {/* Skeleton Loading State */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1A1C2A] via-[#262833] to-[#1A1C2A] rounded-lg animate-pulse" />
+              )}
+
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Word Lock"
                 fill
                 style={{ objectFit: "contain" }}
                 priority
+                onLoadingComplete={() => setImageLoaded(true)}
               />
 
-              {/* Overlay Scrollable Picker - 5 columns */}
+              {/* Overlay Scrollable Picker - 5 columns - Hidden until image loads */}
+              {imageLoaded && (
               <div className="absolute left-[94px] top-[179px] flex gap-[0.5px]">
                 {[0, 1, 2, 3, 4].map((colIdx) => {
                   const visibleValues = getVisibleValues(colIdx);
@@ -266,6 +274,7 @@ export default function WordLockModal({
                   );
                 })}
               </div>
+              )}
             </div>
           </div>
 

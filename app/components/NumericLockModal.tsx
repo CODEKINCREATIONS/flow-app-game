@@ -45,6 +45,7 @@ export default function CodeEntryModal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -181,15 +182,22 @@ export default function CodeEntryModal({
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
             <div className="relative mb-[15px] w-[350px] h-[350px] mx-auto">
+              {/* Skeleton Loading State */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1A1C2A] via-[#262833] to-[#1A1C2A] rounded-lg animate-pulse" />
+              )}
+
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Numeric Lock"
                 fill
                 style={{ objectFit: "contain" }}
                 priority
+                onLoadingComplete={() => setImageLoaded(true)}
               />
 
-              {/* Overlay Scrollable Picker - 4 columns */}
+              {/* Overlay Scrollable Picker - 4 columns - Hidden until image loads */}
+              {imageLoaded && (
               <div className="absolute left-[125px] top-[225px] flex gap-[1px]">
                 {[0, 1, 2, 3].map((colIdx) => {
                   const visibleValues = getVisibleValues(colIdx);
@@ -275,6 +283,7 @@ export default function CodeEntryModal({
                   );
                 })}
               </div>
+              )}
             </div>
           </div>
 

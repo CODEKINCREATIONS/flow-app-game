@@ -37,6 +37,7 @@ export default function NumericV2Modal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleScroll = (rowIdx: number, e: React.WheelEvent) => {
     e.preventDefault();
@@ -152,15 +153,22 @@ export default function NumericV2Modal({
           {/* Lock Image with Overlay Picker */}
           <div className="flex justify-center mb-8">
             <div className="relative mb-[15px] w-[350px] h-[350px] mx-auto">
+              {/* Skeleton Loading State */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1A1C2A] via-[#262833] to-[#1A1C2A] rounded-lg animate-pulse" />
+              )}
+
               <Image
                 src={isUnlocked ? unlockImg : lockImage}
                 alt="NumericV2 Lock"
                 fill
                 style={{ objectFit: "contain" }}
                 priority
+                onLoadingComplete={() => setImageLoaded(true)}
               />
 
-              {/* Overlay Scrollable Picker - 4 rows vertical layout */}
+              {/* Overlay Scrollable Picker - 4 rows vertical layout - Hidden until image loads */}
+              {imageLoaded && (
               <div className="absolute top-[220px] left-[175px] flex flex-col gap-[1px]">
                 {[0, 1, 2, 3].map((rowIdx) => {
                   const visibleValues = getVisibleValues(rowIdx);
@@ -206,6 +214,7 @@ export default function NumericV2Modal({
                   );
                 })}
               </div>
+              )}
             </div>
           </div>
 

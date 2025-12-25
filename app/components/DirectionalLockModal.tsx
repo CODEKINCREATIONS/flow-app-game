@@ -44,6 +44,7 @@ export default function DirectionalLockModal({
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleDirectionClick = (direction: keyof typeof DIRECTION_MAP) => {
     const directionSymbol = DIRECTION_MAP[direction];
@@ -140,16 +141,22 @@ export default function DirectionalLockModal({
           {/* Lock Image with Directional Buttons Overlay */}
           <div className="flex justify-center mb-8">
             <div className="relative mb-[15px] w-[300px] h-[300px] mx-auto">
+              {/* Skeleton Loading State */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1A1C2A] via-[#262833] to-[#1A1C2A] rounded-lg animate-pulse" />
+              )}
+
               <Image
                 src={isUnlocked ? unlockImg : lockImage || lockImg}
                 alt="Directional Lock"
                 fill
                 style={{ objectFit: "contain" }}
                 priority
+                onLoadingComplete={() => setImageLoaded(true)}
               />
 
-              {/* Up Button */}
-              {!isUnlocked && (
+              {/* Up Button - Hidden until image loads */}
+              {!isUnlocked && imageLoaded && (
                 <button
                   onClick={() => handleDirectionClick("up")}
                   className="absolute top-[140px] left-[145px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
