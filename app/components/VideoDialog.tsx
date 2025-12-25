@@ -73,7 +73,7 @@ export default function VideoDialog({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogContent className="relative rounded-[10px] p-[50px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center max-w-2xl">
+      <DialogContent className="relative rounded-[10px] p-[25px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center w-[300px]">
         {/* Close Button */}
         <X
           onClick={handleClose}
