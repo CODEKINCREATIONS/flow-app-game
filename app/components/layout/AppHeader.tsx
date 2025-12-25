@@ -71,41 +71,76 @@ export const AppHeader = ({
   // Game Mode Header
   if (mode === "game") {
     return (
-      <header className="sticky  z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center px-[30px]">
-            {/* Left: Player Name */}
-            <h1 className="text-2xl font-bold text-white flex-1">
-              {playerName || "Player"}
-            </h1>
+      <>
+        <header className="sticky  z-50 w-full bg-[#0F1125] border-b border-white/40 shadow-[0_1px_0_rgba(255,255,255,0.1)]">
+          <style>{`
+            @media (max-width: 768px) {
+              .game-header-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              .game-timer-mobile {
+                display: none;
+              }
+              .game-player-name {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                flex: 0 1 auto;
+              }
+            }
+            @media (min-width: 769px) {
+              .game-timer-below {
+                display: none;
+              }
+            }
+          `}</style>
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex justify-between items-center px-[30px] game-header-container">
+              {/* Left: Player Name - Show only first name */}
+              <h1 className="text-2xl font-bold text-white flex-1 game-player-name">
+                {playerName ? playerName.split(" ")[0] : "Player"}
+              </h1>
 
-            {/* Center: Timer with Clock Icon */}
-            {showTimer && (
-              <div className="flex items-center gap-2 font-mono text-white justify-center flex-1">
-                <Clock className="w-5 h-5 text-white mr-[5px]" />
-                {displayTime}
-              </div>
-            )}
+              {/* Center: Timer with Clock Icon - Hidden on mobile */}
+              {showTimer && (
+                <div className="flex items-center gap-2 font-mono text-white justify-center flex-1 game-timer-mobile">
+                  <Clock className="w-5 h-5 text-white mr-[5px]" />
+                  {displayTime}
+                </div>
+              )}
 
-            {/* Right: Language */}
-            {showLanguage && (
-              <div className="flex items-center gap-2 justify-end flex-1">
-                <Image
-                  src="/assets/icons8-globe-50.png"
-                  alt="Language"
-                  width={24}
-                  height={24}
-                  className="mr-[5px] brightness-0 invert"
-                />
-                <span className="text-white font-medium text-lg mr-[10px]">
-                  {(language as string).toUpperCase()}
-                </span>
-              </div>
-            )}
-            {!showLanguage && showTimer && <div className="flex-1"></div>}
+              {/* Right: Language */}
+              {showLanguage && (
+                <div className="flex items-center gap-2 justify-end flex-1">
+                  <Image
+                    src="/assets/icons8-globe-50.png"
+                    alt="Language"
+                    width={24}
+                    height={24}
+                    className="mr-[5px] brightness-0 invert"
+                  />
+                  <span className="text-white font-medium text-lg mr-[10px]">
+                    {(language as string).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              {!showLanguage && showTimer && <div className="flex-1"></div>}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+
+        {/* Timer Below Header - Mobile Only */}
+        {showTimer && (
+          <div className="game-timer-below w-full bg-[#7ce3ff] text-[#000000] border-b border-white/40 flex justify-center items-center h-[28px]">
+            <div className="flex items-center gap-2 font-mono text-white">
+              <Clock className="w-4 h-4 text-white mr-[5px]" />
+              <span className="text-sm font-[700]">{displayTime}</span>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 

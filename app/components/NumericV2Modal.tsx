@@ -7,7 +7,7 @@ import Button from "@/app/components/ui/Button";
 import { X } from "lucide-react";
 import { triggerDialogConfetti } from "@/app/lib/utils/confetti";
 
-const unlockImg = "/assets/locks/NumericV2-unlocked.png";
+const unlockImg = "/assets/locks/NumericV2-Unlocked.png";
 
 interface NumericV2ModalProps {
   open: boolean;
