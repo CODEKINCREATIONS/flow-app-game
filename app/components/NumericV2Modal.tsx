@@ -169,51 +169,51 @@ export default function NumericV2Modal({
 
               {/* Overlay Scrollable Picker - 4 rows vertical layout - Hidden until image loads */}
               {imageLoaded && (
-              <div className="absolute top-[220px] left-[175px] flex flex-col gap-[1px]">
-                {[0, 1, 2, 3].map((rowIdx) => {
-                  const visibleValues = getVisibleValues(rowIdx);
-                  return (
-                    <div
-                      key={rowIdx}
-                      className="flex gap-[1px] items-center"
-                      onWheel={(e) => handleScroll(rowIdx, e)}
-                    >
-                      {/* Left spacer (before first visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(rowIdx, 0)}
-                        className={`h-[18px] w-[20px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#030508] border-b-[#030508] border-l-[#363636] border-r-[#363636] text-[16px] text-[#fff] mb-[6px] py-[2px] px-0 rounded-l-[5px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)] bg-[#121416]`}
-                        style={{
-                          fontWeight: 700,
-                        }}
+                <div className="absolute top-[220px] left-[175px] flex flex-col gap-[1px]">
+                  {[0, 1, 2, 3].map((rowIdx) => {
+                    const visibleValues = getVisibleValues(rowIdx);
+                    return (
+                      <div
+                        key={rowIdx}
+                        className="flex gap-[1px] items-center"
+                        onWheel={(e) => handleScroll(rowIdx, e)}
                       >
-                        {visibleValues[0]}
-                      </button>
+                        {/* Left spacer (before first visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(rowIdx, 0)}
+                          className={`h-[18px] w-[20px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#030508] border-b-[#030508] border-l-[#363636] border-r-[#363636] text-[16px] text-[#fff] mb-[6px] py-[2px] px-0 rounded-l-[5px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)] bg-[#121416]`}
+                          style={{
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[0]}
+                        </button>
 
-                      {/* Middle row - focused/selected */}
-                      <button
-                        onClick={() => handleButtonClick(rowIdx, 1)}
-                        className="h-[18px] w-[20px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 text-[20px] text-[#fff] py-[2px] px-0 border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#030508] border-b-[#030508] mb-[6px] border-l-[#363636] border-r-[#363636] shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),inset_-1px_-1px_3px_rgba(0,0,0,0.5),0_3px_6px_rgba(0,0,0,0.4)] bg-[#121416]"
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        {visibleValues[1]}
-                      </button>
+                        {/* Middle row - focused/selected */}
+                        <button
+                          onClick={() => handleButtonClick(rowIdx, 1)}
+                          className="h-[18px] w-[20px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 text-[20px] text-[#fff] py-[2px] px-0 border-t-[2px] border-b-[2px] border-l-[3px] border-r-[2px] border-t-[#030508] border-b-[#030508] mb-[6px] border-l-[#363636] border-r-[#363636] shadow-[inset_1px_1px_3px_rgba(255,255,255,0.9),inset_-1px_-1px_3px_rgba(0,0,0,0.5),0_3px_6px_rgba(0,0,0,0.4)] bg-[#121416]"
+                          style={{
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[1]}
+                        </button>
 
-                      {/* Right spacer (after second visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(rowIdx, 2)}
-                        className={`h-[18px] w-[20px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-r-[3px] border-l-[2px] border-t-[#030508] border-b-[#030508] border-l-[#363636] border-r-[#363636] mb-[6px] text-[16px] text-[#fff] py-[2px] px-0 rounded-r-[7px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)] bg-[#121416]`}
-                        style={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        {visibleValues[2]}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+                        {/* Right spacer (after second visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(rowIdx, 2)}
+                          className={`h-[18px] w-[20px] flex items-center justify-center text-xs transition-all border-t-[2px] border-b-[2px] border-r-[3px] border-l-[2px] border-t-[#030508] border-b-[#030508] border-l-[#363636] border-r-[#363636] mb-[6px] text-[16px] text-[#fff] py-[2px] px-0 rounded-r-[7px] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),0_2px_4px_rgba(0,0,0,0.3)] bg-[#121416]`}
+                          style={{
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[2]}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>

@@ -270,9 +270,11 @@ export default function WordMLModal({
 
               {/* Overlay Scrollable Picker - Dynamic columns - Hidden until image loads */}
               {imageLoaded && (
-              <div className="absolute left-[113px] top-[197px] flex gap-px">
-                {Array.from({ length: columnData.length }, (_, idx) => idx).map(
-                  (colIdx) => {
+                <div className="absolute left-[113px] top-[197px] flex gap-px">
+                  {Array.from(
+                    { length: columnData.length },
+                    (_, idx) => idx
+                  ).map((colIdx) => {
                     const visibleValues = getVisibleValues(colIdx);
                     const col = columnData[colIdx];
                     return (
@@ -333,9 +335,8 @@ export default function WordMLModal({
                         </button>
                       </div>
                     );
-                  }
-                )}
-              </div>
+                  })}
+                </div>
               )}
             </div>
           </div>

@@ -212,68 +212,68 @@ export default function WordLockModal({
 
               {/* Overlay Scrollable Picker - 5 columns - Hidden until image loads */}
               {imageLoaded && (
-              <div className="absolute left-[94px] top-[179px] flex gap-[0.5px]">
-                {[0, 1, 2, 3, 4].map((colIdx) => {
-                  const visibleValues = getVisibleValues(colIdx);
-                  const columnData = COLUMN_DATA[colIdx];
-                  return (
-                    <div
-                      key={colIdx}
-                      className="flex flex-col gap-[1px] items-center"
-                      onWheel={(e) => handleScroll(colIdx, e)}
-                    >
-                      {/* Top spacer (before first visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 0)}
-                        className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
-                          colIdx === 0 ? "rounded-tl-[10px]" : ""
-                        } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
-                        style={{
-                          backgroundColor: columnData.color,
-                          fontFamily:
-                            "'Condensed', 'Arial Condensed', sans-serif",
-                          boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
-                          fontWeight: 700,
-                        }}
+                <div className="absolute left-[94px] top-[179px] flex gap-[0.5px]">
+                  {[0, 1, 2, 3, 4].map((colIdx) => {
+                    const visibleValues = getVisibleValues(colIdx);
+                    const columnData = COLUMN_DATA[colIdx];
+                    return (
+                      <div
+                        key={colIdx}
+                        className="flex flex-col gap-[1px] items-center"
+                        onWheel={(e) => handleScroll(colIdx, e)}
                       >
-                        {visibleValues[0]}
-                      </button>
+                        {/* Top spacer (before first visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 0)}
+                          className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
+                            colIdx === 0 ? "rounded-tl-[10px]" : ""
+                          } ${colIdx === 4 ? "rounded-tr-[10px]" : ""}`}
+                          style={{
+                            backgroundColor: columnData.color,
+                            fontFamily:
+                              "'Condensed', 'Arial Condensed', sans-serif",
+                            boxShadow: "0 20px 20px rgba(0, 0, 0, 0.3)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[0]}
+                        </button>
 
-                      {/* Middle row - focused/selected */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 1)}
-                        className="w-[25px] h-[40px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
-                        style={{
-                          backgroundColor: columnData.color,
-                          fontFamily:
-                            "'Condensed', 'Arial Condensed', sans-serif",
-                          boxShadow:
-                            "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {visibleValues[1]}
-                      </button>
+                        {/* Middle row - focused/selected */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 1)}
+                          className="w-[25px] h-[40px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
+                          style={{
+                            backgroundColor: columnData.color,
+                            fontFamily:
+                              "'Condensed', 'Arial Condensed', sans-serif",
+                            boxShadow:
+                              "0 20px 50px rgba(0, 0, 0, 0.3), inset 0 0px 10px 20px rgba(255, 255, 255, 0.1)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[1]}
+                        </button>
 
-                      {/* Bottom spacer (after second visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 2)}
-                        className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
-                          colIdx === 0 ? "rounded-bl-[10px]" : ""
-                        } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
-                        style={{
-                          backgroundColor: columnData.color,
-                          fontFamily:
-                            "'Condensed', 'Arial Condensed', sans-serif",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {visibleValues[2]}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+                        {/* Bottom spacer (after second visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 2)}
+                          className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
+                            colIdx === 0 ? "rounded-bl-[10px]" : ""
+                          } ${colIdx === 4 ? "rounded-br-[10px]" : ""}`}
+                          style={{
+                            backgroundColor: columnData.color,
+                            fontFamily:
+                              "'Condensed', 'Arial Condensed', sans-serif",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {visibleValues[2]}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>

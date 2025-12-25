@@ -198,91 +198,92 @@ export default function CodeEntryModal({
 
               {/* Overlay Scrollable Picker - 4 columns - Hidden until image loads */}
               {imageLoaded && (
-              <div className="absolute left-[125px] top-[225px] flex gap-[1px]">
-                {[0, 1, 2, 3].map((colIdx) => {
-                  const visibleValues = getVisibleValues(colIdx);
-                  const columnData = COLUMN_DATA[colIdx];
-                  return (
-                    <div
-                      key={colIdx}
-                      className="flex flex-col gap-1 items-center"
-                      onWheel={(e) => handleScroll(colIdx, e)}
-                    >
-                      {/* Top spacer (before first visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 0)}
-                        className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
-                        style={{
-                          backgroundColor: columnData.color,
-                          border: `4px solid ${columnData.borderColor}`,
-                          borderTop: "4px solid " + columnData.color,
-                          borderLeft:
-                            colIdx === 0
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          borderRight:
-                            colIdx === 3
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          borderTopLeftRadius: colIdx === 0 ? "8px" : undefined,
-                          borderTopRightRadius:
-                            colIdx === 3 ? "8px" : undefined,
-                          fontWeight: 900,
-                        }}
+                <div className="absolute left-[125px] top-[225px] flex gap-[1px]">
+                  {[0, 1, 2, 3].map((colIdx) => {
+                    const visibleValues = getVisibleValues(colIdx);
+                    const columnData = COLUMN_DATA[colIdx];
+                    return (
+                      <div
+                        key={colIdx}
+                        className="flex flex-col gap-1 items-center"
+                        onWheel={(e) => handleScroll(colIdx, e)}
                       >
-                        {visibleValues[0]}
-                      </button>
+                        {/* Top spacer (before first visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 0)}
+                          className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
+                          style={{
+                            backgroundColor: columnData.color,
+                            border: `4px solid ${columnData.borderColor}`,
+                            borderTop: "4px solid " + columnData.color,
+                            borderLeft:
+                              colIdx === 0
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            borderRight:
+                              colIdx === 3
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            borderTopLeftRadius:
+                              colIdx === 0 ? "8px" : undefined,
+                            borderTopRightRadius:
+                              colIdx === 3 ? "8px" : undefined,
+                            fontWeight: 900,
+                          }}
+                        >
+                          {visibleValues[0]}
+                        </button>
 
-                      {/* Middle row - focused/selected */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 1)}
-                        className="w-[28px] h-[40px] flex items-center justify-center text-[29px] font-extrabold rounded-lg opacity-100 transition-all transform scale-105 p-[10px]"
-                        style={{
-                          backgroundColor: columnData.color,
-                          border: `4px solid ${columnData.borderColor}`,
-                          borderLeft:
-                            colIdx === 0
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          borderRight:
-                            colIdx === 3
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          fontWeight: 900,
-                        }}
-                      >
-                        {visibleValues[1]}
-                      </button>
+                        {/* Middle row - focused/selected */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 1)}
+                          className="w-[28px] h-[40px] flex items-center justify-center text-[29px] font-extrabold rounded-lg opacity-100 transition-all transform scale-105 p-[10px]"
+                          style={{
+                            backgroundColor: columnData.color,
+                            border: `4px solid ${columnData.borderColor}`,
+                            borderLeft:
+                              colIdx === 0
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            borderRight:
+                              colIdx === 3
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            fontWeight: 900,
+                          }}
+                        >
+                          {visibleValues[1]}
+                        </button>
 
-                      {/* Bottom spacer (after second visible value) */}
-                      <button
-                        onClick={() => handleButtonClick(colIdx, 2)}
-                        className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
-                        style={{
-                          backgroundColor: columnData.color,
-                          border: `4px solid ${columnData.borderColor}`,
-                          borderBottom: "4px solid " + columnData.color,
-                          borderLeft:
-                            colIdx === 0
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          borderRight:
-                            colIdx === 3
-                              ? "none"
-                              : `4px solid ${columnData.borderColor}`,
-                          borderBottomLeftRadius:
-                            colIdx === 0 ? "8px" : undefined,
-                          borderBottomRightRadius:
-                            colIdx === 3 ? "8px" : undefined,
-                          fontWeight: 900,
-                        }}
-                      >
-                        {visibleValues[2]}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+                        {/* Bottom spacer (after second visible value) */}
+                        <button
+                          onClick={() => handleButtonClick(colIdx, 2)}
+                          className="w-[28px] h-[40px] flex items-center justify-center text-[25px] font-extrabold rounded-lg transition-all p-[10px]"
+                          style={{
+                            backgroundColor: columnData.color,
+                            border: `4px solid ${columnData.borderColor}`,
+                            borderBottom: "4px solid " + columnData.color,
+                            borderLeft:
+                              colIdx === 0
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            borderRight:
+                              colIdx === 3
+                                ? "none"
+                                : `4px solid ${columnData.borderColor}`,
+                            borderBottomLeftRadius:
+                              colIdx === 0 ? "8px" : undefined,
+                            borderBottomRightRadius:
+                              colIdx === 3 ? "8px" : undefined,
+                            fontWeight: 900,
+                          }}
+                        >
+                          {visibleValues[2]}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>
