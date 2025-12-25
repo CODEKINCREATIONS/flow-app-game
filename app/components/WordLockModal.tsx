@@ -53,8 +53,8 @@ const COLUMN_DATA = [
   { type: "alphabets", data: ALPHABETS, color: "#343441" }, // Col 5: Alphabets
 ];
 
-const lockImg = "/assets/locks/WordLock-Locked.png";
-const unlockImg = "/assets/locks/WordLock-Unlocked.png";
+const lockImg = "/assets/locks/WordLock-locked.png";
+const unlockImg = "/assets/locks/WordLock-unlocked.png";
 
 export default function WordLockModal({
   open,

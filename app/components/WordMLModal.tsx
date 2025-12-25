@@ -112,8 +112,8 @@ const getColumnData = (language: string = "en") => {
 };
 
 // Styling for modal dialog
-const lockImg = "/assets/locks/WordMLLock-Locked.png";
-const unlockImg = "/assets/locks/WordMLLock-Unlocked.png";
+const lockImg = "/assets/locks/WordMLLock-locked.png";
+const unlockImg = "/assets/locks/WordMLLock-unlocked.png";
 
 export default function WordMLModal({
   open,

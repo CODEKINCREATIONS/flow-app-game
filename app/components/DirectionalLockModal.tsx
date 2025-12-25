@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
-const lockImg = "/assets/locks/Directional-Locked.png";
-const unlockImg = "/assets/locks/Directional-Unlocked.png";
+const lockImg = "/assets/locks/Directional-locked.png";
+const unlockImg = "/assets/locks/Directional-unlocked.png";
 
 interface DirectionalLockModalProps {
   open: boolean;

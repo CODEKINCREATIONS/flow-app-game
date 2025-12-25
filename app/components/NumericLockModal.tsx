@@ -7,8 +7,8 @@ import Button from "@/app/components/ui/Button";
 import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
 
-const lockImg = "/assets/locks/NumericLock-Locked.png";
-const unlockImg = "/assets/locks/NumericLock-Unlocked.png";
+const lockImg = "/assets/locks/NumericLock-locked.png";
+const unlockImg = "/assets/locks/NumericLock-unlocked.png";
 const NUMBERS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 // Column configuration: 4 columns with original dial colors and darker borders
