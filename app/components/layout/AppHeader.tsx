@@ -98,9 +98,9 @@ export const AppHeader = ({
           `}</style>
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center px-[30px] game-header-container">
-              {/* Left: Player Name - Show only first name */}
+              {/* Left: Player Name */}
               <h1 className="text-2xl font-bold text-white flex-1 game-player-name">
-                {playerName ? playerName.split(" ")[0] : "Player"}
+                {playerName || "Player"}
               </h1>
 
               {/* Center: Timer with Clock Icon - Hidden on mobile */}
@@ -210,9 +210,7 @@ export const AppHeader = ({
 
             {/* Center: Dashboard Title */}
             <div className="dashboard-title">
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide text-white flex-1 text-center">
-                Dashboard
-              </h2>
+              <h2 className=" m-[10px] text-center">Dashboard</h2>
             </div>
 
             {/* Right: Timer and Custom Actions */}

@@ -13,7 +13,7 @@ export default function ProgressBar({
 
   return (
     <div className="w-full px-0 py-4 mt-[40px]">
-      <div className="relative w-full h-[20px] bg-[#0F1125] border-2 border-[#3A8DFF] my-[5px]">
+      <div className="relative w-full h-[20px] bg-[#0F1125] my-[5px] box-border" style={{ boxShadow: "inset 0 0 0 3px #3A8DFF" }}>
         {/* Progress Bar Fill */}
         <div
           className="h-full bg-gradient-to-r from-[#7B61FF] to-[#3A8DFF] transition-all duration-500 ease-in-out relative"
