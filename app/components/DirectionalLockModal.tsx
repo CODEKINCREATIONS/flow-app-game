@@ -121,7 +121,7 @@ export default function DirectionalLockModal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                Congratulation!
+                <span className="text-[28px]">🎉</span> Congratulation!
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
@@ -212,27 +212,29 @@ export default function DirectionalLockModal({
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-[5px] mb-[30px]">
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || isUnlocked}
-            >
-              {isSubmitting
-                ? "Verifying..."
-                : isUnlocked
-                ? "Unlocked"
-                : "Submit Code"}
-            </Button>
-            <Button
-              onClick={() => setInput((prev) => prev.slice(0, -1))}
-              disabled={input.length === 0 || isUnlocked}
-              variant="danger"
-              className="w-10 h-10 p-0 text-[#ffffff] "
-            >
-              <Delete size={24} />
-            </Button>
-          </div>
+          {/* Action Buttons - Hidden until image loads */}
+          {imageLoaded && (
+            <div className="flex justify-center gap-[5px] mb-[30px]">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || isUnlocked}
+              >
+                {isSubmitting
+                  ? "Verifying..."
+                  : isUnlocked
+                  ? "Unlocked"
+                  : "Submit Code"}
+              </Button>
+              <Button
+                onClick={() => setInput((prev) => prev.slice(0, -1))}
+                disabled={input.length === 0 || isUnlocked}
+                variant="danger"
+                className="w-10 h-10 p-0 text-[#ffffff] "
+              >
+                <Delete size={24} />
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </div>
     </Dialog>

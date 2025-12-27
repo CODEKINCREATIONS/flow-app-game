@@ -133,7 +133,7 @@ export default function NumericV2Modal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                Congratulation!
+                <span className="text-[28px]">🎉</span> Congratulation!
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
@@ -227,20 +227,22 @@ export default function NumericV2Modal({
             )}
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center mb-[30px]">
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || isUnlocked}
-              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting
-                ? "Verifying..."
-                : isUnlocked
-                ? "Unlocked"
-                : "Submit Code"}
-            </Button>
-          </div>
+          {/* Submit Button - Hidden until image loads */}
+          {imageLoaded && (
+            <div className="flex justify-center mb-[30px]">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || isUnlocked}
+                className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting
+                  ? "Verifying..."
+                  : isUnlocked
+                  ? "Unlocked"
+                  : "Submit Code"}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </div>
     </Dialog>

@@ -162,7 +162,7 @@ export default function CodeEntryModal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                Congratulation!
+                <span className="text-[28px]">🎉</span> Congratulation!
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
@@ -299,19 +299,21 @@ export default function CodeEntryModal({
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-[5px] mb-[30px]">
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || isUnlocked}
-            >
-              {isSubmitting
-                ? "Verifying..."
-                : isUnlocked
-                ? "Unlocked"
-                : "Submit Code"}
-            </Button>
-          </div>
+          {/* Action Buttons - Hidden until image loads */}
+          {imageLoaded && (
+            <div className="flex justify-center gap-[5px] mb-[30px]">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || isUnlocked}
+              >
+                {isSubmitting
+                  ? "Verifying..."
+                  : isUnlocked
+                  ? "Unlocked"
+                  : "Submit Code"}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </div>
     </Dialog>

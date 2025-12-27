@@ -234,7 +234,7 @@ export default function WordMLModal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                Congratulation!
+                <span className="text-[28px]">🎉</span> Congratulation!
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
@@ -352,20 +352,22 @@ export default function WordMLModal({
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center mb-[50px] gap-1 mb-7.5">
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || isUnlocked}
-              className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting
-                ? "Verifying..."
-                : isUnlocked
-                ? "Unlocked"
-                : "Submit Code"}
-            </Button>
-          </div>
+          {/* Action Buttons - Hidden until image loads */}
+          {imageLoaded && (
+            <div className="flex justify-center mb-[50px] gap-1 mb-7.5">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || isUnlocked}
+                className="bg-[#7B61FF] hover:bg-[#6A50DD] text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting
+                  ? "Verifying..."
+                  : isUnlocked
+                  ? "Unlocked"
+                  : "Submit Code"}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </div>
     </Dialog>

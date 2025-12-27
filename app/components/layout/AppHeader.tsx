@@ -88,6 +88,8 @@ export const AppHeader = ({
                 overflow: hidden;
                 text-overflow: ellipsis;
                 flex: 0 1 auto;
+                margin-right: 50px;
+               
               }
             }
             @media (min-width: 769px) {
