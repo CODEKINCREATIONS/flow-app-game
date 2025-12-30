@@ -1,11 +1,14 @@
 "use client";
-import { AppLayout } from "@/app/components/layout";
-import ColorDashboard from "@/app/components/ColorDashboard";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  return (
-    <AppLayout>
-      <ColorDashboard />
-    </AppLayout>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/facilitator-login");
+  }, [router]);
+
+  return null;
 }
