@@ -26,11 +26,16 @@ export async function GET(request: NextRequest) {
 
     console.log("[Player Activity API] Proxying request to:", externalApiUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+
     // Call external API
     const response = await fetch(externalApiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Basic ${encoded}`,
       },
     });
 

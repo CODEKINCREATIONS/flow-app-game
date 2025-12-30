@@ -31,10 +31,16 @@ export async function GET(
 
     console.log("Calling backend URL (method 1 - path param):", backendUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+    const authHeader = `Basic ${encoded}`;
+
     let response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: authHeader,
       },
     });
 
@@ -50,6 +56,7 @@ export async function GET(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: authHeader,
         },
       });
     }

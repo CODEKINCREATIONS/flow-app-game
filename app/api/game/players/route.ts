@@ -24,10 +24,15 @@ export async function GET(request: NextRequest) {
 
     console.log("Calling backend URL:", backendUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Basic ${encoded}`,
       },
     });
 

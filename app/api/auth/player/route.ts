@@ -13,10 +13,15 @@ export async function POST(request: NextRequest) {
     const playerLoginUrl = `${AZURE_API_URL}/Player/login`;
     console.log(`Attempting to call: ${playerLoginUrl}`);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+
     const response = await fetch(playerLoginUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Basic ${encoded}`,
       },
       body: JSON.stringify(body),
     });

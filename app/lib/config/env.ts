@@ -6,13 +6,13 @@ const getApiUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  
+
   // On production (Vercel), use relative path for API routes
   if (typeof window === "undefined") {
     // Server-side: use localhost for development
     return process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
   }
-  
+
   // Client-side: use relative path (empty string = current origin)
   return "";
 };
@@ -24,7 +24,10 @@ export const env = {
     process.env.NEXT_PUBLIC_SESSION_VERIFICATION_URL ||
     "https://flowapp-hdx-d5d7hvdeeee4g3dr.uaenorth-01.azurewebsites.net",
   NODE_ENV: process.env.NODE_ENV || "development",
-} as const;
+  // Basic Auth credentials for API
+  API_AUTH_USERNAME: process.env.NEXT_PUBLIC_API_AUTH_USERNAME || "admin",
+  API_AUTH_PASSWORD: process.env.NEXT_PUBLIC_API_AUTH_PASSWORD || "password123",
+};
 
 // Type-safe environment checks
 export const isDevelopment = env.NODE_ENV === "development";

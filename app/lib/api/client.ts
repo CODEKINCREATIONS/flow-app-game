@@ -2,11 +2,21 @@
 import { env } from "@/app/lib/config/env";
 import type { ApiResponse, ApiError } from "@/app/types/api";
 
+// Helper function to generate Basic Auth header
+function getBasicAuthHeader(): string {
+  const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+  // Encode to base64
+  const encoded = Buffer.from(credentials).toString("base64");
+  return `Basic ${encoded}`;
+}
+
 class ApiClient {
   private baseURL: string;
+  private basicAuthHeader: string;
 
   constructor() {
     this.baseURL = env.API_URL;
+    this.basicAuthHeader = getBasicAuthHeader();
   }
 
   private async request<T>(
@@ -20,6 +30,7 @@ class ApiClient {
         ...options,
         headers: {
           "Content-Type": "application/json",
+          "Authorization": this.basicAuthHeader,
           ...options.headers,
         },
       });

@@ -23,7 +23,7 @@ export const PlayerProgress = ({
   const [selectedPlayer, setSelectedPlayer] = useState<DashboardPlayer | null>(
     null
   );
-  const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<number | null>(
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(
     null
   );
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
@@ -116,9 +116,10 @@ export const PlayerProgress = ({
     },
   ];
 
-  const handleViewPlayer = (player: DashboardPlayer, index: number) => {
+  const handleViewPlayer = (player: DashboardPlayer) => {
     setSelectedPlayer(player);
-    setSelectedPlayerIndex(index + 1); // API expects 1-based index
+    // Use the actual playerId from the player object
+    setSelectedPlayerId(player.playerId || player.id || "");
     setShowDetailsDialog(true);
   };
 
@@ -208,7 +209,7 @@ export const PlayerProgress = ({
                     <Button
                       variant="neon"
                       className="!px-6 !py-2 text-sm hover:scale-105 transition-transform"
-                      onClick={() => handleViewPlayer(p, index)}
+                      onClick={() => handleViewPlayer(p)}
                     >
                       View
                     </Button>
@@ -230,19 +231,19 @@ export const PlayerProgress = ({
       </div>
 
       {/* Player Details Dialog */}
-      {selectedPlayer && selectedPlayerIndex !== null && (
+      {selectedPlayer && selectedPlayerId !== null && (
         <PlayerDetailsDialog
           open={showDetailsDialog}
           onClose={() => {
             setShowDetailsDialog(false);
             setSelectedPlayer(null);
-            setSelectedPlayerIndex(null);
+            setSelectedPlayerId(null);
           }}
           playerName={String(selectedPlayer.name || selectedPlayer.playerName)}
           playerEmail={String(selectedPlayer.email || "")}
           riddleData={getRiddleData()}
           sessionCode={effectiveSessionCode}
-          playerId={selectedPlayerIndex} // Pass numeric index (1, 2, 3, etc.)
+          playerId={selectedPlayerId} // Pass the actual playerId from the player object
         />
       )}
     </div>

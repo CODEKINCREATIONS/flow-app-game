@@ -15,32 +15,41 @@ export default function SessionExpiredDialog({
   onConfirm,
 }: SessionExpiredDialogProps) {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogContent className="relative rounded-[10px] p-[40px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center max-w-sm">
-        <div className="flex flex-col items-center text-center space-y-8">
-          <AlertTriangle className="w-16 h-16 text-yellow-400" />
+    <>
+      <style>{`
+        @media (max-width: 640px) {
+          .session-expired-dialog {
+            width: 250px !important;
+          }
+        }
+      `}</style>
+      <Dialog open={open} onClose={onClose}>
+        <DialogContent className="session-expired-dialog relative rounded-[10px] p-[30px] bg-[#12142A] border border-[#1E2144] text-white shadow-2xl text-center max-w-sm">
+          <div className="flex flex-col items-center text-center space-y-8">
+            <AlertTriangle className="w-16 h-16 text-yellow-400" />
 
-          <p className="text-2xl text-white px-4 leading-relaxed font-medium">
-            Session Expired
-          </p>
+            <p className="text-2xl text-white px-4 leading-relaxed font-medium">
+              Session Expired
+            </p>
 
-          <p className="text-sm text-gray-300 px-4">
-            The game session duration has ended. Please return to the dashboard
-            to start a new session.
-          </p>
+            <p className="text-sm text-gray-300 px-4">
+              The game session has ended. Please return to the dashboard to
+              start a new session.
+            </p>
 
-          {/* Action Button */}
-          <div className="flex gap-4 mt-[20px] mb-[10px] justify-center w-full">
-            <Button
-              variant="primary"
-              onClick={onConfirm}
-              className="flex items-center justify-center px-[5px] py-[3px] font-semibold"
-            >
-              <span className="text-lg">Return to Login Page</span>
-            </Button>
+            {/* Action Button */}
+            <div className="flex gap-4 mt-[20px] mb-[10px] justify-center w-full">
+              <Button
+                variant="primary"
+                onClick={onConfirm}
+                className="flex items-center justify-center px-[5px] py-[3px] font-semibold"
+              >
+                <span className="text-lg">Return to Login Page</span>
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

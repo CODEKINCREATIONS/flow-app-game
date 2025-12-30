@@ -28,25 +28,47 @@ export async function PUT(
 
     console.log("Calling Azure backend:", azureUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+
     const response = await fetch(azureUrl, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Basic ${encoded}`,
       },
     });
 
-    const data = await response.json();
-
-    console.log("Azure response status:", response.status, "data:", data);
+    console.log("Azure response status:", response.status);
 
     if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        errorData = { message: `HTTP ${response.status}` };
+      }
+      console.error("Azure backend error:", response.status, errorData);
       return NextResponse.json(
         {
-          message: data.message || "Failed to unlock session",
+          message:
+            errorData.message ||
+            `Failed to unlock session (${response.status})`,
         },
         { status: response.status }
       );
     }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error("Failed to parse response as JSON:", e);
+      data = { message: "Session unlocked successfully" };
+    }
+
+    console.log("Azure response data:", data);
 
     return NextResponse.json(data);
   } catch (error) {

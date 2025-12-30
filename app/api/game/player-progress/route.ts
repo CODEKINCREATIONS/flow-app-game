@@ -27,10 +27,15 @@ export async function GET(request: NextRequest) {
 
     console.log("Calling backend URL:", backendUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Basic ${encoded}`,
       },
     });
 
@@ -107,15 +112,33 @@ export async function POST(request: NextRequest) {
         getProgressUrl
       );
 
+      // Generate Basic Auth header
+      const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+      const encoded = Buffer.from(credentials).toString("base64");
+      const authHeader = `Basic ${encoded}`;
+
       const getProgressResponse = await fetch(getProgressUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: authHeader,
         },
         body: JSON.stringify({}),
       });
 
-      const getProgressData = await getProgressResponse.json();
+      let getProgressData;
+      try {
+        getProgressData = await getProgressResponse.json();
+      } catch (e) {
+        console.error(
+          "[PlayerProgress POST] Failed to parse get progress response as JSON:",
+          e
+        );
+        return NextResponse.json(
+          { message: "Failed to parse backend response" },
+          { status: 500 }
+        );
+      }
       console.log(
         "[PlayerProgress POST] Get progress response:",
         getProgressData
@@ -157,11 +180,21 @@ export async function POST(request: NextRequest) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: authHeader,
         },
         body: JSON.stringify({}),
       });
 
-      const verifyData = await verifyResponse.json();
+      let verifyData;
+      try {
+        verifyData = await verifyResponse.json();
+      } catch (e) {
+        console.error(
+          "[PlayerProgress POST] Failed to parse verify response as JSON:",
+          e
+        );
+        verifyData = { message: "Response received but not JSON" };
+      }
       console.log("[PlayerProgress POST] Verify response:", verifyData);
 
       return NextResponse.json(verifyData, {
@@ -172,6 +205,11 @@ export async function POST(request: NextRequest) {
     // Otherwise, just record the attempt (backward compatible)
     console.log("[PlayerProgress POST] Recording attempt (no password)");
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+    const authHeader = `Basic ${encoded}`;
+
     // Call external API
     const externalApiUrl = `${env.SESSION_VERIFICATION_URL}/PlayerProgress/PlayerId/${playerId}/BoxId/${boxId}`;
 
@@ -181,10 +219,20 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: authHeader,
       },
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error(
+        "[PlayerProgress POST] Failed to parse response as JSON:",
+        e
+      );
+      data = { message: "Failed to parse backend response" };
+    }
     console.log("[PlayerProgress POST] Response:", data);
 
     if (!response.ok) {

@@ -36,10 +36,16 @@ export async function POST(request: NextRequest) {
 
     console.log("[Unlock API] Fetching game progress from:", gameProgressUrl);
 
+    // Generate Basic Auth header
+    const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
+    const encoded = Buffer.from(credentials).toString("base64");
+    const authHeader = `Basic ${encoded}`;
+
     const gameProgressResponse = await fetch(gameProgressUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: authHeader,
       },
     });
 
