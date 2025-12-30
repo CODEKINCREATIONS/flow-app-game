@@ -147,7 +147,6 @@ export default function WordLockModal({
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
     } catch (err) {
-      console.error("[WordLockModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setSelectedValues(["A", "A", "A", "A", "A"]);
       setScrollOffsets([0, 0, 0, 0, 0]);

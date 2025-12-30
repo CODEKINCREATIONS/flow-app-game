@@ -80,12 +80,6 @@ export default function DirectionalLockModal({
     try {
       // Convert arrow symbols to letters (u, r, d, l)
       const letterCode = convertDirectionsToLetters(input);
-      console.log(
-        "[DirectionalLockModal] Converting to letters:",
-        input,
-        "->",
-        letterCode
-      );
 
       // Submit the letter code to backend for verification
       await onSubmit(letterCode);
@@ -93,7 +87,6 @@ export default function DirectionalLockModal({
       setIsUnlocked(true);
       setError("");
     } catch (err) {
-      console.error("[DirectionalLockModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setInput("");
     } finally {

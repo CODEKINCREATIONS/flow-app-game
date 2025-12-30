@@ -26,28 +26,19 @@ function PlayerLoginContent() {
     const sCode = searchParams?.get("sessionCode");
     const pId = searchParams?.get("playerId");
 
-    console.log("[PlayerLogin] Query params:", {
-      sessionId,
-      sessionCode: sCode,
-      playerId: pId,
-    });
-
     if (sessionId) {
       const parsedId = parseInt(sessionId, 10);
       if (!isNaN(parsedId)) {
         setGameSessionId(parsedId);
-        console.log("[PlayerLogin] gameSessionId set to:", parsedId);
       }
     }
     if (sCode) {
       setSessionCode(sCode);
-      console.log("[PlayerLogin] sessionCode set to:", sCode);
     }
     if (pId) {
       const parsedPlayerId = parseInt(pId, 10);
       if (!isNaN(parsedPlayerId)) {
         setPlayerId(parsedPlayerId);
-        console.log("[PlayerLogin] playerId set to:", parsedPlayerId);
       }
     }
   }, [searchParams]);
@@ -79,29 +70,18 @@ function PlayerLoginContent() {
       return;
     }
 
-    console.log("[PlayerLogin] handleLogin - About to join game with:", {
-      gameSessionId,
-      sessionCode,
-      playerId,
-      name,
-      email,
-      language,
-    });
-
     setIsLoading(true);
     setError("");
 
     try {
       // Validate session exists if sessionCode is provided
       if (sessionCode) {
-        console.log("[PlayerLogin] Validating session with code:", sessionCode);
         const dashboardResponse = await gameService.getDashboard(sessionCode);
         if (!dashboardResponse.success) {
           setError("Invalid or expired session code. Please try again.");
           setIsLoading(false);
           return;
         }
-        console.log("[PlayerLogin] Session validated successfully");
       }
 
       // Generate a temporary player ID if not provided
@@ -122,7 +102,6 @@ function PlayerLoginContent() {
         return;
       }
     } catch (err) {
-      console.error("[PlayerLogin] Error during login:", err);
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);

@@ -133,7 +133,6 @@ export default function CodeEntryModal({
       setError("");
     } catch (err) {
       // Backend rejected the code
-      console.error("[NumericLockModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setSelectedValues(["0", "0", "0", "0"]);
       setScrollOffsets([0, 0, 0, 0]);

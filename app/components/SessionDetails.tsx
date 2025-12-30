@@ -1,28 +1,21 @@
 "use client";
 
 import { useSession } from "@/app/lib/hooks";
-import { useDashboard } from "@/app/lib/hooks/useDashboard";
-import { useEffect } from "react";
+import type { DashboardPlayer } from "@/app/lib/hooks/useDashboard";
 
 interface SessionDetailsProps {
   sessionCode?: string;
+  players?: DashboardPlayer[];
 }
 
 export const SessionDetails = ({
   sessionCode: propSessionCode,
+  players: propsPlayers = [],
 }: SessionDetailsProps = {}) => {
   const { session } = useSession();
-  const { dashboardData, fetchDashboard } = useDashboard();
 
   // Use prop sessionCode as fallback
   const effectiveSessionCode = propSessionCode || session?.code;
-
-  // Fetch dashboard data when session code changes
-  useEffect(() => {
-    if (effectiveSessionCode) {
-      fetchDashboard(effectiveSessionCode);
-    }
-  }, [effectiveSessionCode, fetchDashboard]);
 
   const statusColor = (status?: string) => {
     if (!status) return "text-gray-300";
@@ -41,11 +34,9 @@ export const SessionDetails = ({
     }
   };
 
-  const sessionCode =
-    dashboardData?.sessionCode || session?.code || session?.id;
-  const playersJoined =
-    dashboardData?.playersJoined || session?.players?.length || 0;
-  const status = dashboardData?.status;
+  const sessionCode = session?.code || session?.id;
+  const playersJoined = propsPlayers?.length || 0;
+  const status = session?.status;
 
   // Map status number to string if needed
   const statusValue = String(status || "");

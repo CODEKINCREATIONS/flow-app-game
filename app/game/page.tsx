@@ -61,7 +61,6 @@ export default function PlayerGamePage() {
     if (!isHydrated) return;
 
     if (!isPlayer || !user) {
-      console.warn("[Game] Player not authenticated or user not found");
       router.push("/playerlogin");
     }
   }, [isHydrated, isPlayer, user, router]);
@@ -94,13 +93,6 @@ export default function PlayerGamePage() {
           playerId = user.id;
         }
 
-        console.log(
-          "[Game] Fetching game progress for session:",
-          sessionCode,
-          "playerId:",
-          playerId
-        );
-
         const response = await gameService.getGameProgress(
           sessionCode,
           playerId
@@ -113,9 +105,6 @@ export default function PlayerGamePage() {
         if (!response.data) {
           throw new Error("No data returned from API");
         }
-
-        console.log("[Game] Full response:", response);
-        console.log("[Game] Response data:", response.data);
 
         // Handle both direct response and wrapped response structures
         let gameData: any = response.data;
@@ -159,8 +148,6 @@ export default function PlayerGamePage() {
           throw new Error("No game boxes found");
         }
 
-        console.log("[Game] Game progress loaded:", gameProgressData);
-
         // Set game boxes from API
         setGameBoxes(gameProgressData);
 
@@ -177,11 +164,8 @@ export default function PlayerGamePage() {
           physicalCodesMap[box.boxID - 1] = box.physicalCode; // Convert to 0-indexed
         });
         setPhysicalCodesByBox(physicalCodesMap);
-        console.log("[Game] Physical codes loaded:", physicalCodesMap);
-        console.log("[Game] Unlocked chests initialized:", unlockedIds);
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Unknown error";
-        console.error("[Game] Error fetching game progress:", errorMsg);
         setError(errorMsg);
       } finally {
         // Only hide loading on initial fetch
@@ -220,13 +204,6 @@ export default function PlayerGamePage() {
       const boxID = selectedChest + 1; // Convert to 1-indexed for API
       const playerId = "id" in user ? parseInt(user.id) : 0;
 
-      console.log("[Game] Submitting code for unlock:", {
-        sessionCode,
-        boxID,
-        playerId,
-        codeLength: code.length,
-      });
-
       // Call backend to verify password - single API call handles unlock + verification
       const response = await gameService.unlockChest(
         sessionCode,
@@ -235,19 +212,13 @@ export default function PlayerGamePage() {
         playerId
       );
 
-      console.log("[Game] Unlock response:", response);
-
       if (!response.success) {
-        console.warn("[Game] Unlock failed - incorrect code:", response.error);
         throw new Error(response.error || "Incorrect code");
       }
-
-      console.log("[Game] Code accepted by backend!");
 
       // Capture the physical code from the response
       if (response.data) {
         setPhysicalCode(String(response.data));
-        console.log("[Game] Physical code received:", response.data);
       }
 
       // Code was correct - update UI state
@@ -264,12 +235,9 @@ export default function PlayerGamePage() {
         [selectedChest]: code,
       }));
 
-      console.log("[Game] Chest unlocked successfully:", selectedChest + 1);
-
       // DO NOT close modal here - let the modal handle closing after countdown completes
       // The modal will call onClose after the 5-second countdown
     } catch (err) {
-      console.error("[Game] Error submitting code:", err);
       throw err; // Re-throw so modal can catch it and show error
     }
   };
@@ -291,12 +259,6 @@ export default function PlayerGamePage() {
     };
 
     const videoUrl = videoMap[language] || videoMap["en"];
-    console.log(
-      "[Game] getVideoUrl - Language:",
-      language,
-      "Video URL:",
-      videoUrl
-    );
     return videoUrl;
   };
 

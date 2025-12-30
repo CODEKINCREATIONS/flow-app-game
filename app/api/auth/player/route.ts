@@ -7,11 +7,9 @@ const AZURE_API_URL = env.SESSION_VERIFICATION_URL;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("Player auth request body:", JSON.stringify(body, null, 2));
 
     // Try the /Player/login endpoint
     const playerLoginUrl = `${AZURE_API_URL}/Player/login`;
-    console.log(`Attempting to call: ${playerLoginUrl}`);
 
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
@@ -26,9 +24,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    console.log(`Player auth response status: ${response.status}`);
     const responseText = await response.text();
-    console.log("Player auth response text:", responseText);
 
     let data;
     try {
@@ -38,7 +34,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (!response.ok) {
-      console.error("Player auth error response:", data);
       return NextResponse.json(
         {
           message:
@@ -56,7 +51,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Player auth proxy error:", error);
     return NextResponse.json(
       {
         message: "Internal server error",

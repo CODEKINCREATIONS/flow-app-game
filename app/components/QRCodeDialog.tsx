@@ -25,13 +25,7 @@ export default function QRCodeModal({
   // Compute URL directly from props - no need for state to avoid cascading renders
   let url = "";
   if (typeof window !== "undefined") {
-    console.log("[QRCodeDialog] Received props:", {
-      gameSessionId,
-    });
-
     url = `${window.location.origin}/playerlogin?sessionId=${gameSessionId}`;
-
-    console.log("[QRCodeDialog] Final URL:", url);
   }
 
   const sessionUrl = url;

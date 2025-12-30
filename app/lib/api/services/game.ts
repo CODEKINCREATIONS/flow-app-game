@@ -28,19 +28,12 @@ export const gameService = {
     playerId?: number
   ) => {
     try {
-      console.log("[unlockChest] Starting unlock process:", {
-        boxID,
-        playerId,
-      });
-
       // Call the API route which handles the backend communication
       const response = await apiClient.post("/api/game/player-progress", {
         playerId: playerId || 0,
         boxId: boxID,
         password,
       });
-
-      console.log("[unlockChest] Response:", response);
 
       if (!response.success) {
         return {
@@ -57,7 +50,6 @@ export const gameService = {
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.error("[unlockChest] Error:", errorMsg);
       return {
         success: false,
         error: errorMsg || "Failed to unlock chest",

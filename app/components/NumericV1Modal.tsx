@@ -113,7 +113,6 @@ export default function NumericV1Modal({
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
     } catch (err) {
-      console.error("[NumericV1Modal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setSelectedValues(["0", "0", "0"]);
       setScrollOffsets([0, 0, 0]);

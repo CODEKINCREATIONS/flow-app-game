@@ -7,9 +7,6 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const sessionCode = searchParams.get("sessionCode");
 
-    console.log("Players API - session code:", sessionCode);
-    console.log("Backend URL base:", env.SESSION_VERIFICATION_URL);
-
     if (!sessionCode) {
       return NextResponse.json(
         { success: false, error: "Session code is required" },
@@ -21,8 +18,6 @@ export async function GET(request: NextRequest) {
     const backendUrl = `${
       env.SESSION_VERIFICATION_URL
     }/Game/players?sessionCode=${encodeURIComponent(sessionCode)}`;
-
-    console.log("Calling backend URL:", backendUrl);
 
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
@@ -43,9 +38,6 @@ export async function GET(request: NextRequest) {
       console.error("Failed to parse response as JSON:", e);
       data = { message: "Failed to parse backend response" };
     }
-
-    console.log("Backend response status:", response.status);
-    console.log("Backend response data:", data);
 
     if (!response.ok) {
       console.error("Backend returned non-200 status:", response.status, data);

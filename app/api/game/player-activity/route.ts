@@ -24,8 +24,6 @@ export async function GET(request: NextRequest) {
     // Construct external API URL
     const externalApiUrl = `${env.SESSION_VERIFICATION_URL}/PlayerProgress/GetPlayerActivity/${sessionCode}/${playerId}`;
 
-    console.log("[Player Activity API] Proxying request to:", externalApiUrl);
-
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
     const encoded = Buffer.from(credentials).toString("base64");
@@ -51,7 +49,6 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log("[Player Activity API] Response:", data);
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {

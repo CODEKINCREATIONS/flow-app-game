@@ -205,7 +205,6 @@ export default function WordMLModal({
       triggerDialogConfetti(dialogRef.current);
       setIsUnlocked(true);
     } catch (err) {
-      console.error("[WordMLModal] Code rejected:", err);
       setError("Incorrect code. Try again.");
       setSelectedValues(columnData.map((col) => col.data[0]));
       setScrollOffsets(Array(columnData.length).fill(0));

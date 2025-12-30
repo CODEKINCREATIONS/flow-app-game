@@ -43,11 +43,6 @@ function FacilitatorDashboardContent() {
     }
   }, [sessionVerificationChecked, sessionCode, router]);
 
-  // Log sessionCode updates
-  useEffect(() => {
-    console.log("[FacilitatorDashboard] sessionCode from hook:", sessionCode);
-  }, [sessionCode]);
-
   // Verify session from query string on component mount
   useEffect(() => {
     if (!sessionVerificationChecked) {
@@ -134,11 +129,6 @@ function FacilitatorDashboardContent() {
     ) {
       gameSessionIdRef.current = dashboardData.gameSessionId;
       setGameSessionId(dashboardData.gameSessionId);
-      console.log("[FacilitatorDashboard] gameSessionId extracted:", {
-        gameSessionId: dashboardData.gameSessionId,
-        sessionCode: sessionCode,
-        dashboardData,
-      });
     }
   }, [dashboardData, sessionCode]);
 
@@ -292,23 +282,14 @@ function FacilitatorDashboardContent() {
         </main>
 
         {/* QR Code Dialog */}
-        {(() => {
-          console.log("[FacilitatorDashboard] Before rendering QRCodeDialog:", {
-            showQR,
-            gameSessionId,
-            sessionCode,
-          });
-          return (
-            <QRCodeDialog
-              open={showQR}
-              onClose={() => {
-                setShowQR(false);
-              }}
-              gameSessionId={gameSessionId || 0}
-              sessionCode={sessionCode || undefined}
-            />
-          );
-        })()}
+        <QRCodeDialog
+          open={showQR}
+          onClose={() => {
+            setShowQR(false);
+          }}
+          gameSessionId={gameSessionId || 0}
+          sessionCode={sessionCode || undefined}
+        />
 
         {/* Unlock Session Confirmation Dialog */}
         <UnlockSessionDialog

@@ -14,13 +14,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { sessionCode, boxID, password, playerId } = body;
 
-    console.log("[Unlock API] Request:", {
-      sessionCode,
-      boxID,
-      playerId,
-      passwordLength: password?.length,
-    });
-
     if (!sessionCode || !boxID || !password) {
       return NextResponse.json(
         { message: "sessionCode, boxID, and password are required" },
@@ -33,8 +26,6 @@ export async function POST(request: NextRequest) {
     const gameProgressUrl = `${
       env.SESSION_VERIFICATION_URL
     }/GameProgress/SessionCode/${sessionCode}/PlayerId/${playerId || 1}`;
-
-    console.log("[Unlock API] Fetching game progress from:", gameProgressUrl);
 
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
@@ -61,10 +52,6 @@ export async function POST(request: NextRequest) {
     }
 
     const gameData = await gameProgressResponse.json();
-    console.log(
-      "[Unlock API] Game progress fetched, total boxes:",
-      gameData.gameProgress?.length
-    );
 
     // Handle nested data structure from backend
     let gameProgressArray = gameData.gameProgress;
@@ -78,14 +65,10 @@ export async function POST(request: NextRequest) {
     );
 
     if (!targetBox) {
-      console.warn("[Unlock API] Box not found:", boxID);
       return NextResponse.json({ message: "Box not found" }, { status: 404 });
     }
 
-    console.log("[Unlock API] Box found, status:", targetBox.status);
-
     if (targetBox.status === 1) {
-      console.log("[Unlock API] Box already unlocked");
       return NextResponse.json(
         { message: "Box already unlocked", success: true },
         { status: 200 }
@@ -98,13 +81,8 @@ export async function POST(request: NextRequest) {
       .update(password)
       .digest("hex");
 
-    console.log("[Unlock API] Password hash comparison:");
-    console.log("  Provided (hashed):", hashedPassword);
-    console.log("  Stored (from API):", targetBox.padLockPassword);
-
     // Compare the hashes
     if (hashedPassword === targetBox.padLockPassword) {
-      console.log("[Unlock API] Password verified - CORRECT");
       return NextResponse.json(
         {
           success: true,
@@ -114,7 +92,6 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } else {
-      console.log("[Unlock API] Password mismatch - INCORRECT");
       return NextResponse.json(
         {
           success: false,

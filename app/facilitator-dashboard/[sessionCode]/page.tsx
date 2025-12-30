@@ -168,10 +168,6 @@ function FacilitatorDashboardWithCodeContent() {
     ) {
       gameSessionIdRef.current = dashboardData.gameSessionId;
       setGameSessionId(dashboardData.gameSessionId);
-      console.log("[FacilitatorDashboard] gameSessionId extracted:", {
-        gameSessionId: dashboardData.gameSessionId,
-        sessionCode: sessionCode,
-      });
     }
   }, [
     dashboardData?.sessionUnlocked,
@@ -200,7 +196,6 @@ function FacilitatorDashboardWithCodeContent() {
       // When timer reaches 0:00, automatically call finish session
       if (newRemainingTime === "00:00" && !autoFinishCalledRef.current) {
         autoFinishCalledRef.current = true;
-        console.log("[Dashboard] Timer reached 0:00, auto-finishing session");
         handleFinish();
       }
     }, 1000);
@@ -218,10 +213,6 @@ function FacilitatorDashboardWithCodeContent() {
 
       if (response.success) {
         // Session finished successfully, redirect to login
-        console.log(
-          "[handleFinish] Session finished successfully:",
-          response.data
-        );
         window.location.href = "/facilitator-login";
       } else {
         const errorMsg =
@@ -371,7 +362,7 @@ function FacilitatorDashboardWithCodeContent() {
           {/* Body */}
           <div className="space-y-8">
             <div className="mb-[20px] mt-[20px]">
-              <SessionDetails sessionCode={sessionCode} />
+              <SessionDetails sessionCode={sessionCode} players={players} />
             </div>
 
             <PlayerProgress
@@ -384,22 +375,14 @@ function FacilitatorDashboardWithCodeContent() {
         </main>
 
         {/* QR Code Dialog */}
-        {(() => {
-          console.log("[FacilitatorDashboard] QRCodeDialog rendering with:", {
-            gameSessionId,
-            sessionCode,
-          });
-          return (
-            <QRCodeDialog
-              open={showQR}
-              onClose={() => {
-                setShowQR(false);
-              }}
-              gameSessionId={gameSessionId || 0}
-              sessionCode={sessionCode}
-            />
-          );
-        })()}
+        <QRCodeDialog
+          open={showQR}
+          onClose={() => {
+            setShowQR(false);
+          }}
+          gameSessionId={gameSessionId || 0}
+          sessionCode={sessionCode}
+        />
 
         {/* Unlock Session Confirmation Dialog */}
         <UnlockSessionDialog

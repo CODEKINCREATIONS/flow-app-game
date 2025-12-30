@@ -17,17 +17,6 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const playerId = searchParams.get("playerId");
 
-    console.log(
-      "[GameProgress API] session code:",
-      sessionCode,
-      "playerId:",
-      playerId
-    );
-    console.log(
-      "[GameProgress API] Backend URL base:",
-      env.SESSION_VERIFICATION_URL
-    );
-
     if (!sessionCode || !playerId) {
       return NextResponse.json(
         { success: false, error: "Session code and playerId are required" },
@@ -42,8 +31,6 @@ export async function GET(
       sessionCode
     )}/PlayerId/${encodeURIComponent(playerId)}`;
 
-    console.log("[GameProgress API] Calling backend URL:", backendUrl);
-
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
     const encoded = Buffer.from(credentials).toString("base64");
@@ -56,8 +43,6 @@ export async function GET(
       },
     });
 
-    console.log("[GameProgress API] Backend response status:", response.status);
-
     let data;
     try {
       data = await response.json();
@@ -65,8 +50,6 @@ export async function GET(
       console.error("[GameProgress API] Failed to parse response as JSON:", e);
       data = { message: "Failed to parse backend response" };
     }
-
-    console.log("[GameProgress API] Backend response data:", data);
 
     if (!response.ok) {
       console.error(

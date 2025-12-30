@@ -12,8 +12,6 @@ export async function PUT(
     const resolvedParams = await Promise.resolve(params);
     const sessionCode = resolvedParams.sessionCode;
 
-    console.log("Finish Session API - session code:", sessionCode);
-
     if (!sessionCode) {
       return NextResponse.json(
         { success: false, message: "Session code is required" },
@@ -25,8 +23,6 @@ export async function PUT(
     const azureUrl = `${
       env.SESSION_VERIFICATION_URL
     }/Dashboard/FinishSession/${encodeURIComponent(sessionCode)}`;
-
-    console.log("Calling Azure backend:", azureUrl);
 
     // Generate Basic Auth header
     const credentials = `${env.API_AUTH_USERNAME}:${env.API_AUTH_PASSWORD}`;
@@ -40,8 +36,6 @@ export async function PUT(
       },
     });
 
-    console.log("Azure response status:", response.status);
-
     if (!response.ok) {
       let errorData;
       try {
@@ -49,7 +43,6 @@ export async function PUT(
       } catch (e) {
         errorData = { message: `HTTP ${response.status}` };
       }
-      console.error("Azure backend error:", response.status, errorData);
       return NextResponse.json(
         {
           message:
@@ -64,15 +57,11 @@ export async function PUT(
     try {
       data = await response.json();
     } catch (e) {
-      console.error("Failed to parse response as JSON:", e);
       data = { message: "Session finished successfully" };
     }
 
-    console.log("Azure response data:", data);
-
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Finish session error:", error);
     return NextResponse.json(
       {
         success: false,

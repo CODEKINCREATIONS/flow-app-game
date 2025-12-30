@@ -110,11 +110,6 @@ export const useDashboard = () => {
           // Extract the dashboard data (gameSession)
           const dashData =
             (fullData as Record<string, unknown>)?.gameSession || fullData;
-          console.log("[useDashboard] Dashboard data:", dashData);
-          console.log(
-            "[useDashboard] gameSessionId:",
-            (dashData as Record<string, unknown>)?.gameSessionId
-          );
 
           // Only update state if data has actually changed
           const newDashData = dashData as DashboardData;

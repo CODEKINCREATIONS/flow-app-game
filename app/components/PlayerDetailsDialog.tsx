@@ -49,9 +49,6 @@ export const PlayerDetailsDialog = ({
         try {
           setIsLoading(true);
           setError(null);
-          console.log(
-            `[PlayerDetailsDialog] Fetching activity for player ${playerId} in session ${sessionCode}`
-          );
 
           const response = await gameService.getPlayerActivity(
             sessionCode,
@@ -59,22 +56,13 @@ export const PlayerDetailsDialog = ({
           );
 
           if (response.success && response.data) {
-            console.log(
-              "[PlayerDetailsDialog] Activity data received:",
-              response.data
-            );
             setPlayerStats(response.data.playerStats);
             setActivityItems(response.data.playersProgress);
           } else {
-            console.warn(
-              "[PlayerDetailsDialog] Failed to fetch activity:",
-              response.error
-            );
             setError(response.error || "Failed to load player activity");
           }
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : "Unknown error";
-          console.error("[PlayerDetailsDialog] Exception:", errorMsg);
           setError(errorMsg);
         } finally {
           setIsLoading(false);
