@@ -130,7 +130,7 @@ export default function WordMLModal({
   const [scrollOffsets, setScrollOffsets] =
     useState<number[]>(initialScrollOffsets);
   const [selectedValues, setSelectedValues] = useState<string[]>(
-    initialSelectedValues
+    initialSelectedValues,
   );
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -215,7 +215,7 @@ export default function WordMLModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <div ref={dialogRef}>
+      <div ref={dialogRef} suppressHydrationWarning data-translate="no">
         <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
           <div className="flex justify-end mb-4 px-2 relative">
             <div
@@ -272,7 +272,7 @@ export default function WordMLModal({
                 <div className="absolute left-[113px] top-[197px] flex gap-px">
                   {Array.from(
                     { length: columnData.length },
-                    (_, idx) => idx
+                    (_, idx) => idx,
                   ).map((colIdx) => {
                     const visibleValues = getVisibleValues(colIdx);
                     const col = columnData[colIdx];
@@ -284,6 +284,8 @@ export default function WordMLModal({
                       >
                         {/* Top spacer (before first visible value) */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 0)}
                           className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-b-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-t-[10px] text-[23px] uppercase outline-none tap-transparent shadow-lg ${
                             colIdx === 0 ? "rounded-tl-[10px]" : ""
@@ -303,6 +305,8 @@ export default function WordMLModal({
 
                         {/* Middle row - focused/selected */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 1)}
                           className="w-[27px] h-[43px] flex items-center justify-center text-xs transition-all transform scale-105 border-4 rounded py-0.5 px-1.5 font-black text-[26px] uppercase outline-none tap-transparent border-[#3d7a23]"
                           style={{
@@ -316,6 +320,8 @@ export default function WordMLModal({
 
                         {/* Bottom spacer (after second visible value) */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 2)}
                           className={`w-[27px] h-[43px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#4e972f] py-0.5 px-1.5 font-black rounded-b-[10px] text-[23px] uppercase outline-none tap-transparent my-0.5 ${
                             colIdx === 0 ? "rounded-bl-[10px]" : ""
@@ -362,8 +368,8 @@ export default function WordMLModal({
                 {isSubmitting
                   ? "Verifying..."
                   : isUnlocked
-                  ? "Unlocked"
-                  : "Submit Code"}
+                    ? "Unlocked"
+                    : "Submit Code"}
               </Button>
             </div>
           )}

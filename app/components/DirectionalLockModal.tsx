@@ -22,6 +22,7 @@ interface DirectionalLockModalProps {
   onClose: () => void;
   onSubmit: (code: string) => Promise<void>;
   lockImage?: string;
+  unlockImage?: string;
   physicalCode?: string | null;
 }
 
@@ -37,6 +38,7 @@ export default function DirectionalLockModal({
   onClose,
   onSubmit,
   lockImage,
+  unlockImage,
   physicalCode,
 }: DirectionalLockModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -140,7 +142,9 @@ export default function DirectionalLockModal({
               )}
 
               <Image
-                src={isUnlocked ? unlockImg : lockImage || lockImg}
+                src={
+                  isUnlocked ? unlockImage || unlockImg : lockImage || lockImg
+                }
                 alt="Directional Lock"
                 fill
                 style={{ objectFit: "contain" }}
@@ -152,7 +156,7 @@ export default function DirectionalLockModal({
               {!isUnlocked && imageLoaded && (
                 <button
                   onClick={() => handleDirectionClick("up")}
-                  className="absolute top-[140px] left-[145px] transform -translate-x-1/2 bg-[#7B61FF] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
+                  className="absolute top-[140px] left-[145px] transform -translate-x-1/2 bg-[#fff] hover:bg-[#6A50DD] text-transparent p-2 rounded-lg shadow-lg transition-transform duration-300 hover:scale-110 opacity-0"
                   aria-label="Direction Up"
                 >
                   <ArrowUp size={18} />
@@ -215,8 +219,8 @@ export default function DirectionalLockModal({
                 {isSubmitting
                   ? "Verifying..."
                   : isUnlocked
-                  ? "Unlocked"
-                  : "Submit Code"}
+                    ? "Unlocked"
+                    : "Submit Code"}
               </Button>
               <Button
                 onClick={() => setInput((prev) => prev.slice(0, -1))}

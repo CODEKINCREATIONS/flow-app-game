@@ -22,6 +22,7 @@ import type { GameBox } from "@/app/types/game";
 import {
   getLockImageForBox,
   getLockTypeForBox,
+  getLockUnlockImageForBox,
 } from "@/app/lib/config/lockConfig";
 
 export default function PlayerGamePage() {
@@ -95,7 +96,7 @@ export default function PlayerGamePage() {
 
         const response = await gameService.getGameProgress(
           sessionCode,
-          playerId
+          playerId,
         );
 
         if (!response.success) {
@@ -139,8 +140,8 @@ export default function PlayerGamePage() {
         if (!Array.isArray(gameProgressData)) {
           throw new Error(
             `Invalid game progress data format: expected array but got ${typeof gameProgressData}. Full data: ${JSON.stringify(
-              gameData
-            )}`
+              gameData,
+            )}`,
           );
         }
 
@@ -209,7 +210,7 @@ export default function PlayerGamePage() {
         sessionCode,
         boxID,
         code,
-        playerId
+        playerId,
       );
 
       if (!response.success) {
@@ -588,6 +589,9 @@ export default function PlayerGamePage() {
                         onClose={() => setSelectedChest(null)}
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
+                        unlockImage={getLockUnlockImageForBox(
+                          selectedChest || 0,
+                        )}
                         physicalCode={physicalCode}
                       />
                     );

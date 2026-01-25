@@ -157,7 +157,7 @@ export default function WordLockModal({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <div ref={dialogRef}>
+      <div ref={dialogRef} suppressHydrationWarning data-translate="no">
         <DialogContent className="relative rounded-[10px] bg-black p-[6px] border border-[#1E2144] text-white shadow-2xl text-center w-[350px]">
           <div className="flex justify-end mb-4 px-2 relative">
             <div
@@ -223,6 +223,8 @@ export default function WordLockModal({
                       >
                         {/* Top spacer (before first visible value) */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 0)}
                           className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-l-4 border-r-4 border-b-4 border-t-[2px] border-[#1e1e28] border-t-[#575876] text-white font-bold text-[25px] py-[2px] px-2 rounded-t-[10px] text-[#ffffff] ${
                             colIdx === 0 ? "rounded-tl-[10px]" : ""
@@ -240,6 +242,8 @@ export default function WordLockModal({
 
                         {/* Middle row - focused/selected */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 1)}
                           className="w-[25px] h-[40px] flex items-center justify-center text-xs opacity-100 transition-all transform scale-105 rounded-[1px] text-white font-bold text-[29px] py-[2px] px-2 border-t-4 border-b-4 border-l-4 border-r-4 border-t-[#5f5c7c] border-b-[#5f5c7c] border-l-[#201f2a] border-r-[#201f2a] text-[#ffffff]"
                           style={{
@@ -256,6 +260,8 @@ export default function WordLockModal({
 
                         {/* Bottom spacer (after second visible value) */}
                         <button
+                          translate="no"
+                          suppressHydrationWarning
                           onClick={() => handleButtonClick(colIdx, 2)}
                           className={`w-[25px] h-[40px] flex items-center justify-center text-xs transition-all border-t-4 border-l-4 border-r-4 border-[#1e1e28] border-b-[2px] border-b-[#575876] rounded-b-[10px] text-white font-bold text-[24px] py-[2px] px-2 text-[#ffffff] ${
                             colIdx === 0 ? "rounded-bl-[10px]" : ""
@@ -299,8 +305,8 @@ export default function WordLockModal({
                 {isSubmitting
                   ? "Verifying..."
                   : isUnlocked
-                  ? "Unlocked"
-                  : "Submit Code"}
+                    ? "Unlocked"
+                    : "Submit Code"}
               </Button>
             </div>
           )}

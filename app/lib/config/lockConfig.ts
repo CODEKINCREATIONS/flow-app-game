@@ -14,6 +14,7 @@ interface LockConfig {
   box: number;
   type: LockType;
   image: string;
+  unlockImage?: string; // Optional unlock image path
   directionalVariant?: "red" | "blue"; // For directional locks
 }
 
@@ -28,18 +29,21 @@ export const LOCK_CONFIGURATIONS: LockConfig[] = [
     box: 4,
     type: "directional",
     image: "/assets/locks/Directional-locked.png",
+    unlockImage: "/assets/locks/Directional-unlocked.png",
     directionalVariant: "red",
   },
   {
     box: 5,
     type: "directional",
-    image: "/assets/locks/Directional-locked.png",
-    directionalVariant: "red",
+    image: "/assets/locks/Directional-blue-locked.png",
+    unlockImage: "/assets/locks/Directional-blue-unlocked.png",
+    directionalVariant: "blue",
   },
   {
     box: 6,
     type: "directional",
-    image: "/assets/locks/Directional-locked.png",
+    image: "/assets/locks/Directional-black-locked.png",
+    unlockImage: "/assets/locks/Directional-black-unlocked.png",
     directionalVariant: "red",
   },
 
@@ -87,4 +91,12 @@ export function getLockImageForBox(boxIndex: number): string {
 export function getLockTypeForBox(boxIndex: number): LockType {
   const config = getLockConfigForBox(boxIndex);
   return config?.type || "numeric"; // Default fallback
+}
+
+/**
+ * Get unlock image path for a specific box (0-indexed)
+ */
+export function getLockUnlockImageForBox(boxIndex: number): string | undefined {
+  const config = getLockConfigForBox(boxIndex);
+  return config?.unlockImage;
 }
