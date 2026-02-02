@@ -30,8 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # environment variables - NEVER commit sensitive credentials
-.env
-.env.local
+# .env
+# .env.local
 .env.*.local
 .pnpm-debug.log*
 

@@ -20,11 +20,11 @@ const getApiUrl = () => {
 // Validate required environment variables
 const validateEnv = () => {
   const required = ["SESSION_VERIFICATION_URL"];
-  const missing = required.filter((key) => !process.env[`NEXT_PUBLIC_${key}`]);
+  const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0 && process.env.NODE_ENV === "production") {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
+      `Missing required environment variables: ${missing.join(", ")}`,
     );
   }
 };
@@ -38,7 +38,7 @@ export const env = {
   API_URL: getApiUrl(),
   WS_URL: process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3000",
   SESSION_VERIFICATION_URL:
-    process.env.NEXT_PUBLIC_SESSION_VERIFICATION_URL ||
+    process.env.SESSION_VERIFICATION_URL ||
     "https://flowapp-hdx-d5d7hvdeeee4g3dr.uaenorth-01.azurewebsites.net",
   NODE_ENV: process.env.NODE_ENV || "development",
   // API credentials - retrieved only on server-side via API routes
@@ -53,6 +53,6 @@ export const isProduction = env.NODE_ENV === "production";
 // Warn if credentials are missing in production
 if (isProduction && (!env.API_AUTH_USERNAME || !env.API_AUTH_PASSWORD)) {
   console.error(
-    "⚠️ WARNING: API credentials not configured. Set API_AUTH_USERNAME and API_AUTH_PASSWORD environment variables."
+    "⚠️ WARNING: API credentials not configured. Set API_AUTH_USERNAME and API_AUTH_PASSWORD environment variables.",
   );
 }
