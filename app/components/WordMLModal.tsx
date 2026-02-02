@@ -91,7 +91,7 @@ const getColumnData = (language: string = "en") => {
   const lang = (language || "en").toLowerCase();
 
   // For Portuguese: 1 numeric + 4 alphabetic columns
-  if (lang === "pt") {
+  if (lang === "pt" || lang === "portuguese") {
     return [
       { type: "numbers", data: NUMBERS, color: "#56a128" }, // Col 1: Numbers
       { type: "alphabets", data: ALPHABETS, color: "#56a128" }, // Col 2: Alphabets

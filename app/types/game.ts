@@ -18,6 +18,7 @@ export interface GameSessionData {
   sessionCreated?: string;
   sessionUnlockedAt?: string;
   sessionDuration: number;
+  language?: string; // Language code: EN, PT, ES
 }
 
 export interface GameProgressResponse {

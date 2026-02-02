@@ -45,6 +45,7 @@ export default function PlayerGamePage() {
   const [sessionDuration, setSessionDuration] = useState<number>(60);
   const [sessionStatus, setSessionStatus] = useState<number | null>(null);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const [sessionLanguage, setSessionLanguage] = useState<string>("en");
   const { user, isPlayer } = useAuth();
   const isHydrated = useHydration();
   const router = useRouter();
@@ -126,6 +127,10 @@ export default function PlayerGamePage() {
           }
           if (gameSession.sessionDuration) {
             setSessionDuration(gameSession.sessionDuration);
+          }
+          // Extract language from session data
+          if (gameSession.language) {
+            setSessionLanguage(gameSession.language.toLowerCase());
           }
           // Check if session has expired (status = 2 means finished)
           if (gameSession.status === 2 && !showSessionExpired) {
@@ -633,9 +638,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={
-                          ("language" in user ? user.language : "en") as string
-                        }
+                        language={sessionLanguage}
                       />
                     );
                   default:

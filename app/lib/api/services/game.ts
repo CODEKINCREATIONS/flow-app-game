@@ -16,7 +16,7 @@ export const gameService = {
   // Get a specific chest
   getChest: async (chestId: number, sessionId: string) => {
     return apiClient.get<Chest>(
-      `/api/game/chests/${chestId}?sessionId=${sessionId}`
+      `/api/game/chests/${chestId}?sessionId=${sessionId}`,
     );
   },
 
@@ -25,7 +25,7 @@ export const gameService = {
     sessionCode: string,
     boxID: number,
     password: string,
-    playerId?: number
+    playerId?: number,
   ) => {
     try {
       // Call the API route which handles the backend communication
@@ -60,7 +60,7 @@ export const gameService = {
   // Get player progress
   getPlayerProgress: async (sessionId: string) => {
     return apiClient.get<PlayerProgress[]>(
-      `/api/game/progress?sessionId=${sessionId}`
+      `/api/game/progress?sessionId=${sessionId}`,
     );
   },
 
@@ -68,7 +68,7 @@ export const gameService = {
   recordAttempt: async (
     chestId: number,
     playerId: string,
-    success: boolean
+    success: boolean,
   ) => {
     return apiClient.post(`/api/game/attempts`, {
       chestId,
@@ -100,7 +100,7 @@ export const gameService = {
   // Get player activity (statistics and progress)
   getPlayerActivity: async (sessionCode: string, playerId: number | string) => {
     return apiClient.get<PlayerActivityData>(
-      `/api/game/player-activity?sessionCode=${sessionCode}&playerId=${playerId}`
+      `/api/game/player-activity?sessionCode=${sessionCode}&playerId=${playerId}`,
     );
   },
 
@@ -123,7 +123,7 @@ export const gameService = {
   // Verify password for a box
   verifyBoxPassword: async (
     playerId: number | string,
-    padlockPassword: string
+    padlockPassword: string,
   ) => {
     return apiClient.put(`/api/game/player-progress`, {
       playerId,
