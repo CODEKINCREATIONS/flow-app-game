@@ -4,14 +4,17 @@ import { env } from "@/app/lib/config/env";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const sessionCode = searchParams.get("sessionCode");
+    let sessionCode = searchParams.get("sessionCode");
 
     if (!sessionCode) {
       return NextResponse.json(
         { success: false, message: "Session code is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
+
+    // Decode the session code since it's already URL-encoded from the frontend
+    sessionCode = decodeURIComponent(sessionCode);
 
     // Call the Azure endpoint from the server side (no CORS issues)
     const azureUrl = `${
@@ -38,7 +41,7 @@ export async function GET(request: NextRequest) {
           success: false,
           message: data.message || "Invalid session code",
         },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -53,7 +56,7 @@ export async function GET(request: NextRequest) {
         message:
           error instanceof Error ? error.message : "Failed to verify session",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

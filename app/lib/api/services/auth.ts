@@ -13,7 +13,7 @@ export const authService = {
     name: string,
     email: string,
     language: string,
-    gameSessionId?: number | null
+    gameSessionId?: number | null,
   ) => {
     return apiClient.post<Player>("/api/auth/player", {
       name,
@@ -28,14 +28,14 @@ export const authService = {
     try {
       const response = await fetch(
         `/api/auth/verify-session?sessionCode=${encodeURIComponent(
-          sessionCode
+          sessionCode,
         )}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -73,7 +73,7 @@ export const authService = {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -107,7 +107,7 @@ export const authService = {
     name: string,
     email: string,
     language: string,
-    gameSessionId: number
+    gameSessionId: number,
   ) => {
     const payload = {
       Name: name,
