@@ -13,6 +13,7 @@ import {
   Delete,
 } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
+import { useGameTranslation } from "@/app/lib/i18n/useGameTranslation";
 
 const lockImg = "/assets/locks/Directional-locked.png";
 const unlockImg = "/assets/locks/Directional-unlocked.png";
@@ -24,6 +25,7 @@ interface DirectionalLockModalProps {
   lockImage?: string;
   unlockImage?: string;
   physicalCode?: string | null;
+  language?: string;
 }
 
 const DIRECTION_MAP = {
@@ -40,8 +42,10 @@ export default function DirectionalLockModal({
   lockImage,
   unlockImage,
   physicalCode,
+  language = "en",
 }: DirectionalLockModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const { t } = useGameTranslation(language);
   const [input, setInput] = useState<string>("");
   const [error, setError] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -73,7 +77,7 @@ export default function DirectionalLockModal({
 
   const handleSubmit = async () => {
     if (!input.trim()) {
-      setError("Please enter a direction sequence.");
+      setError(t("modal.pleaseEnterDirectionSequence"));
       return;
     }
 
@@ -89,12 +93,21 @@ export default function DirectionalLockModal({
       setIsUnlocked(true);
       setError("");
     } catch (err) {
-      setError("Incorrect code. Try again.");
+      setError(t("modal.incorrectCode"));
       setInput("");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (open) {
+      setInput("");
+      setError("");
+      setIsUnlocked(false);
+      setImageLoaded(false);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -116,13 +129,13 @@ export default function DirectionalLockModal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                <span className="text-[28px]">🎉</span> Congratulation!
+                {t("modal.congratulation")}
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
                 style={{ animationDelay: "0.1s" }}
               >
-                Your Physical Code is:
+                {t("modal.yourPhysicalCodeIs")}
               </p>
               <p
                 className="text-3xl font-bold text-[#FF0000] mt-2 tracking-wider animate-bounce-slow"
@@ -217,10 +230,10 @@ export default function DirectionalLockModal({
                 disabled={isSubmitting || isUnlocked}
               >
                 {isSubmitting
-                  ? "Verifying..."
+                  ? t("modal.verifying")
                   : isUnlocked
-                    ? "Unlocked"
-                    : "Submit Code"}
+                    ? t("modal.unlocked")
+                    : t("modal.submitCode")}
               </Button>
               <Button
                 onClick={() => setInput((prev) => prev.slice(0, -1))}

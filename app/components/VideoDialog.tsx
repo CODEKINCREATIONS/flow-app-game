@@ -11,12 +11,14 @@ import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
 import { X, Eye, EyeOff } from "lucide-react";
 import { authService } from "@/app/lib/api/services/auth";
+import { useGameTranslation } from "@/app/lib/i18n/useGameTranslation";
 
 interface VideoDialogProps {
   open: boolean;
   onClose: () => void;
   videoUrl: string;
   password: string;
+  language?: string;
 }
 
 type DialogStage = "password" | "video";
@@ -25,7 +27,9 @@ export default function VideoDialog({
   open,
   onClose,
   videoUrl,
+  language = "en",
 }: VideoDialogProps) {
+  const { t } = useGameTranslation(language);
   const [stage, setStage] = useState<DialogStage>("password");
   const [inputPassword, setInputPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,7 +40,7 @@ export default function VideoDialog({
     setError("");
 
     if (!inputPassword) {
-      setError("Please enter a password.");
+      setError(t("videoDialog.passwordRequired"));
       return;
     }
 
@@ -48,11 +52,11 @@ export default function VideoDialog({
       if (response.success) {
         setStage("video");
       } else {
-        setError(response.error || "Incorrect password. Please try again.");
+        setError(response.error || t("videoDialog.incorrectPassword"));
         setInputPassword("");
       }
     } catch {
-      setError("An error occurred while verifying password. Please try again.");
+      setError(t("videoDialog.passwordVerifyError"));
     } finally {
       setIsLoading(false);
     }
@@ -96,14 +100,14 @@ export default function VideoDialog({
               <DialogHeader>
                 <DialogTitle>
                   <span className="text-2xl font-bold text-center text-white block">
-                    Enter Password
+                    {t("videoDialog.enterPassword")}
                   </span>
                 </DialogTitle>
               </DialogHeader>
 
               <div className="flex flex-col items-center text-center space-y-4 ">
                 <p className="text-base text-gray-300 px-6 leading-relaxed mb-[25px] font-medium">
-                  This video is password protected
+                  {t("videoDialog.videoPasswordProtected")}
                 </p>
 
                 {/* Password Input Field */}
@@ -114,7 +118,7 @@ export default function VideoDialog({
                       value={inputPassword}
                       onChange={(e) => setInputPassword(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="  Enter password"
+                      placeholder={t("videoDialog.passwordPlaceholder")}
                       autoFocus
                       className="w-full !px-[0px] !py-3 pr-[45px]"
                     />
@@ -155,7 +159,9 @@ export default function VideoDialog({
                   disabled={isLoading}
                   className="w-full max-w-md !px-8 !py-3 mt-[15px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? "Verifying..." : "Submit Password"}
+                  {isLoading
+                    ? t("videoDialog.verifyingPassword")
+                    : t("videoDialog.submitPassword")}
                 </Button>
               </div>
             </>

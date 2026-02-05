@@ -6,7 +6,9 @@ import { AppLayout } from "@/app/components/layout";
 import { Button } from "@/app/components/ui";
 import { useAuth } from "@/app/lib/hooks";
 import { useHydration } from "@/app/lib/hooks/useHydration";
+import { useGameTranslation } from "@/app/lib/i18n/useGameTranslation";
 import { gameService } from "@/app/lib/api/services/game";
+import { calculateRemainingTime } from "@/app/lib/utils/calculateRemainingTime";
 import Image from "next/image";
 import { Video, Check, HelpCircle } from "lucide-react";
 import NumericLockModal from "@/app/components/NumericLockModal";
@@ -50,6 +52,7 @@ export default function PlayerGamePage() {
   const isHydrated = useHydration();
   const router = useRouter();
   const initialFetchDone = useRef(false);
+  const { t } = useGameTranslation(sessionLanguage);
 
   // Wait for hydration to complete before showing any content
   useEffect(() => {
@@ -195,6 +198,60 @@ export default function PlayerGamePage() {
   const playerName =
     isPlayer && user && "name" in user ? (user.name as string) : "Player";
 
+  // Track if finishSession has been called to prevent duplicates
+  const finishSessionCalledRef = useRef(false);
+
+  // Handle timer completion - call finishSession when timer reaches 00:00
+  useEffect(() => {
+    if (!sessionUnlockedAt || !sessionCreated || sessionStatus === 2) {
+      return; // Don't trigger if session data not ready or already finished
+    }
+
+    const checkTimerCompletion = () => {
+      const remainingTime = calculateRemainingTime(
+        sessionCreated,
+        sessionUnlockedAt,
+        sessionDuration,
+      );
+
+      if (remainingTime === "00:00" && !finishSessionCalledRef.current) {
+        // Timer has reached completion
+        if (!user) return;
+
+        // Prevent duplicate calls
+        finishSessionCalledRef.current = true;
+
+        let sessionCode = "SHI-HDS-XkkKi"; // Default fallback
+        if ("sessionCode" in user && user.sessionCode) {
+          sessionCode = user.sessionCode;
+        }
+
+        // Call finishSession API
+        gameService
+          .finishSession(sessionCode)
+          .then(() => {
+            // Session finished successfully, show expired dialog
+            setSessionStatus(2);
+            setShowSessionExpired(true);
+          })
+          .catch((error) => {
+            console.error("Failed to finish session:", error);
+            // Still show the expired dialog even if the API call fails
+            setSessionStatus(2);
+            setShowSessionExpired(true);
+          });
+      }
+    };
+
+    // Check immediately
+    checkTimerCompletion();
+
+    // Then check every 500ms to ensure we catch the 00:00 state
+    const timerCheckInterval = setInterval(checkTimerCompletion, 500);
+
+    return () => clearInterval(timerCheckInterval);
+  }, [sessionCreated, sessionUnlockedAt, sessionDuration, sessionStatus, user]);
+
   const handleSubmitCode = async (code: string) => {
     if (selectedChest === null || !user) {
       throw new Error("No chest selected");
@@ -312,11 +369,9 @@ export default function PlayerGamePage() {
           <div className="text-center">
             <div className="bg-red-500/20 border border-red-500 rounded-lg p-8 mb-6">
               <p className="text-red-400 text-xl font-semibold mb-4">
-                Access Denied
+                {t("game.accessDenied")}
               </p>
-              <p className="text-gray-300 mb-6">
-                You must log in as a player to access the game.
-              </p>
+              <p className="text-gray-300 mb-6">{t("game.mustLogin")}</p>
             </div>
           </div>
         </main>
@@ -340,7 +395,7 @@ export default function PlayerGamePage() {
           <div className="text-center">
             <div className="inline-block">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-              <p className="text-gray-300">Loading game...</p>
+              <p className="text-gray-300">{t("game.loading")}</p>
             </div>
           </div>
         </main>
@@ -364,14 +419,14 @@ export default function PlayerGamePage() {
           <div className="text-center">
             <div className="bg-red-500/20 border border-red-500 rounded-lg p-8 mb-6">
               <p className="text-red-400 text-xl font-semibold mb-4">
-                Error Loading Game
+                {t("game.error")}
               </p>
               <p className="text-gray-300 mb-6">{error}</p>
               <Button
                 variant="primary"
                 onClick={() => router.push("/playerlogin")}
               >
-                Back to Login
+                {t("game.backToLogin")}
               </Button>
             </div>
           </div>
@@ -413,7 +468,8 @@ export default function PlayerGamePage() {
               {/* Unlocked Boxes Display */}
               <div className="border-0 px-[35px] py-[16px] rounded-[0.35rem] text-[#5d3eff] font-['Orbitron'] tracking-wider rounded-xl bg-[#FFFFFF]">
                 <span className="text-2xl sm:text-3xl md:text-4xl font-bold">
-                  Unlocked: {unlockedChests.length}/{gameBoxes.length} Boxes
+                  {t("game.unlockedBoxes")} {unlockedChests.length}/
+                  {gameBoxes.length} {t("game.boxes")}
                 </span>
               </div>
 
@@ -426,7 +482,7 @@ export default function PlayerGamePage() {
               >
                 <div className="flex items-center justify-center gap-2 ">
                   <Video size={25} />
-                  <span className="ml-[5px]">Watch Video</span>
+                  <span className="ml-[5px]">{t("game.watchVideo")}</span>
                 </div>
               </Button>
             </div>
@@ -499,13 +555,13 @@ export default function PlayerGamePage() {
                       loading="eager"
                     />
                     <div className="absolute top-[15px] left-[15px] z-50 text-white font-black text-lg bg-black bg-opacity-50 px-2 py-1 rounded">
-                      Box {gameBox.boxID}
+                      {t("game.box")} {gameBox.boxID}
                     </div>
                     {physicalCodesByBox[boxIndex] && (
                       <div className="absolute inset-0 flex items-start justify-center mt-[100px] bg-black bg-opacity-60 rounded-xl z-30">
                         <div className="text-center">
                           <p
-                            className="text-[#000] font-mono text-[22px] tracking-wider"
+                            className="text-[#fff] font-mono text-[22px] tracking-wider"
                             style={{ fontWeight: 700 }}
                           >
                             {physicalCodesByBox[boxIndex]}
@@ -585,6 +641,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
+                        language={sessionLanguage}
                       />
                     );
                   case "directional":
@@ -598,6 +655,7 @@ export default function PlayerGamePage() {
                           selectedChest || 0,
                         )}
                         physicalCode={physicalCode}
+                        language={sessionLanguage}
                       />
                     );
                   case "numericV1":
@@ -608,6 +666,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
+                        language={sessionLanguage}
                       />
                     );
                   case "word":
@@ -618,6 +677,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
+                        language={sessionLanguage}
                       />
                     );
                   case "numericV2":
@@ -628,6 +688,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
+                        language={sessionLanguage}
                       />
                     );
                   case "wordML":
@@ -652,6 +713,7 @@ export default function PlayerGamePage() {
               onClose={() => setShowVideoDialog(false)}
               videoUrl={getVideoUrl()}
               password=""
+              language={sessionLanguage}
             />
 
             {/* Session Expired Dialog */}
@@ -661,7 +723,7 @@ export default function PlayerGamePage() {
                 setShowSessionExpired(false);
               }}
               onConfirm={() => {
-                window.location.href = "/playerlogin";
+                router.push("/playerlogin");
               }}
             />
           </div>

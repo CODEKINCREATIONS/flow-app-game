@@ -6,6 +6,7 @@ import { Dialog, DialogContent } from "@/app/components/ui/dialog";
 import Button from "@/app/components/ui/Button";
 import { X } from "lucide-react";
 import { triggerDialogConfetti } from "../lib/utils/confetti";
+import { useGameTranslation } from "@/app/lib/i18n/useGameTranslation";
 
 const lockImg = "/assets/locks/NumericLock-locked.png";
 const unlockImg = "/assets/locks/NumericLock-unlocked.png";
@@ -25,6 +26,7 @@ interface CodeEntryModalProps {
   onSubmit: (code: string) => Promise<void>;
   lockImage?: string;
   physicalCode?: string | null;
+  language?: string;
 }
 
 export default function CodeEntryModal({
@@ -33,8 +35,10 @@ export default function CodeEntryModal({
   onSubmit,
   lockImage,
   physicalCode,
+  language = "en",
 }: CodeEntryModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const { t } = useGameTranslation(language);
   const [scrollOffsets, setScrollOffsets] = useState<number[]>([0, 0, 0, 0]);
   const [selectedValues, setSelectedValues] = useState<string[]>([
     "0",
@@ -133,7 +137,7 @@ export default function CodeEntryModal({
       setError("");
     } catch (err) {
       // Backend rejected the code
-      setError("Incorrect code. Try again.");
+      setError(t("modal.incorrectCode"));
       setSelectedValues(["0", "0", "0", "0"]);
       setScrollOffsets([0, 0, 0, 0]);
     } finally {
@@ -161,13 +165,13 @@ export default function CodeEntryModal({
           {isUnlocked && physicalCode && (
             <div className="mb-6 animate-fade-in-slide-down">
               <p className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow">
-                <span className="text-[28px]">🎉</span> Congratulation!
+                {t("modal.congratulation")}
               </p>
               <p
                 className="text-lg font-bold text-[#FF0000] tracking-wider animate-pulse-slow"
                 style={{ animationDelay: "0.1s" }}
               >
-                Your Physical Code is:
+                {t("modal.yourPhysicalCodeIs")}
               </p>
               <p
                 className="text-3xl font-bold text-[#FF0000] mt-2 tracking-wider animate-bounce-slow"
@@ -306,10 +310,10 @@ export default function CodeEntryModal({
                 disabled={isSubmitting || isUnlocked}
               >
                 {isSubmitting
-                  ? "Verifying..."
+                  ? t("modal.verifying")
                   : isUnlocked
-                  ? "Unlocked"
-                  : "Submit Code"}
+                    ? t("modal.unlocked")
+                    : t("modal.submitCode")}
               </Button>
             </div>
           )}
