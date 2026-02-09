@@ -67,6 +67,11 @@ export default function PlayerGamePage() {
 
     if (!isPlayer || !user) {
       router.push("/playerlogin");
+    } else {
+      // Set language from user's login selection
+      if ("language" in user && user.language) {
+        setSessionLanguage(user.language.toLowerCase());
+      }
     }
   }, [isHydrated, isPlayer, user, router]);
 
@@ -131,10 +136,8 @@ export default function PlayerGamePage() {
           if (gameSession.sessionDuration) {
             setSessionDuration(gameSession.sessionDuration);
           }
-          // Extract language from session data
-          if (gameSession.language) {
-            setSessionLanguage(gameSession.language.toLowerCase());
-          }
+          // Language is now set from user's login selection, not from API
+          // This ensures the game uses the language the player selected during login
           // Check if session has expired (status = 2 means finished)
           if (gameSession.status === 2 && !showSessionExpired) {
             setSessionStatus(gameSession.status);
@@ -723,7 +726,7 @@ export default function PlayerGamePage() {
                 setShowSessionExpired(false);
               }}
               onConfirm={() => {
-                router.push("/playerlogin");
+                window.location.href = "/playerlogin";
               }}
             />
           </div>
