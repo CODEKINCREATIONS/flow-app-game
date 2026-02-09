@@ -83,8 +83,8 @@ function FacilitatorDashboardWithCodeContent() {
           setTimeout(() => {
             router.push(
               `/session-error?error=${encodeURIComponent(
-                response.error || "Invalid session code"
-              )}`
+                response.error || "Invalid session code",
+              )}`,
             );
           }, 2000);
         }
@@ -101,7 +101,7 @@ function FacilitatorDashboardWithCodeContent() {
         // Redirect to error page after a short delay
         setTimeout(() => {
           router.push(
-            `/session-error?error=${encodeURIComponent(errorMessage)}`
+            `/session-error?error=${encodeURIComponent(errorMessage)}`,
           );
         }, 2000);
       }
@@ -189,7 +189,7 @@ function FacilitatorDashboardWithCodeContent() {
       const newRemainingTime = calculateRemainingTime(
         dashboardData?.sessionCreated,
         dashboardData?.sessionUnlockedAt,
-        dashboardData?.sessionDuration
+        dashboardData?.sessionDuration,
       );
       setRemainingTime(newRemainingTime);
 
@@ -405,6 +405,7 @@ function FacilitatorDashboardWithCodeContent() {
         {/* Session Expired Dialog */}
         <SessionExpiredDialog
           open={showSessionExpired}
+          language="en"
           onClose={() => {
             setShowSessionExpired(false);
           }}

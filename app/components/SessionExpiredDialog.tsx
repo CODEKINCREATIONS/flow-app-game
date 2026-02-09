@@ -2,18 +2,23 @@
 import Button from "@/app/components/ui/Button";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent } from "@/app/components/ui/dialog";
+import { useGameTranslation } from "@/app/lib/i18n/useGameTranslation";
 
 interface SessionExpiredDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  language?: string;
 }
 
 export default function SessionExpiredDialog({
   open,
   onClose,
   onConfirm,
+  language = "en",
 }: SessionExpiredDialogProps) {
+  const { t } = useGameTranslation(language);
+
   return (
     <>
       <style>{`
@@ -29,12 +34,14 @@ export default function SessionExpiredDialog({
             <AlertTriangle className="w-16 h-16 text-yellow-400" />
 
             <p className="text-2xl text-white px-4 leading-relaxed font-medium">
-              Session Expired
+              {t("sessionExpired.title", "Session Expired")}
             </p>
 
             <p className="text-sm text-gray-300 px-4">
-              The game session has ended. Please return to the dashboard to
-              start a new session.
+              {t(
+                "sessionExpired.message",
+                "The game session has ended. Please return to the dashboard to start a new session.",
+              )}
             </p>
 
             {/* Action Button */}
@@ -44,7 +51,9 @@ export default function SessionExpiredDialog({
                 onClick={onConfirm}
                 className="flex items-center justify-center px-[5px] py-[3px] font-semibold"
               >
-                <span className="text-lg">Return to Login Page</span>
+                <span className="text-lg">
+                  {t("sessionExpired.returnToLogin", "Return to Login Page")}
+                </span>
               </Button>
             </div>
           </div>

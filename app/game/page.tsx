@@ -722,6 +722,7 @@ export default function PlayerGamePage() {
             {/* Session Expired Dialog */}
             <SessionExpiredDialog
               open={showSessionExpired}
+              language={sessionLanguage}
               onClose={() => {
                 setShowSessionExpired(false);
               }}

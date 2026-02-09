@@ -32,5 +32,10 @@
     "passwordRequired": "Please enter a password.",
     "submitPassword": "Submit Password",
     "verifyingPassword": "Verifying..."
+  },
+  "sessionExpired": {
+    "title": "Session Expired",
+    "message": "The game session has ended. Please return to the dashboard to start a new session.",
+    "returnToLogin": "Return to Login Page"
   }
 }

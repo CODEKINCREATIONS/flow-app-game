@@ -32,5 +32,10 @@
     "passwordRequired": "Por favor, insira uma senha.",
     "submitPassword": "Enviar Senha",
     "verifyingPassword": "Verificando..."
+  },
+  "sessionExpired": {
+    "title": "Sessão Expirada",
+    "message": "A sessão do jogo terminou. Por favor, volte ao painel para iniciar uma nova sessão.",
+    "returnToLogin": "Voltar à Página de Login"
   }
 }
