@@ -1,0 +1,36 @@
+{
+  "game": {
+    "title": "Jogo",
+    "loading": "Carregando jogo...",
+    "error": "Erro ao Carregar Jogo",
+    "accessDenied": "Acesso Negado",
+    "mustLogin": "Você deve fazer login como jogador para acessar o jogo.",
+    "backToLogin": "Voltar ao Login",
+    "watchVideo": "Assistir Vídeo",
+    "unlockedBoxes": "Desbloqueadas:",
+    "boxes": "Caixas",
+    "box": "Caixa",
+    "accessDeniedTitle": "Acesso Negado"
+  },
+  "modal": {
+    "congratulation": "🎉 Parabéns!",
+    "yourPhysicalCodeIs": "Seu Código Físico é:",
+    "pleaseEnterDirectionSequence": "Por favor, insira uma sequência de direções.",
+    "incorrectCode": "Código incorreto. Tente novamente.",
+    "verifying": "Verificando...",
+    "submitCode": "Enviar Código",
+    "unlocked": "Desbloqueado",
+    "success": "Sucesso!",
+    "tryAgain": "Tentar Novamente"
+  },
+  "videoDialog": {
+    "enterPassword": "Inserir Senha",
+    "videoPasswordProtected": "Este vídeo está protegido por senha",
+    "passwordPlaceholder": "Inserir senha",
+    "incorrectPassword": "Senha incorreta. Por favor, tente novamente.",
+    "passwordVerifyError": "Ocorreu um erro ao verificar a senha. Por favor, tente novamente.",
+    "passwordRequired": "Por favor, insira uma senha.",
+    "submitPassword": "Enviar Senha",
+    "verifyingPassword": "Verificando..."
+  }
+}
