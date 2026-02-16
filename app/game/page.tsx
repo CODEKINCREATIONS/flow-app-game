@@ -52,7 +52,10 @@ export default function PlayerGamePage() {
   const isHydrated = useHydration();
   const router = useRouter();
   const initialFetchDone = useRef(false);
-  const { t } = useGameTranslation(sessionLanguage);
+  // Use user's chosen language for UI translations, but keep sessionLanguage for lock configuration
+  const userLanguage =
+    user && "language" in user ? (user.language as string).toLowerCase() : "en";
+  const { t } = useGameTranslation(userLanguage);
 
   // Wait for hydration to complete before showing any content
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function PlayerGamePage() {
     if (!isPlayer || !user) {
       router.push("/playerlogin");
     } else {
-      // Set language from user's login selection
+      // Set initial language from user's login selection (will be overridden by session language from API)
       if ("language" in user && user.language) {
         setSessionLanguage(user.language.toLowerCase());
       }
@@ -136,8 +139,12 @@ export default function PlayerGamePage() {
           if (gameSession.sessionDuration) {
             setSessionDuration(gameSession.sessionDuration);
           }
-          // Language is now set from user's login selection, not from API
-          // This ensures the game uses the language the player selected during login
+          // Set language from session API response, with fallback to user's login selection
+          if (gameSession.language) {
+            setSessionLanguage(gameSession.language.toLowerCase());
+          } else if (user && "language" in user && user.language) {
+            setSessionLanguage(user.language.toLowerCase());
+          }
           // Check if session has expired (status = 2 means finished)
           if (gameSession.status === 2 && !showSessionExpired) {
             setSessionStatus(gameSession.status);
@@ -310,12 +317,6 @@ export default function PlayerGamePage() {
 
   // Get language-specific video URL
   const getVideoUrl = (): string => {
-    let language = "en"; // Default to English
-
-    if (user && "language" in user && user.language) {
-      language = (user.language as string).toLowerCase();
-    }
-
     // Map language codes to video file paths
     const videoMap: Record<string, string> = {
       en: "/assets/language_Videos/English.mp4",
@@ -324,7 +325,7 @@ export default function PlayerGamePage() {
       fr: "/assets/language_Videos/English.mp4", // Fallback to English for French
     };
 
-    const videoUrl = videoMap[language] || videoMap["en"];
+    const videoUrl = videoMap[userLanguage] || videoMap["en"];
     return videoUrl;
   };
 
@@ -722,6 +723,7 @@ export default function PlayerGamePage() {
             {/* Session Expired Dialog */}
             <SessionExpiredDialog
               open={showSessionExpired}
+              language={sessionLanguage}
               onClose={() => {
                 setShowSessionExpired(false);
               }}
