@@ -54,7 +54,8 @@ interface WordMLModalProps {
   onSubmit: (code: string) => Promise<void>;
   lockImage: string;
   physicalCode?: string | null;
-  language?: string;
+  language?: string; // UI language for translations
+  sessionLanguage?: string; // Session language for lock structure
 }
 
 const ALPHABETS = [
@@ -123,10 +124,11 @@ export default function WordMLModal({
   lockImage,
   physicalCode,
   language = "en",
+  sessionLanguage = "en",
 }: WordMLModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const { t } = useGameTranslation(language);
-  const columnData = getColumnData(language);
+  const columnData = getColumnData(sessionLanguage);
   const initialScrollOffsets = Array(columnData.length).fill(0);
   const initialSelectedValues = columnData.map((col) => col.data[0]);
   const [scrollOffsets, setScrollOffsets] =
