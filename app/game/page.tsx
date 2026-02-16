@@ -645,7 +645,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
                       />
                     );
                   case "directional":
@@ -659,7 +659,7 @@ export default function PlayerGamePage() {
                           selectedChest || 0,
                         )}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
                       />
                     );
                   case "numericV1":
@@ -670,7 +670,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
                       />
                     );
                   case "word":
@@ -681,7 +681,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
                       />
                     );
                   case "numericV2":
@@ -692,7 +692,7 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
                       />
                     );
                   case "wordML":
@@ -703,7 +703,8 @@ export default function PlayerGamePage() {
                         onSubmit={handleSubmitCode}
                         lockImage={lockImage}
                         physicalCode={physicalCode}
-                        language={sessionLanguage}
+                        language={userLanguage}
+                        sessionLanguage={sessionLanguage}
                       />
                     );
                   default:
@@ -717,13 +718,13 @@ export default function PlayerGamePage() {
               onClose={() => setShowVideoDialog(false)}
               videoUrl={getVideoUrl()}
               password=""
-              language={sessionLanguage}
+              language={userLanguage}
             />
 
             {/* Session Expired Dialog */}
             <SessionExpiredDialog
               open={showSessionExpired}
-              language={sessionLanguage}
+              language={userLanguage}
               onClose={() => {
                 setShowSessionExpired(false);
               }}
